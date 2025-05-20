@@ -3,9 +3,7 @@
   config,
   pkgs,
   ...
-}:
-
-{
+}: {
   imports = [
     inputs.home-manager.nixosModules.home-manager
     ./hardware-configuration.nix
@@ -18,8 +16,21 @@
     ../users/jacopo.nix
   ];
 
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.users.jacopo = {
+    isNormalUser = true;
+    description = "Jacopo";
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
+    packages = with pkgs; [
+      kdePackages.kate
+    ];
+  };
+
   home-manager = {
-    extraSpecialArgs = { inherit inputs; };
+    extraSpecialArgs = {inherit inputs;};
     users = {
       jacopo = import /home/jacopo/.config/home-manager/home.nix;
     };
@@ -39,7 +50,7 @@
     # Enable X11
     xserver = {
       enable = true;
-      videoDrivers = [ "amdgpu" ];
+      videoDrivers = ["amdgpu"];
     };
 
     # Enable Plasma and SDDM
@@ -87,7 +98,7 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     # Home Manager
-    home-manager
+    # home-manager
     git
     (vscode-with-extensions.override {
       vscodeExtensions = with vscode-extensions; [
