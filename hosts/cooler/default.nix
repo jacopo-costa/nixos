@@ -6,7 +6,7 @@
 }: {
   imports = [
     inputs.home-manager.nixosModules.home-manager
-    /etc/nixos/hardware-configuration.nix
+    ./hardware-configuration.nix
     ../modules/locale.nix
     ../modules/grub.nix
     ../modules/sound.nix
