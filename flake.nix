@@ -29,6 +29,7 @@
       # Set optimize store and generation for every hosts
       {
         nix.settings = {
+          experimental-features = ["nix-command" "flakes"];
           auto-optimise-store = true;
         };
 

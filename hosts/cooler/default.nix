@@ -12,7 +12,7 @@
     ../../modules/grub.nix
     ../../modules/locale.nix
 
-    ./no-rgb.nix
+    # ./no-rgb.nix
 
     # Users
     ../../users/jacopo
@@ -41,4 +41,18 @@
   environment.systemPackages = with pkgs; [
     openrgb
   ];
+
+  programs = {
+    # Gaming
+    steam = {
+      package = pkgs.steam.override {
+        extraPkgs = p: [
+          p.kdePackages.breeze
+        ];
+      };
+      enable = true;
+      localNetworkGameTransfers.openFirewall = true;
+    };
+    gamemode.enable = true;
+  };
 }
