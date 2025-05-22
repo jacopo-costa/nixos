@@ -1,20 +1,18 @@
 {
-  # Nix
-  nix = {
-    optimise.automatic = true;
-    settings = {
-      auto-optimise-store = true;
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-    };
-    gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 7d";
-    };
-  };
+  config,
+  pkgs,
+  ...
+}: {
+  imports = [
+    ./bluetooth.nix
+    ./network.nix
+    ./packages.nix
+    ./programs.nix
+    ./services.nix
+    ./sound.nix
+  ];
+
+  users.mutableUsers = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

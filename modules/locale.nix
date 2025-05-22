@@ -1,8 +1,8 @@
 {
-  # Set your time zone.
+  # Timezone
   time.timeZone = "Europe/Rome";
 
-  # Select internationalisation properties.
+  # Default IT locale
   i18n.defaultLocale = "it_IT.UTF-8";
 
   i18n.extraLocaleSettings = {

@@ -1,41 +1,24 @@
 {
-  inputs,
   config,
   pkgs,
+  home-manager,
   ...
 }: {
   imports = [
-    inputs.home-manager.nixosModules.home-manager
+    home-manager.nixosModules.home-manager
     ./hardware-configuration.nix
-    ../modules/locale.nix
-    ../modules/grub.nix
-    ../modules/sound.nix
-    ../modules/system.nix
+    ../../modules/desktop
 
     # Users
-    ../users/jacopo
+    ../../users/jacopo
   ];
 
-  hardware = {
-    bluetooth.enable = true;
-  };
+  # Set hostname
+  networking.hostName = "cooler";
 
-  # Networking
-  networking = {
-    hostName = "cooler";
-    networkmanager.enable = true;
-  };
-
+  # Enable host specific services
   services = {
-    # Enable X11
-    xserver = {
-      enable = true;
-      videoDrivers = ["amdgpu"];
-    };
-
-    # Enable Plasma and SDDM
-    displayManager.sddm.enable = true;
-    desktopManager.plasma6.enable = true;
+    xserver.videoDrivers = ["amdgpu"];
 
     # Enable automatic login for the user.
     displayManager.autoLogin.enable = true;
@@ -46,53 +29,5 @@
       layout = "us";
       variant = "";
     };
-
-    # Enable CUPS to print documents.
-    printing.enable = true;
   };
-
-  # Programs
-  programs = {
-    firefox = {
-      enable = true;
-      preferences = {
-        "widget.use-xdg-desktop-portal.file-picker" = 1;
-      };
-    };
-
-    steam = {
-      package = pkgs.steam.override {
-        extraPkgs = p: [
-          p.kdePackages.breeze
-        ];
-      };
-      enable = true;
-      localNetworkGameTransfers.openFirewall = true;
-    };
-  };
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    # Home Manager
-    # home-manager
-    git
-    (vscode-with-extensions.override {
-      vscodeExtensions = with vscode-extensions; [
-        brettm12345.nixfmt-vscode
-        bbenoist.nix
-        jnoortheen.nix-ide
-      ];
-    })
-    nixfmt-rfc-style
-    spotify
-    vlc
-    # Spelling
-    aspell
-    aspellDicts.it
-    aspellDicts.en
-  ];
 }
