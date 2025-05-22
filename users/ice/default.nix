@@ -3,9 +3,9 @@
   pkgs,
   ...
 }: {
-  users.users.jacopo = {
+  users.users.ice = {
     isNormalUser = true;
-    description = "Jacopo";
+    description = "ice";
     extraGroups = [
       "networkmanager"
       "wheel"

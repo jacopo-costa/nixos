@@ -1,6 +1,12 @@
-{config, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   # Programs
   programs = {
+    zsh.enable = true;
+
     firefox = {
       enable = true;
       preferences = {

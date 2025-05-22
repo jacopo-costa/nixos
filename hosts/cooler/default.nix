@@ -9,6 +9,9 @@
     ./hardware-configuration.nix
     ../../modules/desktop
 
+    ../../modules/grub.nix
+    ../../modules/locale.nix
+
     # Users
     ../../users/jacopo
   ];
