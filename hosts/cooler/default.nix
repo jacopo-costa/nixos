@@ -12,6 +12,8 @@
     ../../modules/grub.nix
     ../../modules/locale.nix
 
+    ./no-rgb.nix
+
     # Users
     ../../users/jacopo
   ];
@@ -33,4 +35,10 @@
       variant = "";
     };
   };
+
+  services.hardware.openrgb.enable = true;
+
+  environment.systemPackages = with pkgs; [
+    openrgb
+  ];
 }
