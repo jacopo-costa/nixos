@@ -12,6 +12,8 @@
     ./sound.nix
   ];
 
+  programs.zsh.enable = true;
+
   users.mutableUsers = true;
 
   # This value determines the NixOS release from which the default

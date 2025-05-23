@@ -1,7 +1,5 @@
 {pkgs, ...}: {
   environment.systemPackages = with pkgs; [
-    # Alejandra
-    alejandra
     # Multimedia
     spotify
     vlc

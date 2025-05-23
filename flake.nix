@@ -48,12 +48,18 @@
       cooler = nixpkgs.lib.nixosSystem {
         inherit system;
 
-        specialArgs = {inherit pkgs home-manager;};
+        specialArgs = {inherit pkgs;};
 
         modules =
           sharedModules
           ++ [
+            # Main config
             ./hosts/cooler
+
+            # Set hostname
+            {networking.hostName = "cooler";}
+
+            # Home Manager
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
@@ -73,7 +79,13 @@
         modules =
           sharedModules
           ++ [
+            # Main config
             ./hosts/freezer
+
+            # Set hostname
+            {networking.hostName = "freezer";}
+
+            # Home Manager
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;

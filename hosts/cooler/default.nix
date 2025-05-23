@@ -1,25 +1,18 @@
 {
   config,
   pkgs,
-  home-manager,
   ...
 }: {
   imports = [
-    home-manager.nixosModules.home-manager
     ./hardware-configuration.nix
     ../../modules/desktop
 
     ../../modules/grub.nix
     ../../modules/locale.nix
 
-    # ./no-rgb.nix
-
     # Users
     ../../users/jacopo
   ];
-
-  # Set hostname
-  networking.hostName = "cooler";
 
   # Enable host specific services
   services = {

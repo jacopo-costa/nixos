@@ -5,9 +5,6 @@
 }: {
   # Programs
   programs = {
-    # Shell
-    zsh.enable = true;
-
     # Firefox
     firefox = {
       enable = true;
