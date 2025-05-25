@@ -39,7 +39,7 @@
 
   # OpenCL
   hardware = {
-    opengl.extraPackages = with pkgs; [
+    graphics.extraPackages = with pkgs; [
       rocmPackages.clr.icd
       amdvlk
     ];
