@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   environment.systemPackages = with pkgs; [
     # Multimedia
     spotify
@@ -7,5 +11,9 @@
     aspell
     aspellDicts.it
     aspellDicts.en
+    # KDE Utilities
+    kdePackages.kcalc
+    kdePackages.sddm-kcm
+    kdePackages.partitionmanager
   ];
 }

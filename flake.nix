@@ -3,11 +3,11 @@
 
   inputs = {
     # Stable release
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
 
     # Home Manager, follows pkgs stable release
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.11";
+      url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -38,6 +38,8 @@
           dates = "weekly";
           options = "--delete-older-than 7d";
         };
+
+        nixpkgs.config.allowUnfree = true;
       }
     ];
   in {
@@ -48,16 +50,11 @@
       cooler = nixpkgs.lib.nixosSystem {
         inherit system;
 
-        specialArgs = {inherit pkgs;};
-
         modules =
           sharedModules
           ++ [
             # Main config
             ./hosts/cooler
-
-            # Set hostname
-            {networking.hostName = "cooler";}
 
             # Home Manager
             home-manager.nixosModules.home-manager
@@ -74,16 +71,11 @@
       freezer = nixpkgs.lib.nixosSystem {
         inherit system;
 
-        specialArgs = {inherit pkgs;};
-
         modules =
           sharedModules
           ++ [
             # Main config
             ./hosts/freezer
-
-            # Set hostname
-            {networking.hostName = "freezer";}
 
             # Home Manager
             home-manager.nixosModules.home-manager

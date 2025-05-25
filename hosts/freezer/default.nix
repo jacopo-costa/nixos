@@ -42,7 +42,7 @@
 
   # Networking
   networking = {
-    hostName = "CoolCoasty";
+    hostName = "freezer";
     networkmanager.enable = true;
   };
 

@@ -14,6 +14,12 @@
     ../../users/jacopo
   ];
 
+  # Set hostname
+  networking.hostName = "cooler";
+
+  # Make the kernel use the correct driver early
+  boot.initrd.kernelModules = ["amdgpu"];
+
   # Enable host specific services
   services = {
     xserver.videoDrivers = ["amdgpu"];
@@ -27,13 +33,25 @@
       layout = "us";
       variant = "";
     };
+
+    hardware.openrgb.enable = true;
   };
 
-  services.hardware.openrgb.enable = true;
+  # OpenCL
+  hardware = {
+    opengl.extraPackages = with pkgs; [
+      rocmPackages.clr.icd
+      amdvlk
+    ];
+  };
 
-  environment.systemPackages = with pkgs; [
-    openrgb
-  ];
+  environment = {
+    systemPackages = with pkgs; [
+      openrgb
+      # OpenCL
+      clinfo
+    ];
+  };
 
   programs = {
     # Gaming
@@ -41,6 +59,7 @@
       package = pkgs.steam.override {
         extraPkgs = p: [
           p.kdePackages.breeze
+          p.python314
         ];
       };
       enable = true;
