@@ -35,6 +35,11 @@
     };
 
     hardware.openrgb.enable = true;
+
+    ollama = {
+      enable = true;
+      acceleration = "rocm";
+    };
   };
 
   # OpenCL
@@ -48,8 +53,7 @@
   environment = {
     systemPackages = with pkgs; [
       openrgb
-      # OpenCL
-      clinfo
+      gimp
     ];
   };
 
@@ -67,4 +71,10 @@
     };
     gamemode.enable = true;
   };
+
+  # Virtualization
+  programs.virt-manager.enable = true;
+  users.groups.libvirtd.members = ["jacopo"];
+  virtualisation.libvirtd.enable = true;
+  virtualisation.spiceUSBRedirection.enable = true;
 }

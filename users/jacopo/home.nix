@@ -5,7 +5,7 @@
 }: {
   home.username = "jacopo";
   home.homeDirectory = "/home/jacopo";
-  home.stateVersion = "24.11";
+  home.stateVersion = "25.05";
 
   programs = {
     zsh = {

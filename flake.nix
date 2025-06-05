@@ -5,9 +5,15 @@
     # Stable release
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
 
-    # Home Manager, follows pkgs stable release
+    # Home Manager
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Disko
+    disko = {
+      url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -15,6 +21,7 @@
   outputs = {
     self,
     nixpkgs,
+    disko,
     home-manager,
     ...
   }: let
@@ -65,6 +72,10 @@
                 jacopo = import ./users/jacopo/home.nix;
               };
             }
+
+            # Disko
+            # disko.nixosModules.disko
+            # ./hosts/cooler/disko-config.nix
           ];
       };
 
@@ -86,6 +97,10 @@
                 ice = import ./users/ice/home.nix;
               };
             }
+
+            # Disko
+            disko.nixosModules.disko
+            ./hosts/freezer/disko-config.nix
           ];
       };
     };
