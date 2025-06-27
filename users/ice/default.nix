@@ -7,7 +7,6 @@
     isNormalUser = true;
     description = "ice";
     extraGroups = [
-      "networkmanager"
       "wheel"
     ];
     shell = pkgs.zsh;

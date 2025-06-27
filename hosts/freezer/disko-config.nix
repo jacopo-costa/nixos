@@ -3,9 +3,9 @@
     disk = {
       main = {
         type = "disk";
+        device = "/dev/nvme1n1";
         content = {
           type = "gpt";
-          device = "/dev/nvme1n1";
           partitions = {
             ESP = {
               size = "1G";
@@ -22,7 +22,6 @@
               content = {
                 type = "filesystem";
                 format = "ext4";
-                label = "NixOS";
                 mountpoint = "/";
                 mountOptions = ["noatime"];
               };
