@@ -50,6 +50,7 @@
         bbenoist.nix
         jnoortheen.nix-ide
         kamadorueda.alejandra
+        continue.continue
       ];
     })
   ];
