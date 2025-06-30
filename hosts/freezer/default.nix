@@ -15,18 +15,21 @@
 
   # Networking
   networking = {
+    useNetworkd = true;
+    networkmanager.enable = false;
+
     firewall.enable = true;
 
     # Disable DHCP on individual interfaces
-    interfaces.enp2s0.useDHCP = false;
     interfaces.enp3s0.useDHCP = false;
+    interfaces.enp4s0.useDHCP = false;
 
     bonds.bond0 = {
-      interfaces = ["enp2s0" "enp3s0"];
+      interfaces = ["enp3s0" "enp4s0"];
       driverOptions = {
         miimon = "100";
         mode = "active-backup";
-        primary = "enp2s0";
+        primary = "enp3s0";
       };
     };
 

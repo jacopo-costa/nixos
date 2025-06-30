@@ -27,6 +27,16 @@
 
       history.size = 10000;
     };
+
+    git = {
+      enable = true;
+      userName = "Jacopo Costa";
+      userEmail = "costa.jacopo@gmail.com";
+      extraConfig = {
+        init.defaultBranch = "main";
+        pull.rebase = true;
+      };
+    };
   };
 
   home.packages = with pkgs; [
