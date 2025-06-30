@@ -5,6 +5,7 @@
 }: {
   imports = [
     ./boot.nix
+    ./services.nix
   ];
 
   programs.zsh.enable = true;
