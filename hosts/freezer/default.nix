@@ -3,6 +3,9 @@
   pkgs,
   ...
 }: let
+
+  # Derivation of Newt from the release on Github,
+  # it downloads it and save it into NixOS store with the appropriate hash
   newt = pkgs.stdenv.mkDerivation {
     pname = "newt";
     version = "1.2.1";
@@ -30,13 +33,21 @@ in {
     ../../users/ice
   ];
 
+  # Sops secrets
   sops = {
-    defaultSopsFile = ./secrets.yaml;
+    # Where the generated secrets with sops <filename> is
+    defaultSopsFile = ../../secrets.yaml;
     defaultSopsFormat = "yaml";
-    age.keyFile = "/etc/sops/age/keys.txt"
 
+    # Where the private key is
+    age.keyFile = "/etc/sops/age/keys.txt";
+    age.generateKey = false;
+
+    # Declaring used secrets
     secrets."newtId" = {};
     secrets."newtSecret" = {};
+    secrets."adminToken" = {};
+    secrets."smtpPassword" = {};
   };
 
   # Networking
@@ -65,18 +76,18 @@ in {
     hostName = "freezer";
   };
 
+  # Setup Newt client systemd service from the previous derivation
   systemd.services.newt-client = {
     description = "Newt client for Pangolin";
     after = ["network.target"];
     wantedBy = ["multi-user.target"];
 
     serviceConfig = {
-      ExecStart = ''
-        ${pkgs.runtimeShell} -c '${newt}/bin/newt \
-          --id "$(cat /run/secrets/newtId)" \
-          --secret "$(cat /run/secrets/newtSecret)" \
-          --endpoint https://pangolin.dimoracosta.it"'
-      '';
+      Environment = [
+        "NEWT_ID_FILE=/run/secrets/newtId"
+        "NEWT_SECRET_FILE=/run/secrets/newtSecret"
+      ];
+      ExecStart = "/bin/sh -c '${newt}/bin/newt --id \"$(cat $NEWT_ID_FILE)\" --secret \"$(cat $NEWT_SECRET_FILE)\" --endpoint https://pangolin.dimoracosta.it'";
       Restart = "on-failure";
     };
   };
