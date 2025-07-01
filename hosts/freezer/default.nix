@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  secrets,
   ...
 }: let
   newt = pkgs.stdenv.mkDerivation {
@@ -30,6 +29,15 @@ in {
     # Users
     ../../users/ice
   ];
+
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    defaultSopsFormat = "yaml";
+    age.keyFile = "/etc/sops/age/keys.txt"
+
+    secrets."newtId" = {};
+    secrets."newtSecret" = {};
+  };
 
   # Networking
   networking = {
@@ -63,7 +71,12 @@ in {
     wantedBy = ["multi-user.target"];
 
     serviceConfig = {
-      ExecStart = "${newt}/bin/newt --id ${secrets.newtId} --secret ${secrets.newtSecret} --endpoint https://pangolin.dimoracosta.it";
+      ExecStart = ''
+        ${pkgs.runtimeShell} -c '${newt}/bin/newt \
+          --id "$(cat /run/secrets/newtId)" \
+          --secret "$(cat /run/secrets/newtSecret)" \
+          --endpoint https://pangolin.dimoracosta.it"'
+      '';
       Restart = "on-failure";
     };
   };
