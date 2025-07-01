@@ -46,8 +46,6 @@ in {
     # Declaring used secrets
     secrets."newtId" = {};
     secrets."newtSecret" = {};
-    secrets."adminToken" = {};
-    secrets."smtpPassword" = {};
   };
 
   # Networking
