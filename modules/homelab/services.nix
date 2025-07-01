@@ -24,7 +24,7 @@
         ROCKET_LOG = "critical";
 
         SMTP_HOST = "smtp.gmail.com";
-        SMTP_SECURITY=starttls
+        SMTP_SECURITY=starttls;
         SMTP_PORT = 587;
 
         SMTP_USERNAME="dimoracosta.system@gmail.com";
