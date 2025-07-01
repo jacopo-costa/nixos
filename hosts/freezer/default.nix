@@ -2,7 +2,26 @@
   config,
   pkgs,
   ...
-}: {
+}: let
+  secrets = import ../../secrets.nix;
+
+  newt = pkgs.stdenv.mkDerivation {
+    pname = "newt";
+    version = "1.2.1";
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/fosrl/newt/releases/download/1.2.1/newt_linux_amd64";
+      sha256 = "sha256-d40Fi3IC1MkVKG1EmsBt55AklP8s5nm3aoroVk9zYi4=";
+    };
+
+    phases = ["installPhase"];
+    installPhase = ''
+      mkdir -p $out/bin
+      cp $src $out/bin/newt
+      chmod +x $out/bin/newt
+    '';
+  };
+in {
   imports = [
     ./hardware-configuration.nix
 
@@ -37,5 +56,16 @@
     interfaces.bond0.useDHCP = true;
 
     hostName = "freezer";
+  };
+
+  systemd.services.newt-client = {
+    description = "Newt client for Pangolin";
+    after = ["network.target"];
+    wantedBy = ["multi-user.target"];
+
+    serviceConfig = {
+      ExecStart = "${newt}/bin/newt --id ${secrets.newtId} --secret ${secrets.newtSecret} --endpoint https://pangolin.dimoracosta.it";
+      Restart = "on-failure";
+    };
   };
 }
