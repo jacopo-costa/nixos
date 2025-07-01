@@ -16,6 +16,12 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Sops secrets
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -23,6 +29,7 @@
     nixpkgs,
     disko,
     home-manager,
+    sops-nix,
     ...
   }: let
     system = "x86_64-linux";
@@ -31,8 +38,6 @@
       inherit system;
       config.allowUnfree = true;
     };
-
-    secrets = builtins.fromJSON (builtins.readFile "${self}/secrets.json");
 
     sharedModules = [
       # Set optimize store and generation for every hosts
@@ -59,8 +64,6 @@
       cooler = nixpkgs.lib.nixosSystem {
         inherit system;
 
-        specialArgs = { inherit secrets; };
-
         modules =
           sharedModules
           ++ [
@@ -80,13 +83,14 @@
             # Disko
             # disko.nixosModules.disko
             # ./hosts/cooler/disko-config.nix
+
+            # Sops
+            sops-nix.nixosModules.sops
           ];
       };
 
       freezer = nixpkgs.lib.nixosSystem {
         inherit system;
-
-        specialArgs = { inherit secrets; };
 
         modules =
           sharedModules
@@ -107,6 +111,9 @@
             # Disko
             disko.nixosModules.disko
             ./hosts/freezer/disko-config.nix
+
+            # Sops
+            sops-nix.nixosModules.sops
           ];
       };
     };
