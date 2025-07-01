@@ -32,6 +32,8 @@
       config.allowUnfree = true;
     };
 
+    secrets = builtins.fromJSON (builtins.readFile "${self}/secrets.json");
+
     sharedModules = [
       # Set optimize store and generation for every hosts
       {
@@ -57,6 +59,8 @@
       cooler = nixpkgs.lib.nixosSystem {
         inherit system;
 
+        specialArgs = { inherit secrets; };
+
         modules =
           sharedModules
           ++ [
@@ -81,6 +85,8 @@
 
       freezer = nixpkgs.lib.nixosSystem {
         inherit system;
+
+        specialArgs = { inherit secrets; };
 
         modules =
           sharedModules

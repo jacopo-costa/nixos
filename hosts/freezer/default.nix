@@ -1,10 +1,9 @@
 {
   config,
   pkgs,
+  secrets,
   ...
 }: let
-  secrets = import ../../secrets.nix;
-
   newt = pkgs.stdenv.mkDerivation {
     pname = "newt";
     version = "1.2.1";
