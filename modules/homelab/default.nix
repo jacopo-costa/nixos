@@ -5,7 +5,7 @@
 }: {
   imports = [
     ./boot.nix
-    ./caddy.nix
+    ./traefik.nix
     ./services.nix
   ];
 
