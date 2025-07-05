@@ -1,5 +1,4 @@
 {config, ...}: {
-
   sops = {
     # SMTP Credentials
     secrets."smtpPassword" = {};
@@ -34,7 +33,6 @@
   };
 
   services = {
-
     openssh = {
       enable = true;
       settings = {

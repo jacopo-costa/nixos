@@ -1,5 +1,4 @@
-{ config, ... }: {
-  
+{config, ...}: {
   # Networking
   networking = {
     useNetworkd = true;
