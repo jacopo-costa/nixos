@@ -56,7 +56,6 @@
             "1.0.0.1:53"
           ];
         };
-        propagation.delayBeforeChecks = 60;
       };
     };
 
