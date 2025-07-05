@@ -1,4 +1,4 @@
-{ config, ...}: let
+{config, ...}: let
   certloc = "/var/lib/acme/dimoracosta.it";
 in {
   networking.firewall.allowedTCPPorts = [80 443];
