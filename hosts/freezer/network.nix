@@ -29,11 +29,13 @@
       "30-enp3s0" = {
         matchConfig.Name = "enp3s0";
         networkConfig.Bond = "bond0";
+        linkConfig.WakeOnLan = "magic";
       };
 
       "30-enp4s0" = {
         matchConfig.Name = "enp4s0";
         networkConfig.Bond = "bond0";
+        linkConfig.WakeOnLan = "magic";
       };
 
       "40-bond0" = {
@@ -41,8 +43,6 @@
         linkConfig.RequiredForOnline = "carrier";
         networkConfig = {
           DHCP = "yes";
-          IPv6AcceptRA = true;
-          LinkLocalAddressing = "ipv6";
         };
       };
     };
