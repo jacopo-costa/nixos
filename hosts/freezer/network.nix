@@ -8,6 +8,7 @@
       enable = true;
     };
 
+    hostId = "f028eb6b";
     hostName = "freezer";
   };
 
