@@ -46,6 +46,10 @@
         filePath = "${config.services.traefik.dataDir}/traefik.log";
       };
 
+      accesslog = {
+        filePath = "${config.services.traefik.dataDir}/access.log";
+      };
+
       certificatesResolvers.cloudflare.acme = {
         email = "costa.jacopo@gmail.com";
         storage = "${config.services.traefik.dataDir}/acme.json";
@@ -61,7 +65,7 @@
 
     dynamicConfigOptions = {
       http.routers = {
-        haos = {
+        vaultwarden = {
           rule = "Host(`vault.dimoracosta.it`)";
           service = "vaultwarden";
           tls.certresolver = "cloudflare";
@@ -69,9 +73,11 @@
       };
 
       http.services = {
-        vaultwarden = {
-          loadBalancer.servers = ["http://127.0.0.1:8222"];
-        };
+        vaultwarden.loadBalancer.servers = [
+          {
+            url = "http://127.0.0.1:8222";
+          }
+        ];
       };
     };
   };
