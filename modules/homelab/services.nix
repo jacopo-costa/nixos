@@ -64,6 +64,7 @@
       enable = true;
       # Port 9091
       openFirewall = true;
+      settings.rpc-bind-address = "0.0.0.0";
       group = "arr";
     };
 
