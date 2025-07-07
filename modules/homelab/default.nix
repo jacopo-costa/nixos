@@ -15,7 +15,7 @@
 
   # Create multimidea group
   users.groups = {
-    arr = { };
+    arr = {};
   };
 
   # This value determines the NixOS release from which the default
