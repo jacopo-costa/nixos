@@ -10,8 +10,8 @@
   ];
 
   networking.firewall = {
-      enable = true;
-    };
+    enable = true;
+  };
 
   programs.zsh.enable = true;
 

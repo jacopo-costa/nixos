@@ -8,6 +8,7 @@
     description = "ice";
     extraGroups = [
       "wheel"
+      "docker"
     ];
     shell = pkgs.zsh;
   };
