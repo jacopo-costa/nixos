@@ -9,7 +9,7 @@
     ./services.nix
   ];
 
-  firewall = {
+  networking.firewall = {
       enable = true;
     };
 
