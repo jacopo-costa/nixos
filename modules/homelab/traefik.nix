@@ -9,6 +9,9 @@
     # Cloudflare Token
     secrets."cloudflareToken" = {};
 
+    # Crowdsec bouncer API key
+    secrets."crowdsecTraefikBouncerKey" = {};
+
     templates.cloudflareEnv = {
       content = ''
         CF_DNS_API_TOKEN=${config.sops.placeholder.cloudflareToken}
@@ -83,12 +86,12 @@
         };
       };
 
-      #experimental.plugins = {
-      #  crowdsec-bouncer = {
-      #    moduleName = "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin";
-      #    version = "v1.4.4";
-      #  };
-      #};
+      experimental.plugins = {
+        crowdsec-bouncer = {
+          moduleName = "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin";
+          version = "v1.4.4";
+        };
+      };
     };
 
     dynamicConfigOptions = {
@@ -96,6 +99,15 @@
         ratelimiter.rateLimit = {
           average = 50;
           burst = 100;
+        };
+
+        crowdsec-bouncer.plugin.crowdsec-bouncer-traefik-plugin = {
+          enabled = true;
+          CrowdsecLapiKey: ${config.sops.placeholder.crowdsecTraefikBouncerKey}
+          crowdsecAppsecEnabled: true
+          crowdsecAppsecHost: "127.0.0.1:7422"
+          crowdsecAppsecFailureBlock: true
+          crowdsecAppsecUnreachableBlock: true
         };
       };
 
