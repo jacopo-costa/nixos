@@ -51,7 +51,7 @@
       };
 
       certificatesResolvers.cloudflare.acme = {
-        email = "costa.jacopo@gmail.com";
+        email = "dimoracosta.system@gmail.com";
         storage = "${config.services.traefik.dataDir}/acme.json";
         dnsChallenge = {
           provider = "cloudflare";
@@ -64,10 +64,32 @@
     };
 
     dynamicConfigOptions = {
+      http.middlewares = {
+        ratelimiter.rateLimit = {
+          average = 50;
+          burst = 100;
+        }
+      };
+
       http.routers = {
         vaultwarden = {
           rule = "Host(`vault.dimoracosta.it`)";
           service = "vaultwarden";
+          tls.certresolver = "cloudflare";
+          middlewares = [
+            "rateLimit"
+          ];
+        };
+
+        jellyfin = {
+          rule = "Host(`jellyfin.dimoracosta.it`)";
+          service = "jellyfin";
+          tls.certresolver = "cloudflare";
+        };
+
+        jellyseerr = {
+          rule = "Host(`jellyseerr.dimoracosta.it`)";
+          service = "jellyseerr";
           tls.certresolver = "cloudflare";
         };
       };
@@ -76,6 +98,18 @@
         vaultwarden.loadBalancer.servers = [
           {
             url = "http://127.0.0.1:8222";
+          }
+        ];
+
+        jellyfin.loadBalancer.servers = [
+          {
+            url = "http://127.0.0.1:8096";
+          }
+        ];
+
+        jellyseerr.loadBalancer.servers = [
+          {
+            url = "http://127.0.0.1:5055";
           }
         ];
       };
