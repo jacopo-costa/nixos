@@ -13,9 +13,22 @@
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    crowdsec
-  ];
+  virtualisation.oci-containers = {
+    backend = "docker";
+    containers = {
+      crowdsec = {
+        image = "crowdsecurity/crowdsec:latest";
+        environment = {
+          COLLECTIONS = "crowdsecurity/linux crowdsecurity/traefik crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules";
+        };
+        volumes = [
+          "/etc/crowdsec:/etc/crowdsec"
+          "/var/lib/traefik/access.log:/var/log/traefik/access.log:ro"
+          "/var/lib/traefik/traefik.log:/var/log/traefik/traefik.log:ro"
+        ];
+      };
+    };
+  };
 
   services.traefik = {
     enable = true;
@@ -79,7 +92,7 @@
         ratelimiter.rateLimit = {
           average = 50;
           burst = 100;
-        }
+        };
       };
 
       http.routers = {
