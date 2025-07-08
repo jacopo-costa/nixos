@@ -103,11 +103,11 @@
 
         crowdsec-bouncer.plugin.crowdsec-bouncer-traefik-plugin = {
           enabled = true;
-          CrowdsecLapiKey: ${config.sops.placeholder.crowdsecTraefikBouncerKey}
-          crowdsecAppsecEnabled: true
-          crowdsecAppsecHost: "127.0.0.1:7422"
-          crowdsecAppsecFailureBlock: true
-          crowdsecAppsecUnreachableBlock: true
+          crowdsecLapiKey = "${config.sops.placeholder.crowdsecTraefikBouncerKey}";
+          crowdsecAppsecEnabled = true;
+          crowdsecAppsecHost = "127.0.0.1:7422";
+          crowdsecAppsecFailureBlock = true;
+          crowdsecAppsecUnreachableBlock = true;
         };
       };
 
@@ -117,7 +117,7 @@
           service = "vaultwarden";
           tls.certresolver = "cloudflare";
           middlewares = [
-            "rateLimit"
+            "ratelimiter"
           ];
         };
 
