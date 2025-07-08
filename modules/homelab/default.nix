@@ -9,12 +9,16 @@
     ./services.nix
   ];
 
+  firewall = {
+      enable = true;
+    };
+
   programs.zsh.enable = true;
 
   users.mutableUsers = true;
 
-  # Create multimidea group
   users.groups = {
+    # Create multimedia group
     arr = {};
   };
 

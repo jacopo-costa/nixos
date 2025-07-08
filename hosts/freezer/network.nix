@@ -4,10 +4,6 @@
     useNetworkd = true;
     networkmanager.enable = false;
 
-    firewall = {
-      enable = true;
-    };
-
     hostId = "f028eb6b";
     hostName = "freezer";
   };
