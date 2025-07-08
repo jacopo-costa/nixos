@@ -60,11 +60,13 @@
       openFirewall = true;
     };
 
-    transmission = {
+    deluge = {
       enable = true;
-      # Port 9091
-      openFirewall = true;
-      settings.rpc-bind-address = "0.0.0.0";
+      web = {
+        enable = true;
+        # Port 8112
+        openFirewall = true;
+      };
       group = "arr";
     };
 
