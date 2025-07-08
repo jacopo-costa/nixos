@@ -1,4 +1,4 @@
-{config, ...}: {
+{config, pkgs, ...}: {
   networking.firewall.allowedTCPPorts = [80 443];
 
   sops = {
@@ -12,6 +12,10 @@
       path = "${config.services.traefik.dataDir}/env";
     };
   };
+
+  environment.systemPackages = with pkgs; [
+    crowdsec
+  ];
 
   services.traefik = {
     enable = true;
@@ -61,6 +65,13 @@
           ];
         };
       };
+
+      #experimental.plugins = {
+      #  crowdsec-bouncer = {
+      #    moduleName = "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin";
+      #    version = "v1.4.4";
+      #  };
+      #};
     };
 
     dynamicConfigOptions = {
