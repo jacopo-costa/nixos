@@ -9,31 +9,11 @@
     # Cloudflare Token
     secrets."cloudflareToken" = {};
 
-    # Crowdsec bouncer API key
-    secrets."crowdsecTraefikBouncerKey" = {};
-
     templates.cloudflareEnv = {
       content = ''
         CF_DNS_API_TOKEN=${config.sops.placeholder.cloudflareToken}
       '';
       path = "${config.services.traefik.dataDir}/env";
-    };
-  };
-
-  virtualisation.oci-containers = {
-    backend = "docker";
-    containers = {
-      crowdsec = {
-        image = "crowdsecurity/crowdsec:latest";
-        environment = {
-          COLLECTIONS = "crowdsecurity/linux crowdsecurity/traefik crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules";
-        };
-        volumes = [
-          "/etc/crowdsec:/etc/crowdsec"
-          "/var/lib/traefik/access.log:/var/log/traefik/access.log:ro"
-          "/var/lib/traefik/traefik.log:/var/log/traefik/traefik.log:ro"
-        ];
-      };
     };
   };
 
@@ -85,13 +65,6 @@
           ];
         };
       };
-
-      experimental.plugins = {
-        crowdsec-bouncer = {
-          moduleName = "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin";
-          version = "v1.4.4";
-        };
-      };
     };
 
     dynamicConfigOptions = {
@@ -99,15 +72,6 @@
         ratelimiter.rateLimit = {
           average = 50;
           burst = 100;
-        };
-
-        crowdsec-bouncer.plugin.crowdsec-bouncer-traefik-plugin = {
-          enabled = true;
-          crowdsecLapiKey = "${config.sops.placeholder.crowdsecTraefikBouncerKey}";
-          crowdsecAppsecEnabled = true;
-          crowdsecAppsecHost = "127.0.0.1:7422";
-          crowdsecAppsecFailureBlock = true;
-          crowdsecAppsecUnreachableBlock = true;
         };
       };
 
