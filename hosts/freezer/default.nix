@@ -24,10 +24,4 @@
     age.keyFile = "/etc/sops/age/keys.txt";
     age.generateKey = false;
   };
-
-  # ZFS
-  boot = {
-    supportedFilesystems = ["zfs"];
-    zfs.extraPools = ["tank"];
-  };
 }
