@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{...}: {
   # Enable smartd
   services.smartd = {
     enable = true;

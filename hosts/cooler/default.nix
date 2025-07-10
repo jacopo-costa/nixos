@@ -5,17 +5,26 @@
 }: {
   imports = [
     ./hardware-configuration.nix
-    ../../modules/desktop
+    ./network.nix
 
-    ../../modules/grub.nix
+    ../../modules/desktop
     ../../modules/locale.nix
 
     # Users
     ../../users/jacopo
   ];
 
-  # Set hostname
-  networking.hostName = "cooler";
+  # GRUB
+  boot = {
+    loader.efi.canTouchEfiVariables = true;
+    loader.grub = {
+      enable = true;
+      devices = ["nodev"];
+      efiSupport = true;
+      useOSProber = true;
+      default = "2";
+    };
+  };
 
   # Make the kernel use the correct driver early
   boot.initrd.kernelModules = ["amdgpu"];
