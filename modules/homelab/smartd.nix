@@ -10,8 +10,6 @@
       test = true;
       mail = {
         enable = true;
-        sender = "dimoracosta.system@gmail.com";
-        recipient = "dimoracosta.system@gmail.com";
       };
     };
   };
