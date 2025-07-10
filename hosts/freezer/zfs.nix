@@ -1,5 +1,8 @@
-{config, ...}: {
-
+{
+  config,
+  pkgs,
+  ...
+}: {
   boot = {
     supportedFilesystems = ["zfs"];
     zfs.extraPools = ["tank"];
@@ -27,7 +30,7 @@
 
   services.zfs.zed.settings = {
     ZED_DEBUG_LOG = "/tmp/zed.debug.log";
-    ZED_EMAIL_ADDR = [ "root" ];
+    ZED_EMAIL_ADDR = ["root"];
     ZED_EMAIL_PROG = "${pkgs.msmtp}/bin/msmtp";
     ZED_EMAIL_OPTS = "@ADDRESS@";
 
