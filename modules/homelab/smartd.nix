@@ -1,5 +1,4 @@
-{...}:
-{
+{pkgs, ...}: {
   # Enable smartd
   services.smartd = {
     enable = true;
@@ -11,7 +10,8 @@
       test = true;
       mail = {
         enable = true;
-        mailer = "/run/wrappers/bin/sendmail";
+        sender = "dimoracosta.system@gmail.com";
+        recipient = "dimoracosta.system@gmail.com";
       };
     };
   };

@@ -5,7 +5,7 @@
 }: {
   imports = [
     ./boot.nix
-    ./msmtp.nix
+    ./postfix.nix
     ./services.nix
     ./smartd.nix
     ./traefik.nix
