@@ -6,6 +6,7 @@
   imports = [
     ./hardware-configuration.nix
     ./network.nix
+    ./zfs.nix
 
     ../../modules/homelab
     ../../modules/locale.nix
