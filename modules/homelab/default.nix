@@ -5,8 +5,10 @@
 }: {
   imports = [
     ./boot.nix
-    ./traefik.nix
+    ./msmtp.nix
     ./services.nix
+    ./smartd.nix
+    ./traefik.nix
   ];
 
   # Firewall
