@@ -1,5 +1,13 @@
-{config, ...}:
-{
+{config, ...}: {
+  environment.etc = {
+    "aliases" = {
+      text = ''
+        root: costa.jacopo@gmail.com
+      '';
+      mode = "0644";
+    };
+  };
+
   programs.msmtp = {
     enable = true;
     setSendmail = true;
