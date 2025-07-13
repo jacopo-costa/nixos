@@ -2,6 +2,7 @@
   imports = [
     ./arr.nix
     ./vaultwarden.nix
+    ./nextcloud.nix
   ];
 
   services = {
