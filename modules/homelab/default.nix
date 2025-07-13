@@ -6,7 +6,7 @@
   imports = [
     ./boot.nix
     ./postfix.nix
-    ./services.nix
+    ./services
     ./smartd.nix
     ./traefik.nix
   ];

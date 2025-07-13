@@ -96,6 +96,12 @@
           service = "jellyseerr";
           tls.certresolver = "cloudflare";
         };
+
+        nextcloud = {
+          rule = "Host(`cloud.dimoracosta.it`)";
+          service = "nextcloud";
+          tls.certresolver = "cloudflare";
+        };
       };
 
       http.services = {
@@ -114,6 +120,12 @@
         jellyseerr.loadBalancer.servers = [
           {
             url = "http://127.0.0.1:5055";
+          }
+        ];
+
+        nextcloud.loadBalancer.servers = [
+          {
+            url = "http://127.0.0.1:8123";
           }
         ];
       };
