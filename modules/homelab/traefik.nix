@@ -120,6 +120,15 @@
             "nextcloud-secure-headers"
           ];
         };
+
+        pocketid = {
+          rule = "Host(`pocketid.dimoracosta.it`)";
+          service = "pocketid";
+          tls.certresolver = "cloudflare";
+          middlewares = [
+            "ratelimiter"
+          ];
+        };
       };
 
       http.services = {
@@ -144,6 +153,12 @@
         nextcloud.loadBalancer.servers = [
           {
             url = "http://127.0.0.1:11000";
+          }
+        ];
+
+        pocketid.loadBalancer.servers = [
+          {
+            url = "http://127.0.0.1:1411";
           }
         ];
       };
