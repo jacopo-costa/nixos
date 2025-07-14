@@ -1,23 +1,15 @@
-{pkgs, ...}: {
-  services = {
-    # Change port of Nextcloud
-    nginx.virtualHosts."localhost".listen = [
-      {
-        addr = "127.0.0.1";
-        port = 8123;
-      }
-    ];
+{config, ...}: {
+  sops.secrets.nextcloudPass = {};
 
+  services = {
     nextcloud = {
       enable = true;
       hostName = "cloud.dimoracosta.it";
       autoUpdateApps.enable = true;
-      https = true;
 
       home = "/tank/nextcloud";
 
       # Enable Redis
-      configureRedis = true;
       caching = {
         redis = true;
       };
@@ -93,5 +85,16 @@
       requires = ["postgresql.service"];
       after = ["postgresql.service"];
     };
+  };
+
+  services.nginx.enable = true;
+
+  services.nginx.virtualHosts."cloud.dimoracosta.it" = {
+    listen = [
+      {
+        addr = "127.0.0.1";
+        port = 8123;
+      }
+    ];
   };
 }
