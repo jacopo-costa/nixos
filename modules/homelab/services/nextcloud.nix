@@ -12,13 +12,17 @@
       # Enable Redis
       configureRedis = true;
 
+      # DB
+      database.createLocally = true;
+      config = {
+        dbtype = "pgsql";
+
+        adminuser = "admin";
+        adminpassFile = "${config.sops.secrets.nextcloudPass.path}";
+      };
+
       # Max upload size
       maxUploadSize = "1G";
-
-      extraOptions = {
-        mail_smtpmode = "sendmail";
-        mail_sendmailmode = "pipe";
-      };
 
       settings = {
         # Trust local traefik
@@ -45,14 +49,6 @@
         ];
 
         default_phone_region = "IT";
-      };
-
-      database.createLocally = true;
-      config = {
-        dbtype = "pgsql";
-
-        adminuser = "admin";
-        adminpassFile = "${config.sops.secrets.nextcloudPass.path}";
       };
     };
   };
