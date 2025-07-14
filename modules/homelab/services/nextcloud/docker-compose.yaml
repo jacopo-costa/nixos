@@ -1,7 +1,7 @@
-// Nextcloud is a behemoth on itself, insted of trying to undestand why
-// in NixOs is not working or atleast throw at my face random errors
-// I keep using the AiO docker image that is working and the DB/Redis/Collabora
-// servers are contained
+# Nextcloud is a behemoth on itself, insted of trying to undestand why
+# in NixOs is not working or atleast throw at my face random errors
+# I keep using the AiO docker image that is working and the DB/Redis/Collabora
+# servers are contained
 
 ---
 services:
