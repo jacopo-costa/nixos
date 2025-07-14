@@ -10,21 +10,17 @@
       home = "/tank/nextcloud";
 
       # Enable Redis
-      caching = {
-        redis = true;
-      };
+      configureRedis = true;
 
       # Max upload size
       maxUploadSize = "1G";
 
-      settings = {
-        redis = {
-          host = "127.0.0.1";
-          port = 31638;
-          dbindex = 0;
-          timeout = 1.5;
-        };
+      extraOptions = {
+        mail_smtpmode = "sendmail";
+        mail_sendmailmode = "pipe";
+      };
 
+      settings = {
         # Trust local traefik
         trusted_proxies = [
           "127.0.0.1"
@@ -51,50 +47,20 @@
         default_phone_region = "IT";
       };
 
+      database.createLocally = true;
       config = {
         dbtype = "pgsql";
-        dbuser = "nextcloud";
-        dbname = "nextcloud";
-        dbhost = "/run/postgresql";
 
         adminuser = "admin";
         adminpassFile = "${config.sops.secrets.nextcloudPass.path}";
       };
     };
-
-    postgresql = {
-      enable = true;
-      ensureDatabases = ["nextcloud"];
-      ensureUsers = [
-        {
-          name = "nextcloud";
-          ensureDBOwnership = true;
-        }
-      ];
-    };
-
-    redis.servers.nextcloud = {
-      enable = true;
-      port = 31638;
-      bind = "127.0.0.1";
-    };
   };
 
-  systemd = {
-    services."nextcloud-setup" = {
-      requires = ["postgresql.service"];
-      after = ["postgresql.service"];
-    };
-  };
-
-  services.nginx.enable = true;
-
-  services.nginx.virtualHosts."cloud.dimoracosta.it" = {
-    listen = [
-      {
-        addr = "127.0.0.1";
-        port = 8123;
-      }
-    ];
-  };
+  services.nginx.virtualHosts."${config.services.nextcloud.hostName}".listen = [
+    {
+      addr = "127.0.0.1";
+      port = 8123;
+    }
+  ];
 }
