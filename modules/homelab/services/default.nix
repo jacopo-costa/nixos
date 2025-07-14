@@ -1,5 +1,6 @@
 {pkgs, ...}: {
   imports = [
+    ./pocket-id.nix
     ./arr.nix
     ./vaultwarden.nix
   ];
