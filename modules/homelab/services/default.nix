@@ -1,4 +1,4 @@
-{...}: {
+{pkgs, ...}: {
   imports = [
     ./arr.nix
     ./vaultwarden.nix
@@ -8,6 +8,10 @@
   virtualisation.docker = {
     enable = true;
   };
+
+  environment.systemPackages = [
+    pkgs.docker-compose
+  ];
 
   services = {
     openssh = {
