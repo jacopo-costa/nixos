@@ -5,7 +5,6 @@
 }: {
   imports = [
     ./hardware-configuration.nix
-    ./network.nix
 
     ../../modules/desktop
     ../../modules/locale.nix
@@ -13,6 +12,9 @@
     # Users
     ../../users/jacopo
   ];
+
+  # Set hostname
+  networking.hostName = "cooler";
 
   # GRUB
   boot = {
@@ -48,6 +50,14 @@
     ollama = {
       enable = true;
       acceleration = "rocm";
+    };
+
+    # Enable streaming
+    sunshine = {
+      enable = true;
+      autoStart = true;
+      capSysAdmin = true;
+      openFirewall = true;
     };
   };
 
