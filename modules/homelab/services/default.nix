@@ -2,8 +2,12 @@
   imports = [
     ./arr.nix
     ./vaultwarden.nix
-    ./nextcloud.nix
   ];
+
+  # Enable docker
+  virtualisation.docker = {
+    enable = true;
+  };
 
   services = {
     openssh = {

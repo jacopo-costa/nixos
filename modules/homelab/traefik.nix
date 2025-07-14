@@ -73,6 +73,21 @@
           average = 50;
           burst = 100;
         };
+        security-headers.headers.customResponseHeaders = {
+          Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload";
+          Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; object-src 'none';";
+          X-Content-Type-Options = "nosniff";
+          X-Frame-Options = "DENY";
+          X-XSS-Protection = "1; mode=block";
+          Referrer-Policy = "no-referrer-when-downgrade";
+          Cache-Control = "no-store, no-cache, must-revalidate";
+        };
+        nextcloud-secure-headers.headers = {
+          hostsProxyHeaders = [
+            "X-Forwarded-Host"
+          ];
+          referrerPolicy = "same-origin";
+        };
       };
 
       http.routers = {
@@ -101,6 +116,9 @@
           rule = "Host(`cloud.dimoracosta.it`)";
           service = "nextcloud";
           tls.certresolver = "cloudflare";
+          middlewares = [
+            "nextcloud-secure-headers"
+          ];
         };
       };
 
@@ -125,7 +143,7 @@
 
         nextcloud.loadBalancer.servers = [
           {
-            url = "http://127.0.0.1:8123";
+            url = "http://127.0.0.1:11000";
           }
         ];
       };
