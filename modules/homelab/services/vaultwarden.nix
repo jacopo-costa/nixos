@@ -28,7 +28,7 @@
         SMTP_FROM = ${config.sops.placeholder.smtpUser}
         SMTP_FROM_NAME = "Vaultwarden DimoraCosta"
       '';
-      path = "/etc/vaultwarden/vaultwarden.env";
+      path = "/var/lib/vaultwarden/env";
     };
   };
 
