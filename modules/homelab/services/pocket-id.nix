@@ -5,9 +5,9 @@
 
     templates.pocketidEnv = {
       content = ''
-        APP_URL = https://pocketid.dimoracosta.it;
-        TRUST_PROXY = true;
-        ENCRYPTION_KEY_FILE = ${config.sops.placeholder.pocketIdEnc};
+        APP_URL=https://pocketid.dimoracosta.it
+        TRUST_PROXY=true
+        ENCRYPTION_KEY=${config.sops.placeholder.pocketIdEnc}
       '';
       path = "/var/lib/pocketid/env";
     };
@@ -20,7 +20,7 @@
         image = "ghcr.io/pocket-id/pocket-id:v1";
         workdir = "/var/lib/pocketid";
         environmentFiles = [
-          "/var/lib/pocketid/env"
+          /var/lib/pocketid/env
         ];
         volumes = [
           "/var/lib/pocketid/data:/app/data"
