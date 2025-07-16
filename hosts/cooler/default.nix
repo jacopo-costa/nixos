@@ -3,21 +3,25 @@
   pkgs,
   ...
 }: {
-  imports = [
-    ./hardware-configuration.nix
-
-    ../../modules/desktop
-    ../../modules/locale.nix
-
-    # Users
-    ../../users/jacopo
-  ];
-
   # Set hostname
-  networking.hostName = "cooler";
+  networking = {
+    hostName = "cooler";
+  };
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   # GRUB
   boot = {
+    initrd = {
+      availableKernelModules = ["nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod"];
+      # Make the kernel use the correct driver early
+      kernelModules = ["amdgpu"];
+    };
+    kernelModules = ["kvm-amd"];
+    boot.extraModulePackages = [];
+
+    # GRUB
     loader.efi.canTouchEfiVariables = true;
     loader.grub = {
       enable = true;
@@ -28,8 +32,7 @@
     };
   };
 
-  # Make the kernel use the correct driver early
-  boot.initrd.kernelModules = ["amdgpu"];
+  system.autoUpgrade.enable = false;
 
   # Enable host specific services
   services = {

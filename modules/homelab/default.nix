@@ -11,11 +11,6 @@
     ./traefik.nix
   ];
 
-  # Firewall
-  networking.firewall = {
-    enable = true;
-  };
-
   # Power
   powerManagement.cpuFreqGovernor = "powersave";
   services.thermald.enable = true;
