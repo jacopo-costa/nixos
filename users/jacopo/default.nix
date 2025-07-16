@@ -3,13 +3,25 @@
   pkgs,
   ...
 }: {
-  users.users.jacopo = {
-    isNormalUser = true;
-    description = "Jacopo";
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-    ];
-    shell = pkgs.zsh;
+  users = {
+    users = {
+      jacopo = {
+        shell = pkgs.zsh;
+        uid = 1000;
+        isNormalUser = true;
+        description = "Jacopo";
+        extraGroups = [
+          "wheel"
+          "users"
+          "podman"
+        ];
+        group = "jacopo";
+      };
+    };
+    groups = {
+      jacopo = {
+        gid = 1000;
+      };
+    };
   };
 }

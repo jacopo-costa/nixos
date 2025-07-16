@@ -25,125 +25,134 @@
   };
 
   outputs = {
-    self,
     nixpkgs,
     disko,
     home-manager,
-    sops-nix,
     ...
-  }: let
-    system = "x86_64-linux";
-
-    pkgs = import nixpkgs {
-      inherit system;
-      config.allowUnfree = true;
-    };
-
-    sharedModules = [
-      # Set optimize store and generation for every hosts
-      {
-        nix.settings = {
-          experimental-features = ["nix-command" "flakes"];
-          auto-optimise-store = true;
-        };
-
-        nix.gc = {
-          automatic = true;
-          dates = "weekly";
-          options = "--delete-older-than 7d";
-        };
-
-        nixpkgs.config.allowUnfree = true;
-      }
+  } @ inputs: let
+    helpers = import ./flakeHelpers.nix inputs;
+    inherit (helpers) mkMerge mkNixos;
+  in
+    mkMerge [
+      (flake-utils.lib.eachDefaultSystem (
+        system: let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in {
+          packages.default = pkgs.mkShell {
+            packages = [
+              pkgs.just
+              pkgs.nixos-rebuild
+            ];
+          };
+        }
+      ))
+      (mkNixos "cooler" inputs.nixpkgs [
+        ./desktop
+        # Users
+        ./users/jacopo
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.users = {
+            jacopo = import ./users/jacopo/home.nix;
+          };
+        }
+      ])
+      (mkNixos "freezer" inputs.nixpkgs [
+        ./homelab
+        # Users
+        ./users/ice
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.users = {
+            ice = import ./users/ice/home.nix;
+          };
+        }
+      ])
     ];
-  in {
-    # Set formatter to alejandra
-    formatter.${system} = pkgs.alejandra;
 
-    nixosConfigurations = {
-      cooler = nixpkgs.lib.nixosSystem {
-        inherit system;
+  # nixosConfigurations = {
+  #   cooler = nixpkgs.lib.nixosSystem {
+  #     inherit system;
 
-        modules =
-          sharedModules
-          ++ [
-            # Main config
-            ./hosts/cooler
+  #     modules =
+  #       sharedModules
+  #       ++ [
+  #         # Main config
+  #         ./hosts/cooler
 
-            # Home Manager
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users = {
-                jacopo = import ./users/jacopo/home.nix;
-              };
-            }
+  #         # Home Manager
+  #         home-manager.nixosModules.home-manager
+  #         {
+  #           home-manager.useGlobalPkgs = true;
+  #           home-manager.useUserPackages = true;
+  #           home-manager.users = {
+  #             jacopo = import ./users/jacopo/home.nix;
+  #           };
+  #         }
 
-            # Disko
-            # disko.nixosModules.disko
-            # ./hosts/cooler/disko-config.nix
+  #         # Disko
+  #         # disko.nixosModules.disko
+  #         # ./hosts/cooler/disko-config.nix
 
-            # Sops
-            sops-nix.nixosModules.sops
-          ];
-      };
+  #         # Sops
+  #         sops-nix.nixosModules.sops
+  #       ];
+  #   };
 
-      librovivo = nixpkgs.lib.nixosSystem {
-        inherit system;
+  #   librovivo = nixpkgs.lib.nixosSystem {
+  #     inherit system;
 
-        modules =
-          sharedModules
-          ++ [
-            # Main config
-            ./hosts/librovivo
+  #     modules =
+  #       sharedModules
+  #       ++ [
+  #         # Main config
+  #         ./hosts/librovivo
 
-            # Home Manager
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users = {
-                jacopo = import ./users/jacopo/home.nix;
-              };
-            }
+  #         # Home Manager
+  #         home-manager.nixosModules.home-manager
+  #         {
+  #           home-manager.useGlobalPkgs = true;
+  #           home-manager.useUserPackages = true;
+  #           home-manager.users = {
+  #             jacopo = import ./users/jacopo/home.nix;
+  #           };
+  #         }
 
-            # Disko
-            # disko.nixosModules.disko
-            # ./hosts/librovivo/disko-config.nix
+  #         # Disko
+  #         # disko.nixosModules.disko
+  #         # ./hosts/librovivo/disko-config.nix
 
-            # Sops
-            sops-nix.nixosModules.sops
-          ];
-      };
+  #         # Sops
+  #         sops-nix.nixosModules.sops
+  #       ];
+  #   };
 
-      freezer = nixpkgs.lib.nixosSystem {
-        inherit system;
+  #   freezer = nixpkgs.lib.nixosSystem {
+  #     inherit system;
 
-        modules =
-          sharedModules
-          ++ [
-            # Main config
-            ./hosts/freezer
+  #     modules =
+  #       sharedModules
+  #       ++ [
+  #         # Main config
+  #         ./hosts/freezer
 
-            # Home Manager
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users = {
-                ice = import ./users/ice/home.nix;
-              };
-            }
+  #         # Home Manager
+  #         home-manager.nixosModules.home-manager
+  #         {
+  #           home-manager.useGlobalPkgs = true;
+  #           home-manager.useUserPackages = true;
+  #           home-manager.users = {
+  #             ice = import ./users/ice/home.nix;
+  #           };
+  #         }
 
-            # Disko
-            disko.nixosModules.disko
-            ./hosts/freezer/disko-config.nix
+  #         # Disko
+  #         disko.nixosModules.disko
+  #         ./hosts/freezer/disko-config.nix
 
-            # Sops
-            sops-nix.nixosModules.sops
-          ];
-      };
-    };
-  };
+  #         # Sops
+  #         sops-nix.nixosModules.sops
+  #       ];
+  #   };
+  # };
 }
