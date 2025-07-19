@@ -11,13 +11,6 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
-  swapDevices = [
-    {
-      device = "/swapfile";
-      size = 32 * 1024;
-    }
-  ];
-
   boot = {
     initrd = {
       availableKernelModules = ["nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "sr_mod"];
@@ -54,6 +47,31 @@
         vpl-gpu-rt
       ];
     };
+  };
+
+  environment.etc = {
+    "aliases" = {
+      text = ''
+        root: costa.jacopo@gmail.com
+      '';
+      mode = "0644";
+    };
+  };
+
+  sops = {
+    secrets = {
+      smtpPassword = {};
+    };
+  };
+
+  email = {
+    enable = true;
+    fromAddress = "dimoracosta.system@gmail.com";
+    toAddress = "costa.jacopo@gmail.com";
+    smtpServer = "smtp.gmail.com";
+    smtpPort = 587;
+    smtpUsername = "dimoracosta.system@gmail.com";
+    smtpPasswordPath = config.sops.secrets.smtpPassword.path;
   };
 
   services.zfs.zed.settings = {
