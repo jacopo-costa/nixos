@@ -43,6 +43,7 @@
 
   programs.git.enable = true;
   programs.htop.enable = true;
+  programs.zsh.enable = true;
 
   security = {
     doas.enable = lib.mkDefault false;
