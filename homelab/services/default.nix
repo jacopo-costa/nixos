@@ -69,7 +69,6 @@
     ./arr/prowlarr
     ./arr/radarr
     ./arr/sonarr
-    ./immich
     ./nextcloud
     ./vaultwarden
   ];

@@ -41,7 +41,9 @@ in {
         };
 
         # Systemd boot
-        systemd-boot.enable = lib.mkIf cfg.systemd-boot;
+        systemd-boot = lib.mkIf cfg.systemd-boot {
+          enable = true;
+        };
       };
 
       plymouth = {
