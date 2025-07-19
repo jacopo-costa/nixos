@@ -49,15 +49,6 @@
     };
   };
 
-  environment.etc = {
-    "aliases" = {
-      text = ''
-        root: costa.jacopo@gmail.com
-      '';
-      mode = "0644";
-    };
-  };
-
   sops = {
     secrets = {
       smtpPassword = {};

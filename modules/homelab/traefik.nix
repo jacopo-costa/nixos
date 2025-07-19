@@ -11,6 +11,7 @@
 
     templates.cloudflareEnv = {
       content = ''
+        CF_API_EMAIL=dimoracosta.system@gmail.com
         CF_DNS_API_TOKEN=${config.sops.placeholder.cloudflareToken}
       '';
       path = "${config.services.traefik.dataDir}/env";

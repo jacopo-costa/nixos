@@ -21,7 +21,7 @@ in {
     smtpServer = lib.mkOption {
       description = "The SMTP server address";
       type = lib.types.str;
-      default = "smtp.example.com";
+      default = "smtp.gmail.com";
     };
     smtpPort = lib.mkOption {
       description = "The SMTP server port";
