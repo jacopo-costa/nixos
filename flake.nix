@@ -5,6 +5,9 @@
     # Stable release
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
 
+    # Flake Utils
+    flake-utils.url = "github:numtide/flake-utils";
+
     # Home Manager
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";
@@ -25,8 +28,8 @@
   };
 
   outputs = {
+    flake-utils,
     nixpkgs,
-    disko,
     home-manager,
     ...
   } @ inputs: let
@@ -44,6 +47,7 @@
               pkgs.nixos-rebuild
             ];
           };
+          formatter = pkgs.alejandra;
         }
       ))
       (mkNixos "cooler" inputs.nixpkgs [

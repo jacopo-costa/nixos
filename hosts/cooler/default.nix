@@ -1,15 +1,18 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }: {
+  imports = [
+    ./desktop
+  ];
   # Set hostname
   networking = {
     hostName = "cooler";
   };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   # GRUB
   boot = {
@@ -19,20 +22,8 @@
       kernelModules = ["amdgpu"];
     };
     kernelModules = ["kvm-amd"];
-    boot.extraModulePackages = [];
-
-    # GRUB
-    loader.efi.canTouchEfiVariables = true;
-    loader.grub = {
-      enable = true;
-      devices = ["nodev"];
-      efiSupport = true;
-      useOSProber = true;
-      default = "2";
-    };
+    extraModulePackages = [];
   };
-
-  system.autoUpgrade.enable = false;
 
   # Enable host specific services
   services = {
@@ -64,8 +55,10 @@
     };
   };
 
-  # OpenCL
   hardware = {
+    cpu.amd.updateMicrocode = true;
+
+    # OpenGL
     graphics.extraPackages = with pkgs; [
       rocmPackages.clr.icd
       amdvlk

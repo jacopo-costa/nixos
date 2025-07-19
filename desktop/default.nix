@@ -16,15 +16,8 @@ in {
       '';
     };
     grub = lib.mkEnableOption "Whether to activate grub";
-    systemd-boot = lib.mkEnableOption "Whether to activate systemd-boot"
+    systemd-boot = lib.mkEnableOption "Whether to activate systemd-boot";
   };
-  imports = [
-    ./services
-    ./samba
-    ./networks
-    ./motd
-    ./fail2ban-cloudflare
-  ];
   config = lib.mkIf cfg.enable {
     networking = {
       networkmanager.enable = true;
@@ -36,6 +29,21 @@ in {
     };
 
     boot = {
+      loader = {
+        efi.canTouchEfiVariables = true;
+        # GRUB
+        grub = lib.mkIf cfg.grub {
+          enable = true;
+          devices = ["nodev"];
+          efiSupport = true;
+          useOSProber = true;
+          default = "2";
+        };
+
+        # Systemd boot
+        systemd-boot.enable = lib.mkIf cfg.systemd-boot;
+      };
+
       plymouth = {
         enable = true;
       };

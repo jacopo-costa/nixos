@@ -49,8 +49,6 @@
     };
   };
 
-  system.autoUpgrade.enable = true;
-
   services.zfs.zed.settings = {
     ZED_DEBUG_LOG = "/tmp/zed.debug.log";
     ZED_EMAIL_ADDR = ["root"];
