@@ -23,6 +23,11 @@ in {
       type = lib.types.str;
       default = "smtp.example.com";
     };
+    smtpPort = lib.mkOption {
+      description = "The SMTP server port";
+      type = lib.types.int;
+      default = 587;
+    };
     smtpUsername = lib.mkOption {
       description = "The SMTP username";
       type = lib.types.str;
@@ -37,9 +42,11 @@ in {
   config = lib.mkIf cfg.enable {
     programs.msmtp = {
       enable = true;
+      setSendmail = true;
       accounts.default = {
         auth = true;
         host = config.email.smtpServer;
+        port = config.email.smtpPort;
         from = config.email.fromAddress;
         user = config.email.smtpUsername;
         tls = true;

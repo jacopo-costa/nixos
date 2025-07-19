@@ -63,6 +63,7 @@
       ])
       (mkNixos "freezer" inputs.nixpkgs [
         ./homelab
+        ./modules/email
         # Users
         ./users/ice
         home-manager.nixosModules.home-manager

@@ -10,13 +10,6 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
-  swapDevices = [
-    {
-      device = "/swapfile";
-      size = 12 * 1024;
-    }
-  ];
-
   hardware.cpu.amd.updateMicrocode = true;
 
   boot = {
