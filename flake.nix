@@ -68,91 +68,16 @@
           };
         }
       ])
+      (mkNixos "librovivo" inputs.nixpkgs [
+        ./desktop
+        # Users
+        ./users/jacopo
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.users = {
+            jacopo = import ./users/jacopo/home.nix;
+          };
+        }
+      ])
     ];
-
-  # nixosConfigurations = {
-  #   cooler = nixpkgs.lib.nixosSystem {
-  #     inherit system;
-
-  #     modules =
-  #       sharedModules
-  #       ++ [
-  #         # Main config
-  #         ./hosts/cooler
-
-  #         # Home Manager
-  #         home-manager.nixosModules.home-manager
-  #         {
-  #           home-manager.useGlobalPkgs = true;
-  #           home-manager.useUserPackages = true;
-  #           home-manager.users = {
-  #             jacopo = import ./users/jacopo/home.nix;
-  #           };
-  #         }
-
-  #         # Disko
-  #         # disko.nixosModules.disko
-  #         # ./hosts/cooler/disko-config.nix
-
-  #         # Sops
-  #         sops-nix.nixosModules.sops
-  #       ];
-  #   };
-
-  #   librovivo = nixpkgs.lib.nixosSystem {
-  #     inherit system;
-
-  #     modules =
-  #       sharedModules
-  #       ++ [
-  #         # Main config
-  #         ./hosts/librovivo
-
-  #         # Home Manager
-  #         home-manager.nixosModules.home-manager
-  #         {
-  #           home-manager.useGlobalPkgs = true;
-  #           home-manager.useUserPackages = true;
-  #           home-manager.users = {
-  #             jacopo = import ./users/jacopo/home.nix;
-  #           };
-  #         }
-
-  #         # Disko
-  #         # disko.nixosModules.disko
-  #         # ./hosts/librovivo/disko-config.nix
-
-  #         # Sops
-  #         sops-nix.nixosModules.sops
-  #       ];
-  #   };
-
-  #   freezer = nixpkgs.lib.nixosSystem {
-  #     inherit system;
-
-  #     modules =
-  #       sharedModules
-  #       ++ [
-  #         # Main config
-  #         ./hosts/freezer
-
-  #         # Home Manager
-  #         home-manager.nixosModules.home-manager
-  #         {
-  #           home-manager.useGlobalPkgs = true;
-  #           home-manager.useUserPackages = true;
-  #           home-manager.users = {
-  #             ice = import ./users/ice/home.nix;
-  #           };
-  #         }
-
-  #         # Disko
-  #         disko.nixosModules.disko
-  #         ./hosts/freezer/disko-config.nix
-
-  #         # Sops
-  #         sops-nix.nixosModules.sops
-  #       ];
-  #   };
-  # };
 }

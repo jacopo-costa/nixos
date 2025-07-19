@@ -1,26 +1,13 @@
 {
   lib,
   config,
+  pkgs,
   ...
 }: let
   cfg = config.desktop;
 in {
   options.desktop = {
     enable = lib.mkEnableOption "The desktop services and configuration variables";
-    user = lib.mkOption {
-      default = "share";
-      type = lib.types.str;
-      description = ''
-        User to run the desktop services as
-      '';
-    };
-    group = lib.mkOption {
-      default = "share";
-      type = lib.types.str;
-      description = ''
-        Group to run the desktop services as
-      '';
-    };
     timeZone = lib.mkOption {
       default = "Europe/Rome";
       type = lib.types.str;
@@ -28,6 +15,8 @@ in {
         Time zone to be used for the desktop services
       '';
     };
+    grub = lib.mkEnableOption "Whether to activate grub";
+    systemd-boot = lib.mkEnableOption "Whether to activate systemd-boot"
   };
   imports = [
     ./services
@@ -37,15 +26,82 @@ in {
     ./fail2ban-cloudflare
   ];
   config = lib.mkIf cfg.enable {
-    users = {
-      groups.${cfg.group} = {
-        gid = 993;
+    networking = {
+      networkmanager.enable = true;
+    };
+
+    # Enable bluetooth
+    hardware = {
+      bluetooth.enable = true;
+    };
+
+    boot = {
+      plymouth = {
+        enable = true;
       };
-      users.${cfg.user} = {
-        uid = 994;
-        isSystemUser = true;
-        group = cfg.group;
+
+      # Enable "Silent boot"
+      consoleLogLevel = 3;
+      initrd.verbose = false;
+      kernelParams = [
+        "quiet"
+        "splash"
+        "boot.shell_on_fail"
+        "udev.log_priority=3"
+        "rd.systemd.show_status=auto"
+      ];
+    };
+
+    environment.systemPackages = with pkgs; [
+      # Multimedia
+      spotify
+      vlc
+      # Spelling
+      aspell
+      aspellDicts.it
+      aspellDicts.en
+      # KDE Utilities
+      kdePackages.kcalc
+      kdePackages.sddm-kcm
+      kdePackages.partitionmanager
+    ];
+
+    # Programs
+    programs = {
+      # Firefox
+      firefox = {
+        enable = true;
+        preferences = {
+          "widget.use-xdg-desktop-portal.file-picker" = 1;
+        };
       };
+    };
+
+    # Enable Plasma, SDDM and CUPS services
+    services = {
+      # Enable X11
+      xserver = {
+        enable = true;
+      };
+
+      # Enable Plasma and SDDM
+      desktopManager.plasma6.enable = true;
+      displayManager.sddm = {
+        enable = true;
+        wayland.enable = true;
+      };
+
+      # Enable CUPS to print documents.
+      printing.enable = true;
+    };
+
+    # Enable sound with pipewire.
+    security.rtkit.enable = true;
+    services.pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
     };
   };
 }

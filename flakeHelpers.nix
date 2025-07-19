@@ -20,7 +20,11 @@ in {
           ./hosts/${machineHostname}
           ./modules/email
           ./modules/auto-aspm
+          # Sops-nix
           inputs.sops-nix.nixosModules.sops
+          # Disko
+          inputs.disko.nixosModules.disko
+          ./hosts/${machineHostname}/disko-config.nix
           (homeManagerCfg true)
         ]
         ++ extraModules;
