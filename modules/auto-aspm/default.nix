@@ -4,12 +4,10 @@
   pkgs,
   inputs,
   ...
-}:
-let
+}: let
   cfg = config.services.auto-aspm;
   auto-aspm = pkgs.writeScriptBin "auto-aspm" (builtins.readFile "${inputs.auto-aspm}/autoaspm.py");
-in
-{
+in {
   options.services.auto-aspm = {
     enable = lib.mkEnableOption "Automatically activate ASPM on all supported devices";
   };
@@ -21,7 +19,7 @@ in
     ];
     systemd.services.auto-aspm = {
       description = "Automatically activate ASPM on all supported devices";
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = ["multi-user.target"];
       path = [
         pkgs.python312Full
         pkgs.which

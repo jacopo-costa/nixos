@@ -1,24 +1,35 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }: {
   imports = [
-    ./hardware-configuration.nix
-    ../../modules/desktop
-
-    ../../modules/systemd-boot.nix
-    ../../modules/locale.nix
-
-    # Users
-    ../../users/jacopo
+    ./desktop
   ];
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 12 * 1024;
+    }
+  ];
+
+  hardware.cpu.amd.updateMicrocode = true;
+
+  boot = {
+    initrd = {
+      availableKernelModules = ["nvme" "xhci_pci" "ahci" "usb_storage" "sd_mod" "rtsx_usb_sdmmc"];
+      kernelModules = ["amdgpu"];
+    };
+    kernelModules = ["kvm-amd"];
+    extraModulePackages = [];
+  };
 
   # Set hostname
   networking.hostName = "librovivo";
-
-  # Make the kernel use the correct driver early
-  boot.initrd.kernelModules = ["amdgpu"];
 
   # Enable host specific services
   services = {
