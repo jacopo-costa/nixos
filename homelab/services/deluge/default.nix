@@ -16,7 +16,7 @@ in {
     };
     url = lib.mkOption {
       type = lib.types.str;
-      default = "deluge.${hl.baseDomain}";
+      default = "deluge.${homelab.baseDomain}";
     };
     homepage.name = lib.mkOption {
       type = lib.types.str;

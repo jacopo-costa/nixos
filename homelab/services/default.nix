@@ -24,7 +24,7 @@
         dnsResolver = "1.1.1.1:53";
         dnsPropagationCheck = true;
         group = config.services.caddy.group;
-        environmentFile = config.homelab.cloudflare.dnsCredentialsFile;
+        environmentFile = null;
       };
     };
     services.caddy = {
@@ -69,6 +69,8 @@
     ./arr/prowlarr
     ./arr/radarr
     ./arr/sonarr
+    ./deluge
+    ./jellyfin
     ./nextcloud
     ./vaultwarden
   ];

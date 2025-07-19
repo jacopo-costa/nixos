@@ -26,6 +26,12 @@
     kernelModules = ["kvm-intel"];
     extraModulePackages = [];
 
+    loader = {
+      # Systemd boot
+      efi.canTouchEfiVariables = true;
+      systemd-boot.enable = true;
+    };
+
     # ZFS
     supportedFilesystems = ["zfs"];
     zfs.extraPools = ["tank"];
