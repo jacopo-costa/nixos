@@ -3,13 +3,25 @@
   pkgs,
   ...
 }: {
-  users.users.ice = {
-    isNormalUser = true;
-    description = "ice";
-    extraGroups = [
-      "wheel"
-      "docker"
-    ];
-    shell = pkgs.zsh;
+  users = {
+    users = {
+      ice = {
+        shell = pkgs.zsh;
+        uid = 1000;
+        isNormalUser = true;
+        description = "ICE";
+        extraGroups = [
+          "wheel"
+          "users"
+          "podman"
+        ];
+        group = "ice";
+      };
+    };
+    groups = {
+      ice = {
+        gid = 1000;
+      };
+    };
   };
 }

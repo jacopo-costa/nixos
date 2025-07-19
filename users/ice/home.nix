@@ -40,7 +40,5 @@
   };
 
   home.packages = with pkgs; [
-    # Utilities
-    htop
   ];
 }
