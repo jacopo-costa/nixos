@@ -9,13 +9,20 @@
   };
 
   config = lib.mkIf config.homelab.services.enable {
+    sops = {
+      secrets.cloudflareToken = {};
+
+      templates.cloudflareEnv.content = ''
+        CF_DNS_API_TOKEN=${config.sops.placeholder.cloudflareToken}
+      '';
+    };
     networking.firewall.allowedTCPPorts = [
       80
       443
     ];
     security.acme = {
       acceptTerms = true;
-      defaults.email = "dimoracosta.system@gmail.com";
+      defaults.email = "dimoracosta.system+acme@gmail.com";
       certs.${config.homelab.baseDomain} = {
         reloadServices = ["caddy.service"];
         domain = "${config.homelab.baseDomain}";
@@ -24,13 +31,13 @@
         dnsResolver = "1.1.1.1:53";
         dnsPropagationCheck = true;
         group = config.services.caddy.group;
-        environmentFile = null;
+        environmentFile = "${config.sops.templates.cloudflareEnv.path}";
       };
     };
     services.caddy = {
       enable = true;
       globalConfig = ''
-        auto_https on
+        auto_https off
       '';
       virtualHosts = {
         "https://${config.homelab.baseDomain}" = {

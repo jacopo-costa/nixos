@@ -1,6 +1,8 @@
 {config, ...}: let
   hl = config.homelab;
 in {
+  sops.secrets.nextcloudPass = {};
+
   homelab = {
     enable = true;
     baseDomain = "dimoracosta.it";
@@ -20,6 +22,12 @@ in {
 
       # Deluge
       deluge.enable = true;
+
+      # Nextcloud
+      nextcloud = {
+        enable = true;
+        adminpassFile = config.sops.secrets.nextcloudPass.path;
+      };
 
       # Vaultwarden
       vaultwarden.enable = true;
