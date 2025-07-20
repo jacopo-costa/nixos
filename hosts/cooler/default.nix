@@ -85,6 +85,8 @@
     gamemode.enable = true;
   };
 
+  system.autoUpgrade.allowReboot = false;
+
   # Virtualization
   programs.virt-manager.enable = true;
   users.groups.libvirtd.members = ["jacopo"];

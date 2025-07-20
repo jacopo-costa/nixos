@@ -6,6 +6,7 @@
   users = {
     users = {
       jacopo = {
+        hashedPassword = "$y$j9T$2pzGVGk1aptVNUU5iTNKL.$BZ7y/F51YmFdzU5ecEsHbTUyuNaIWnq3hNV10bTlIV4";
         shell = pkgs.zsh;
         uid = 1000;
         isNormalUser = true;

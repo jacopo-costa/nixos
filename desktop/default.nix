@@ -8,13 +8,6 @@
 in {
   options.desktop = {
     enable = lib.mkEnableOption "The desktop services and configuration variables";
-    timeZone = lib.mkOption {
-      default = "Europe/Rome";
-      type = lib.types.str;
-      description = ''
-        Time zone to be used for the desktop services
-      '';
-    };
     grub = lib.mkEnableOption "Whether to activate grub";
     systemd-boot = lib.mkEnableOption "Whether to activate systemd-boot";
   };
