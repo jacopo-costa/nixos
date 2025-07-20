@@ -85,7 +85,7 @@
     gamemode.enable = true;
   };
 
-  system.autoUpgrade.allowReboot = false;
+  system.autoUpgrade.allowReboot = lib.mkForce false;
 
   # Virtualization
   programs.virt-manager.enable = true;
