@@ -19,6 +19,8 @@
     allowReboot = true;
   };
 
+  users.mutableUsers = false;
+
   imports = [
     ./nix
     ./secrets
@@ -44,6 +46,10 @@
   programs.git.enable = true;
   programs.htop.enable = true;
   programs.zsh.enable = true;
+
+  hardware = {
+    enableRedistributableFirmware = true;
+  };
 
   security = {
     doas.enable = lib.mkDefault false;

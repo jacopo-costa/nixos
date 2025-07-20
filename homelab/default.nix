@@ -52,7 +52,11 @@ in {
     };
 
     # Power
-    powerManagement.cpuFreqGovernor = "powersave";
+    powerManagement = {
+      cpuFreqGovernor = "powersave";
+      scsiLinkPolicy = "min_power";
+      powertop.enable = true;
+    };
     services.thermald.enable = true;
 
     # Turn off every night at 2AM
