@@ -7,12 +7,8 @@
   imports = [
     ./desktop
   ];
-  # Set hostname
-  networking = {
-    hostName = "cooler";
-  };
 
-  # GRUB
+  # Boot
   boot = {
     initrd = {
       availableKernelModules = ["nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod"];
@@ -23,7 +19,47 @@
     extraModulePackages = [];
   };
 
-  # Enable host specific services
+  # Hardware
+  hardware = {
+    cpu.amd.updateMicrocode = true;
+
+    # OpenGL
+    graphics.extraPackages = with pkgs; [
+      rocmPackages.clr.icd
+      amdvlk
+    ];
+  };
+
+  # Networking
+  networking = {
+    hostName = "cooler";
+  };
+
+  # Pkgs
+  environment = {
+    systemPackages = with pkgs; [
+      openrgb
+      gimp
+    ];
+  };
+
+  # Programs
+  programs = {
+    # Gaming
+    steam = {
+      package = pkgs.steam.override {
+        extraPkgs = p: [
+          p.kdePackages.breeze
+          p.python314
+        ];
+      };
+      enable = true;
+      localNetworkGameTransfers.openFirewall = true;
+    };
+    gamemode.enable = true;
+  };
+
+  # Services
   services = {
     xserver.videoDrivers = ["amdgpu"];
 
@@ -53,38 +89,16 @@
     };
   };
 
-  hardware = {
-    cpu.amd.updateMicrocode = true;
+  # Swap
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 32 * 1024;
+    }
+  ];
 
-    # OpenGL
-    graphics.extraPackages = with pkgs; [
-      rocmPackages.clr.icd
-      amdvlk
-    ];
-  };
-
-  environment = {
-    systemPackages = with pkgs; [
-      openrgb
-      gimp
-    ];
-  };
-
-  programs = {
-    # Gaming
-    steam = {
-      package = pkgs.steam.override {
-        extraPkgs = p: [
-          p.kdePackages.breeze
-          p.python314
-        ];
-      };
-      enable = true;
-      localNetworkGameTransfers.openFirewall = true;
-    };
-    gamemode.enable = true;
-  };
-
+  # System
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   system.autoUpgrade.allowReboot = lib.mkForce false;
 
   # Virtualization

@@ -5,12 +5,13 @@
   ...
 }: {
   imports = [
-    ./network.nix
+    ./email
     ./homelab
+    ./network
+    ./zfs
   ];
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-
+  # Boot
   boot = {
     initrd = {
       availableKernelModules = ["nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "sr_mod"];
@@ -30,10 +31,7 @@
     zfs.extraPools = ["tank"];
   };
 
-  # Hardware acceleration for jellyfin
-  nixpkgs.config.packageOverrides = pkgs: {
-    vaapiIntel = pkgs.vaapiIntel.override {enableHybridCodec = true;};
-  };
+  # Hardware
   hardware = {
     cpu.intel.updateMicrocode = true;
     graphics = {
@@ -49,32 +47,19 @@
     };
   };
 
-  sops = {
-    secrets = {
-      smtpPassword = {};
-    };
+  ## Hardware acceleration for jellyfin
+  nixpkgs.config.packageOverrides = pkgs: {
+    vaapiIntel = pkgs.vaapiIntel.override {enableHybridCodec = true;};
   };
 
-  email = {
-    enable = true;
-    fromAddress = "dimoracosta.system@gmail.com";
-    toAddress = "costa.jacopo@gmail.com";
-    smtpServer = "smtp.gmail.com";
-    smtpPort = 587;
-    smtpUsername = "dimoracosta.system@gmail.com";
-    smtpPasswordPath = config.sops.secrets.smtpPassword.path;
-  };
+  # Swap
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 32 * 1024;
+    }
+  ];
 
-  services.zfs.zed.settings = {
-    ZED_DEBUG_LOG = "/tmp/zed.debug.log";
-    ZED_EMAIL_ADDR = ["root"];
-    ZED_EMAIL_PROG = "sendmail";
-    ZED_EMAIL_OPTS = "@ADDRESS@";
-
-    ZED_NOTIFY_INTERVAL_SECS = 3600;
-    ZED_NOTIFY_VERBOSE = true;
-
-    ZED_USE_ENCLOSURE_LEDS = true;
-    ZED_SCRUB_AFTER_RESILVER = true;
-  };
+  # System
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }

@@ -38,6 +38,7 @@ in {
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
+      openFirewall = true;
       user = homelab.user;
       group = homelab.group;
       web = {
