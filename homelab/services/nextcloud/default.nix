@@ -117,5 +117,11 @@ in {
         adminpassFile = cfg.adminpassFile;
       };
     };
+    services.caddy.virtualHosts."${cfg.url}" = {
+      useACMEHost = homelab.baseDomain;
+      extraConfig = ''
+        reverse_proxy http://127.0.0.1:8083
+      '';
+    };
   };
 }

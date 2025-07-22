@@ -5,32 +5,18 @@
   lib,
   ...
 }: {
-  system.stateVersion = "25.05";
-  system.autoUpgrade = {
-    enable = true;
-    flake = "/etc/nixos\\?submodules=1";
-    flags = [
-      "--update-input"
-      "nixpkgs"
-      "-L"
-    ];
-    dates = "Sat *-*-* 09:00:00";
-    randomizedDelaySec = "45min";
-    allowReboot = true;
-  };
-
-  users.mutableUsers = false;
-
   imports = [
     ./nix
     ./secrets
   ];
 
-  time.timeZone = "Europe/Rome";
+  # Hardware
+  hardware = {
+    enableRedistributableFirmware = true;
+  };
 
-  # Default IT locale
+  # Locale
   i18n.defaultLocale = "it_IT.UTF-8";
-
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "it_IT.UTF-8";
     LC_IDENTIFICATION = "it_IT.UTF-8";
@@ -43,14 +29,20 @@
     LC_TIME = "it_IT.UTF-8";
   };
 
-  programs.git.enable = true;
-  programs.htop.enable = true;
-  programs.zsh.enable = true;
+  # Pkgs
+  environment.systemPackages = with pkgs; [
+    wget
+    lm_sensors
+  ];
 
-  hardware = {
-    enableRedistributableFirmware = true;
+  # Programs
+  programs = {
+    git.enable = true;
+    htop.enable = true;
+    zsh.enable = true;
   };
 
+  # Security
   security = {
     doas.enable = lib.mkDefault false;
     sudo = {
@@ -59,8 +51,28 @@
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    wget
-    lm_sensors
-  ];
+  # System
+  system = {
+    stateVersion = "25.05";
+    autoUpgrade = {
+      enable = true;
+      flake = "/etc/nixos\\?submodules=1";
+      flags = [
+        "--update-input"
+        "nixpkgs"
+        "-L"
+      ];
+      dates = "Sat *-*-* 09:00:00";
+      randomizedDelaySec = "45min";
+      allowReboot = true;
+    };
+  };
+
+  # Timezone
+  time.timeZone = "Europe/Rome";
+
+  # Users
+  # set mutable as false because
+  # the password is already set as hashable
+  users.mutableUsers = false;
 }

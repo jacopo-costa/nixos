@@ -8,10 +8,7 @@
     ./desktop
   ];
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-
-  hardware.cpu.amd.updateMicrocode = true;
-
+  # Boot
   boot = {
     initrd = {
       availableKernelModules = ["nvme" "xhci_pci" "ahci" "usb_storage" "sd_mod" "rtsx_usb_sdmmc"];
@@ -21,10 +18,13 @@
     extraModulePackages = [];
   };
 
-  # Set hostname
+  # Hardware
+  hardware.cpu.amd.updateMicrocode = true;
+
+  # Networking
   networking.hostName = "librovivo";
 
-  # Enable host specific services
+  # Services
   services = {
     xserver.videoDrivers = ["amdgpu"];
 
@@ -38,4 +38,16 @@
       variant = "";
     };
   };
+
+  # Swap
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 12 * 1024;
+    }
+  ];
+
+  # System
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  system.autoUpgrade.allowReboot = lib.mkForce false;
 }

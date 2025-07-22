@@ -4,11 +4,13 @@
   pkgs,
   ...
 }: {
+  # Options
   options.homelab.services = {
     enable = lib.mkEnableOption "Settings and services for the homelab";
   };
 
   config = lib.mkIf config.homelab.services.enable {
+    # Cloudflare environment file
     sops = {
       secrets.cloudflareToken = {};
 
@@ -16,10 +18,14 @@
         CF_DNS_API_TOKEN=${config.sops.placeholder.cloudflareToken}
       '';
     };
+
+    # HTTP & HTTPS ports
     networking.firewall.allowedTCPPorts = [
       80
       443
     ];
+
+    # ACME certificates service
     security.acme = {
       acceptTerms = true;
       defaults.email = "dimoracosta.system+acme@gmail.com";
@@ -34,6 +40,8 @@
         environmentFile = "${config.sops.templates.cloudflareEnv.path}";
       };
     };
+
+    # Caddy, redir every domain to its counterpart in HTTPS
     services.caddy = {
       enable = true;
       globalConfig = ''
@@ -53,6 +61,7 @@
       };
     };
 
+    # Setup podman for containerization
     virtualisation.podman = {
       dockerCompat = true;
       autoPrune.enable = true;

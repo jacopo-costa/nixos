@@ -14,7 +14,6 @@
         extraGroups = [
           "wheel"
           "users"
-          "podman"
         ];
         group = "jacopo";
       };

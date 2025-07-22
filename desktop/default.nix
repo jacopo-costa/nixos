@@ -12,15 +12,16 @@ in {
     systemd-boot = lib.mkEnableOption "Whether to activate systemd-boot";
   };
   config = lib.mkIf cfg.enable {
-    networking = {
-      networkmanager.enable = true;
+    # Audio
+    security.rtkit.enable = true;
+    services.pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
     };
 
-    # Enable bluetooth
-    hardware = {
-      bluetooth.enable = true;
-    };
-
+    # Boot
     boot = {
       loader = {
         efi.canTouchEfiVariables = true;
@@ -55,6 +56,17 @@ in {
       ];
     };
 
+    # Hardware
+    hardware = {
+      bluetooth.enable = true;
+    };
+
+    # Networking
+    networking = {
+      networkmanager.enable = true;
+    };
+
+    # Pkgs
     environment.systemPackages = with pkgs; [
       # Multimedia
       spotify
@@ -80,7 +92,7 @@ in {
       };
     };
 
-    # Enable Plasma, SDDM and CUPS services
+    # Services
     services = {
       # Enable X11
       xserver = {
@@ -96,15 +108,6 @@ in {
 
       # Enable CUPS to print documents.
       printing.enable = true;
-    };
-
-    # Enable sound with pipewire.
-    security.rtkit.enable = true;
-    services.pipewire = {
-      enable = true;
-      alsa.enable = true;
-      alsa.support32Bit = true;
-      pulse.enable = true;
     };
   };
 }
