@@ -56,7 +56,7 @@
     stateVersion = "25.05";
     autoUpgrade = {
       enable = true;
-      flake = "/etc/nixos\\?submodules=1";
+      flake = inputs.self.outPath;
       flags = [
         "--update-input"
         "nixpkgs"

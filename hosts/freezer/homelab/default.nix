@@ -26,6 +26,7 @@ in {
       # Nextcloud
       nextcloud = {
         enable = true;
+        adminuser = "admin";
         adminpassFile = config.sops.secrets.nextcloudPass.path;
       };
 

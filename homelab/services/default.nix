@@ -4,6 +4,18 @@
   pkgs,
   ...
 }: {
+  imports = [
+    ./arr/flaresolverr
+    ./arr/jellyseerr
+    ./arr/prowlarr
+    ./arr/radarr
+    ./arr/sonarr
+    ./deluge
+    ./jellyfin
+    ./nextcloud
+    ./vaultwarden
+  ];
+
   # Options
   options.homelab.services = {
     enable = lib.mkEnableOption "Settings and services for the homelab";
@@ -78,16 +90,4 @@
       lib.lists.optionals config.virtualisation.podman.enable
       [53];
   };
-
-  imports = [
-    ./arr/flaresolverr
-    ./arr/jellyseerr
-    ./arr/prowlarr
-    ./arr/radarr
-    ./arr/sonarr
-    ./deluge
-    ./jellyfin
-    ./nextcloud
-    ./vaultwarden
-  ];
 }
