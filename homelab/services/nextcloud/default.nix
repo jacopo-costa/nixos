@@ -17,7 +17,7 @@ in {
     };
     adminuser = lib.mkOption {
       type = lib.types.str;
-      default = "jacopo";
+      default = "admin";
     };
     configDir = lib.mkOption {
       type = lib.types.str;
@@ -117,6 +117,13 @@ in {
         adminpassFile = cfg.adminpassFile;
       };
     };
+
+    services.onlyoffice = {
+      enable = true;
+      hostname = "localhost";
+      port = 8084;
+    };
+
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
