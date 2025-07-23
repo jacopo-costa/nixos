@@ -12,6 +12,7 @@
     ./arr/sonarr
     ./deluge
     ./jellyfin
+    ./keycloak
     ./nextcloud
     ./vaultwarden
   ];

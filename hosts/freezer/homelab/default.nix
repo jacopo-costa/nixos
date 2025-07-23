@@ -17,11 +17,17 @@ in {
       radarr.enable = true;
       sonarr.enable = true;
 
+      # Deluge
+      deluge.enable = true;
+
       # Jellyfin
       jellyfin.enable = true;
 
-      # Deluge
-      deluge.enable = true;
+      # Keycloak
+      keycloak = {
+        enable = true;
+        dbPasswordFile = config.sops.secrets.keycloakDbPass.path;
+      };
 
       # Nextcloud
       nextcloud = {
