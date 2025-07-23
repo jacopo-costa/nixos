@@ -3,7 +3,9 @@
   lib,
   pkgs,
   ...
-}: {
+}: let
+  cfg = config.homelab.services;
+in {
   imports = [
     ./arr/flaresolverr
     ./arr/jellyseerr
@@ -20,18 +22,13 @@
   # Options
   options.homelab.services = {
     enable = lib.mkEnableOption "Settings and services for the homelab";
+    cloudflareEnvPath = lib.mkOption {
+      type = lib.types.path;
+      description = "Path to the Cloudflare environment file";
+    };
   };
 
   config = lib.mkIf config.homelab.services.enable {
-    # Cloudflare environment file
-    sops = {
-      secrets.cloudflareToken = {};
-
-      templates.cloudflareEnv.content = ''
-        CF_DNS_API_TOKEN=${config.sops.placeholder.cloudflareToken}
-      '';
-    };
-
     # HTTP & HTTPS ports
     networking.firewall.allowedTCPPorts = [
       80
@@ -50,7 +47,7 @@
         dnsResolver = "1.1.1.1:53";
         dnsPropagationCheck = true;
         group = config.services.caddy.group;
-        environmentFile = "${config.sops.templates.cloudflareEnv.path}";
+        environmentFile = "${cfg.cloudflareEnvPath}";
       };
     };
 
