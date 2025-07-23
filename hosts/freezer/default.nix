@@ -52,6 +52,17 @@
     vaapiIntel = pkgs.vaapiIntel.override {enableHybridCodec = true;};
   };
 
+  # Services
+  services.openssh = {
+    enable = true;
+    ports = [22];
+    settings = {
+      PasswordAuthentication = true;
+      AllowUsers = ["ice"];
+      PermitRootLogin = "no";
+    };
+  };
+
   # Swap
   swapDevices = [
     {
