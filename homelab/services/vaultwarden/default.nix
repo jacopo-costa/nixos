@@ -11,6 +11,10 @@ in {
     enable = lib.mkEnableOption {
       description = "Enable ${service}";
     };
+    vaultwardenEnvPath = lib.mkOption {
+      type = lib.types.path;
+      description = "Path to the Vaultwarden environment file";
+    };
     configDir = lib.mkOption {
       type = lib.types.str;
       default = "/var/lib/${service}";
@@ -24,16 +28,9 @@ in {
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
-      config = {
-        DOMAIN = "https://${cfg.url}";
-        SIGNUPS_ALLOWED = false;
-        ROCKET_ADDRESS = "127.0.0.1";
-        ROCKET_PORT = 8222;
-        EXTENDED_LOGGING = true;
-        LOG_LEVEL = "warn";
-        IP_HEADER = "CF-Connecting-IP";
-      };
+      environmentFile = "${cfg.vaultwardenEnvPath}";
     };
+
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''

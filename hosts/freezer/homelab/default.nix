@@ -1,8 +1,29 @@
 {config, ...}: let
   hl = config.homelab;
 in {
-  sops.secrets.nextcloudPass = {};
-  sops.secrets.keycloakDbPass = {};
+  # Cloudflare environment file
+  sops = {
+    secrets.nextcloudPass = {};
+    secrets.keycloakDbPass = {};
+    secrets.cloudflareToken = {};
+    secrets.vaultwardenAdminToken = {};
+
+    templates = {
+      cloudflareEnv.content = ''
+        CF_DNS_API_TOKEN=${config.sops.placeholder.cloudflareToken}
+      '';
+      vaultwardenEnv.content = ''
+        DOMAIN=https://vault.${hl.baseDomain}
+        SIGNUPS_ALLOWED=false
+        ADMIN_TOKEN='${config.sops.placeholder.vaultwardenAdminToken}'
+        ROCKET_ADDRESS=127.0.0.1
+        ROCKET_PORT=8222
+        EXTENDED_LOGGING=true
+        LOG_LEVEL=warn
+        IP_HEADER=X-Real-IP
+      '';
+    };
+  };
 
   homelab = {
     enable = true;
@@ -10,6 +31,7 @@ in {
     timeZone = "Europe/Rome";
     services = {
       enable = true;
+      cloudflareEnvPath = "${config.sops.templates.cloudflareEnv.path}";
 
       # ARR stack
       flaresolverr.enable = true;
@@ -38,7 +60,11 @@ in {
       };
 
       # Vaultwarden
-      vaultwarden.enable = true;
+      vaultwarden = {
+        enable = true;
+        vaultwardenEnvPath = config.sops.templates.vaultwardenEnv.path;
+        url = "vault.${hl.baseDomain}";
+      };
     };
   };
 }
