@@ -2,6 +2,7 @@
   hl = config.homelab;
 in {
   sops.secrets.nextcloudPass = {};
+  sops.secrets.keycloakDbPass = {};
 
   homelab = {
     enable = true;
