@@ -4,9 +4,10 @@ in {
   # Cloudflare environment file
   sops = {
     secrets.nextcloudPass = {};
-    secrets.keycloakDbPass = {};
+    secrets.smtpPassword = {};
     secrets.cloudflareToken = {};
     secrets.vaultwardenAdminToken = {};
+    secrets.authentikKey = {};
 
     templates = {
       cloudflareEnv.content = ''
@@ -21,6 +22,10 @@ in {
         EXTENDED_LOGGING=true
         LOG_LEVEL=warn
         IP_HEADER=X-Real-IP
+      '';
+      authentikEnv.content = ''
+        AUTHENTIK_SECRET_KEY=${config.sops.placeholder.authentikKey}
+        AUTHENTIK_EMAIL__PASSWORD=${config.sops.placeholder.smtpPassword}
       '';
     };
   };
@@ -46,10 +51,11 @@ in {
       # Jellyfin
       jellyfin.enable = true;
 
-      # Keycloak
-      keycloak = {
+      # Authentik
+      authentik = {
         enable = true;
-        dbPasswordFile = config.sops.secrets.keycloakDbPass.path;
+        environmentFile = config.sops.templates.authentikEnv.path;
+        emailUsername = "dimoracosta.system@gmail.com";
       };
 
       # Nextcloud
