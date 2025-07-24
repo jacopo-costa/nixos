@@ -14,7 +14,7 @@ in {
     ./arr/sonarr
     ./deluge
     ./jellyfin
-    ./keycloak
+    ./authentik
     ./nextcloud
     ./vaultwarden
   ];
