@@ -26,9 +26,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Authentik
-    authentik-nix = {
-      url = "github:nix-community/authentik-nix";
+    # Arion
+    arion = {
+      url = "github:hercules-ci/arion";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -68,7 +68,7 @@
         }
       ])
       (mkNixos "freezer" inputs.nixpkgs [
-        inputs.authentik-nix.nixosModules.default
+        inputs.arion.nixosModules.arion
         ./homelab
         ./modules/email
         # Users
