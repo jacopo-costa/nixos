@@ -38,39 +38,39 @@ in {
       enable = true;
       cloudflareEnvPath = "${config.sops.templates.cloudflareEnv.path}";
 
-      # ARR stack
-      flaresolverr.enable = true;
-      jellyseerr.enable = true;
-      prowlarr.enable = true;
-      radarr.enable = true;
-      sonarr.enable = true;
+      # # ARR stack
+      # flaresolverr.enable = true;
+      # jellyseerr.enable = true;
+      # prowlarr.enable = true;
+      # radarr.enable = true;
+      # sonarr.enable = true;
 
-      # Deluge
-      deluge.enable = true;
+      # # Deluge
+      # deluge.enable = true;
 
-      # Jellyfin
-      jellyfin.enable = true;
+      # # Jellyfin
+      # jellyfin.enable = true;
 
-      # Authentik
-      authentik = {
-        enable = true;
-        environmentFile = config.sops.templates.authentikEnv.path;
-        emailUsername = "dimoracosta.system@gmail.com";
-      };
+      # # Authentik
+      # authentik = {
+      #   enable = true;
+      #   environmentFile = config.sops.templates.authentikEnv.path;
+      #   emailUsername = "dimoracosta.system@gmail.com";
+      # };
 
-      # Nextcloud
-      nextcloud = {
-        enable = true;
-        adminuser = "admin";
-        adminpassFile = config.sops.secrets.nextcloudPass.path;
-      };
+      # # Nextcloud
+      # nextcloud = {
+      #   enable = true;
+      #   adminuser = "admin";
+      #   adminpassFile = config.sops.secrets.nextcloudPass.path;
+      # };
 
-      # Vaultwarden
-      vaultwarden = {
-        enable = true;
-        vaultwardenEnvPath = config.sops.templates.vaultwardenEnv.path;
-        url = "vault.${hl.baseDomain}";
-      };
+      # # Vaultwarden
+      # vaultwarden = {
+      #   enable = true;
+      #   vaultwardenEnvPath = config.sops.templates.vaultwardenEnv.path;
+      #   url = "vault.${hl.baseDomain}";
+      # };
     };
   };
 }
