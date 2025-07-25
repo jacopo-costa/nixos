@@ -1,11 +1,11 @@
 {...}: {
   virtualisation.arion = {
-    projects.traefik = {
+    projects.traefik.settings = {
       project.name = "traefik";
 
-      networks.traefik = {};
+      networks.traefik.name = "traefik";
 
-      volumes.logs = {};
+      docker-compose.volumes.logs = {};
 
       services.traefik = {
         service = {
