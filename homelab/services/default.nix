@@ -6,19 +6,6 @@
 }: let
   cfg = config.homelab.services;
 in {
-  imports = [
-    ./arr/flaresolverr
-    ./arr/jellyseerr
-    ./arr/prowlarr
-    ./arr/radarr
-    ./arr/sonarr
-    ./deluge
-    ./jellyfin
-    ./authentik
-    ./nextcloud
-    ./vaultwarden
-  ];
-
   # Options
   options.homelab.services = {
     enable = lib.mkEnableOption "Settings and services for the homelab";
