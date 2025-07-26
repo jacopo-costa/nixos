@@ -25,12 +25,6 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # Arion
-    arion = {
-      url = "github:hercules-ci/arion";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = {
@@ -68,7 +62,6 @@
         }
       ])
       (mkNixos "freezer" inputs.nixpkgs [
-        inputs.arion.nixosModules.arion
         ./homelab
         ./modules/email
         # Users

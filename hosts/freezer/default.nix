@@ -73,7 +73,4 @@
 
   # System
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-
-  # Virtualization
-  virtualisation.podman.enable = true;
 }
