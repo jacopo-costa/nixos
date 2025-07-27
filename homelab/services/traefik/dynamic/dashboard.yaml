@@ -6,8 +6,8 @@ http:
         - websecure
       service: api@internal
       middlewares:
-        - crowdsec-bouncer@file
-        - authentik@file
+        # - crowdsec-bouncer@file
+        # - authentik@file
         - ratelimiter@file
       tls:
         certresolver: cloudflare
