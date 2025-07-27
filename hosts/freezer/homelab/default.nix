@@ -5,17 +5,16 @@
   smtpUsername = "dimoracosta.system@gmail.com";
 in {
   sops = {
-    secrets.secrets.smtpPassword = {};
+    secrets.smtpPassword = {};
 
     secrets.cloudflareToken = {};
 
     secrets.vaultwardenAdminToken = {};
 
-    secrets.authentikPgPass = {};
-    secrets.authentikSecretKey = {};
+    secrets.keycloakDbPass = {};
 
     templates = {
-      traefikEnv.content = ''
+      cloudflareEnv.content = ''
         CF_DNS_API_TOKEN=${config.sops.placeholder.cloudflareToken}
       '';
       vaultwardenEnv.content = ''
@@ -25,7 +24,7 @@ in {
         ROCKET_ADDRESS=127.0.0.1
         ROCKET_PORT=8222
         SMTP_HOST=${smtpHost}
-        SMTP_PORT=${smtpPort}
+        SMTP_PORT=${toString smtpPort}
         SMTP_FROM=${smtpUsername}
         SMTP_FROM_NAME=CostaVault
         SMTP_USERNAME=${smtpUsername}
@@ -33,26 +32,6 @@ in {
         SMTP_TIMEOUT=10
         EXTENDED_LOGGING=true
         LOG_LEVEL=warn
-      '';
-      authentikEnv.content = ''
-        POSTGRES_PASSWORD=${config.sops.placeholder.authentikPgPass}
-        POSTGRES_USER=authentik
-        POSTGRES_DB=authentik
-        AUTHENTIK_REDIS__HOST=redis
-        AUTHENTIK_POSTGRESQL__HOST=postgresql
-        AUTHENTIK_POSTGRESQL__USER=authentik
-        AUTHENTIK_POSTGRESQL__NAME=authentik
-        AUTHENTIK_POSTGRESQL__PASSWORD=${config.sops.placeholder.authentikPgPass}
-        AUTHENTIK_SECRET_KEY=${config.sops.placeholder.authentikSecretKey}
-        AUTHENTIK_ERROR_REPORTING__ENABLED=true
-        AUTHENTIK_EMAIL__HOST=${smtpHost}
-        AUTHENTIK_EMAIL__PORT=${smtpPort}
-        AUTHENTIK_EMAIL__USERNAME=${smtpUsername}
-        AUTHENTIK_EMAIL__PASSWORD=${config.sops.placeholder.smtpPassword}
-        AUTHENTIK_EMAIL__USE_TLS=true
-        AUTHENTIK_EMAIL__USE_SSL=false
-        AUTHENTIK_EMAIL__TIMEOUT=10
-        AUTHENTIK_EMAIL__FROM=${smtpUsername}
       '';
     };
   };
@@ -64,14 +43,29 @@ in {
       enable = true;
       containerizationType = "docker";
 
-      traefik = {
+      caddy = {
         enable = true;
-        traefikEnvPath = config.sops.templates.traefikEnv.path;
+        cloudflareEnvPath = config.sops.templates.cloudflareEnv.path;
       };
 
-      authentik = {
+      vaultwarden = {
         enable = true;
-        authentikEnvPath = config.sops.templates.authentikEnv.path;
+        vaultwardenEnvPath = config.sops.templates.vaultwardenEnv.path;
+      };
+
+      flaresolverr.enable = true;
+      jellyseerr.enable = true;
+      prowlarr.enable = true;
+      radarr.enable = true;
+      sonarr.enable = true;
+
+      deluge.enable = true;
+
+      jellyfin.enable = true;
+
+      keycloak = {
+        enable = true;
+        keycloakDbPassFile = config.sops.secrets.keycloakDbPass.path;
       };
     };
   };
