@@ -1,6 +1,6 @@
 {
   config,
-  pkgs,
+  lib,
   ...
 }: let
   service = "traefik";
@@ -36,7 +36,7 @@ in {
     virtualisation.oci-containers.containers = {
       traefik = {
         image = "traefik:latest";
-        containerName = "traefik";
+        serviceName = "traefik";
         workdir = "/var/lib/traefik";
         ports = ["80:80" "443:443"];
         environmentFiles = [
@@ -59,7 +59,7 @@ in {
 
       catchall = {
         image = "nginx:latest";
-        containerName = "catchall";
+        serviceName = "catchall";
         workdir = "/var/lib/traefik/catchall";
         volumes = [
           "/etc/traefik/catchall:/usr/share/nginx/html:ro"
