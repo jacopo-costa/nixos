@@ -6,6 +6,10 @@
 }: let
   cfg = config.homelab.services;
 in {
+  imports = [
+    ./traefik
+  ];
+
   # Options
   options.homelab.services = {
     enable = lib.mkEnableOption "Settings and services for the homelab";
