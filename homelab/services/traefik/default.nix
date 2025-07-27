@@ -57,9 +57,6 @@ in {
         networks = [
           "traefik"
         ];
-        extraOptions = [
-          "--restart=unless-stopped"
-        ];
       };
 
       catchall = {
@@ -81,9 +78,6 @@ in {
         };
         networks = [
           "traefik"
-        ];
-        extraOptions = [
-          "--restart=unless-stopped"
         ];
       };
     };
