@@ -23,12 +23,12 @@ in {
     environment.etc."traefik/catchall".source = ./catchall;
 
     # Create volume if not already existing
-    system.activationScripts.createTraefikLogVol = ''
+    system.activationScripts.createTraefikLogVol.text = ''
       docker volume inspect traefik_logs >/dev/null 2>&1 || docker volume create traefik_logs
     '';
 
     # Create network if not already existing
-    system.activationScripts.createTraefikNet = ''
+    system.activationScripts.createTraefikNet.text = ''
       docker network inspect traefik >/dev/null 2>&1 || docker network create traefik
     '';
 
