@@ -18,7 +18,7 @@ entryPoints:
 certificatesResolvers:
   cloudflare:
     acme:
-      email: "costa.jacopo@gmail.com"
+      email: "dimoracosta.system+acme@gmail.com"
       storage: "/var/traefik/certs/cloudflare-acme.json"
       dnsChallenge:
         provider: cloudflare
