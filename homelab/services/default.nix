@@ -7,7 +7,16 @@
   cfg = config.homelab.services;
 in {
   imports = [
-    ./traefik
+    ./caddy
+    ./arr/flaresolverr
+    ./arr/jellyseerr
+    ./arr/prowlarr
+    ./arr/radarr
+    ./arr/sonarr
+    ./deluge
+    ./jellyfin
+    ./keycloak
+    ./vaultwarden
   ];
 
   # Options

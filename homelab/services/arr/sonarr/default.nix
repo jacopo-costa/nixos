@@ -11,34 +11,15 @@ in {
     enable = lib.mkEnableOption {
       description = "Enable ${service}";
     };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/${service}";
-    };
-    url = lib.mkOption {
-      type = lib.types.str;
-      default = "${service}.${homelab.baseDomain}";
-    };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Sonarr";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "TV show collection manager";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "sonarr.svg";
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Arr";
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8989;
     };
   };
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
+      settings.server.port = cfg.port;
       openFirewall = true;
       user = homelab.user;
       group = homelab.group;

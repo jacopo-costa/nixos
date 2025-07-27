@@ -20,29 +20,11 @@ in {
       type = lib.types.port;
       default = 5055;
     };
-    package = lib.mkPackageOption pkgs "jellyseerr" {};
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Jellyseerr";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Media request and discovery manager";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "jellyseerr.svg";
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Arr";
-    };
   };
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
       port = cfg.port;
-      package = cfg.package;
     };
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;

@@ -16,23 +16,11 @@ in {
       type = lib.types.str;
       default = "login.${homelab.baseDomain}";
     };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Keycloak";
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8821;
     };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "Open Source Identity and Access Management";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "keycloak.svg";
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Services";
-    };
-    dbPasswordFile = lib.mkOption {
+    keycloakDbPassFile = lib.mkOption {
       type = lib.types.path;
     };
   };
@@ -40,9 +28,9 @@ in {
     services.${service} = {
       enable = true;
       initialAdminPassword = "dumbo";
-      database.passwordFile = cfg.dbPasswordFile;
+      database.passwordFile = cfg.keycloakDbPassFile;
       settings = {
-        http-port = 8821;
+        http-port = cfg.port;
         hostname = cfg.url;
         hostname-strict = false;
         hostname-strict-https = false;
@@ -53,7 +41,7 @@ in {
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:8821
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };
