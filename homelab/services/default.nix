@@ -16,7 +16,7 @@ in {
     ./deluge
     ./immich
     ./jellyfin
-    ./keycloak
+    ./pocket-id
     ./vaultwarden
   ];
 
