@@ -16,19 +16,13 @@ in {
       type = lib.types.str;
       default = "login.${homelab.baseDomain}";
     };
-    port = lib.mkOption {
-      type = lib.types.port;
-      default = 8821;
-    };
-    keycloakDbPassFile = lib.mkOption {
-      type = lib.types.path;
-    };
   };
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
+      package = inputs.nixpkgs-unstable.legacyPackages.${pkgs.system}.${service};
       settings.TRUST_PROXY = true;
-      settings.PUBLIC_APP_URL = "https://${cfg.url}";
+      settings.APP_URL = "https://${cfg.url}";
     };
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
