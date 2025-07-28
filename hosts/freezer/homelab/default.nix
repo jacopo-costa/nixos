@@ -63,10 +63,7 @@ in {
 
       jellyfin.enable = true;
 
-      keycloak = {
-        enable = true;
-        keycloakDbPassFile = config.sops.secrets.keycloakDbPass.path;
-      };
+      pocket-id.enable = true;
 
       immich.enable = true;
     };
