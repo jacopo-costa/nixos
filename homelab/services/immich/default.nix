@@ -1,10 +1,12 @@
-{ config, lib, ... }:
-let
+{
+  config,
+  lib,
+  ...
+}: let
   service = "immich";
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
-in
-{
+in {
   options.homelab.services.${service} = {
     enable = lib.mkEnableOption "Self-hosted photo and video management solution";
     user = lib.mkOption {
@@ -31,7 +33,7 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
-    systemd.tmpfiles.rules = [ "d ${cfg.mediaDir} 0775 immich ${homelab.group} - -" ];
+    systemd.tmpfiles.rules = ["d ${cfg.mediaDir} 0775 immich ${homelab.group} - -"];
     users.users.immich.extraGroups = [
       "video"
       "render"
@@ -49,5 +51,4 @@ in
       '';
     };
   };
-
 }
