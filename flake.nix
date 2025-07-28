@@ -5,6 +5,9 @@
     # Stable release
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
 
+    # Unstable release
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+
     # Flake Utils
     flake-utils.url = "github:numtide/flake-utils";
 
