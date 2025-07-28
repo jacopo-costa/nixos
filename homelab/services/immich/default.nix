@@ -47,7 +47,7 @@ in {
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:${toString config.services.immich.port}
+        reverse_proxy http://${config.services.immich.host}:${toString config.services.immich.port}
       '';
     };
   };
