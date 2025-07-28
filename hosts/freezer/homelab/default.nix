@@ -67,6 +67,8 @@ in {
         enable = true;
         keycloakDbPassFile = config.sops.secrets.keycloakDbPass.path;
       };
+
+      immich.enable = true;
     };
   };
 }

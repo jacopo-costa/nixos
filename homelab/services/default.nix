@@ -14,6 +14,7 @@ in {
     ./arr/radarr
     ./arr/sonarr
     ./deluge
+    ./immich
     ./jellyfin
     ./keycloak
     ./vaultwarden
