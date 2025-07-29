@@ -40,6 +40,30 @@ in {
     services = {
       enable = true;
       containerizationType = "docker";
+
+      caddy = {
+        enable = true;
+        cloudflareEnvPath = config.sops.templates.cloudflareEnv.path;
+      };
+
+      vaultwarden = {
+        enable = true;
+        vaultwardenEnvPath = config.sops.templates.vaultwardenEnv.path;
+      };
+
+      flaresolverr.enable = true;
+      jellyseerr.enable = true;
+      prowlarr.enable = true;
+      radarr.enable = true;
+      sonarr.enable = true;
+
+      deluge.enable = true;
+
+      jellyfin.enable = true;
+
+      pocket-id.enable = true;
+
+      immich.enable = true;
     };
   };
 }
