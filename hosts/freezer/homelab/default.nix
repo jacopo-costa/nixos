@@ -31,6 +31,17 @@ in {
         EXTENDED_LOGGING=true
         LOG_LEVEL=warn
       '';
+      pocketIdEnv.content = ''
+        APP_URL=https://login.${hl.baseDomain}
+        TRUST_PROXY=true
+        PUID=994
+        PGID=993
+        SMTP_HOST=${smtpHost}
+        SMTP_PORT=${toString smtpPort}
+        SMTP_FROM=${smtpUsername}
+        SMTP_USER=${smtpUsername}
+        SMTP_PASSWORD=${config.sops.placeholder.smtpPassword}
+      '';
     };
   };
 
@@ -61,7 +72,10 @@ in {
 
       jellyfin.enable = true;
 
-      pocket-id.enable = true;
+      pocket-id = {
+        enable = true;
+        pocketIdEnvPath = config.sops.templates.pocketIdEnv.path;
+      };
 
       immich.enable = true;
     };
