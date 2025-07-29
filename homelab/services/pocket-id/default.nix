@@ -21,7 +21,7 @@ in {
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
-      package = inputs.nixpkgs-unstable.${pkgs.system}.${service};
+      package = inputs.nixpkgs-unstable.legacyPackages.${pkgs.system}.${service};
       settings.TRUST_PROXY = true;
       settings.APP_URL = "https://${cfg.url}";
     };
