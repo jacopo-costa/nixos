@@ -68,7 +68,6 @@ in {
       defaults.autodetected = "-a -o on -S on -s (S/../.././10|L/../../7/11) -n standby,q";
 
       notifications = {
-        test = true;
         mail = {
           enable = true;
           sender = config.email.fromAddress;
