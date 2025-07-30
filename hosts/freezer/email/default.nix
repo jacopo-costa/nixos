@@ -7,7 +7,7 @@
 
   email = {
     enable = true;
-    fromAddress = "dimoracosta.system@gmail.com";
+    fromAddress = "dimoracosta.system+freezer@gmail.com";
     toAddress = "costa.jacopo@gmail.com";
     smtpServer = "smtp.gmail.com";
     smtpPort = 587;

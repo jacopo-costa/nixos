@@ -65,13 +65,14 @@ in {
     # SMARTd
     services.smartd = {
       enable = true;
-      autodetect = true;
-
-      defaults.monitored = "-a -o on -s (S/../.././10|L/../../7/11)";
+      defaults.autodetected = "-a -o on -S on -s (S/../.././10|L/../../7/11) -n standby,q";
 
       notifications = {
+        test = true;
         mail = {
           enable = true;
+          sender = config.email.fromAddress;
+          recipient = config.email.toAddress;
         };
       };
     };
