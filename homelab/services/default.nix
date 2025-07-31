@@ -18,6 +18,8 @@ in {
     ./jellyfin
     ./pocket-id
     ./vaultwarden
+    ./ollama
+    ./open-webui
   ];
 
   # Options
