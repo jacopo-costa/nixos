@@ -7,19 +7,18 @@
   cfg = config.homelab.services;
 in {
   imports = [
-    ./caddy
     ./arr/flaresolverr
     ./arr/jellyseerr
     ./arr/prowlarr
     ./arr/radarr
     ./arr/sonarr
+    ./caddy
     ./deluge
     ./immich
     ./jellyfin
+    ./nextcloud
     ./pocket-id
     ./vaultwarden
-    ./ollama
-    ./open-webui
   ];
 
   # Options

@@ -12,122 +12,46 @@ in {
     enable = lib.mkEnableOption {
       description = "Enable ${service}";
     };
-    adminpassFile = lib.mkOption {
-      type = lib.types.path;
-    };
-    adminuser = lib.mkOption {
-      type = lib.types.str;
-      default = "admin";
-    };
-    configDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/lib/${service}";
-    };
     url = lib.mkOption {
       type = lib.types.str;
       default = "cloud.${homelab.baseDomain}";
     };
-    homepage.name = lib.mkOption {
-      type = lib.types.str;
-      default = "Nextcloud";
-    };
-    homepage.description = lib.mkOption {
-      type = lib.types.str;
-      default = "A safe home for all your data";
-    };
-    homepage.icon = lib.mkOption {
-      type = lib.types.str;
-      default = "nextcloud.svg";
-    };
-    homepage.category = lib.mkOption {
-      type = lib.types.str;
-      default = "Services";
-    };
   };
   config = lib.mkIf cfg.enable {
-    services.nginx = {
-      virtualHosts."${config.services.nextcloud.hostName}" = {
-        listen = [
-          {
-            addr = "127.0.0.1";
-            port = 8083;
-          }
-        ];
-      };
+    # Create volume if not already existing
+    system.activationScripts.createNextcloudVol = {
+      text = ''
+        ${pkgs.docker}/bin/docker volume inspect nextcloud_aio_mastercontainer >/dev/null 2>&1 || ${pkgs.docker}/bin/docker volume create nextcloud_aio_mastercontainer
+      '';
     };
 
-    services.postgresql = {
-      enable = true;
-      ensureDatabases = ["nextcloud"];
-      ensureUsers = [
-        {
-          name = "nextcloud";
-          ensureDBOwnership = true;
-        }
-      ];
-    };
-
-    systemd.services."nextcloud-setup" = {
-      requires = ["postgresql.service"];
-      after = ["postgresql.service"];
-    };
-
-    services.${service} = {
-      enable = true;
-      package = pkgs.nextcloud31;
-      hostName = "nextcloud";
-      configureRedis = true;
-      caching = {
-        redis = true;
-      };
-      maxUploadSize = "50G";
-      settings = {
-        trusted_proxies = ["127.0.0.1"];
-        overwriteprotocol = "https";
-        overwritehost = "cloud.${homelab.baseDomain}";
-        overwrite.cli.url = "https://cloud.${homelab.baseDomain}";
-        mail_smtpmode = "sendmail";
-        mail_sendmailmode = "pipe";
-        user_oidc = {
-          allow_multiple_user_backends = 0;
+    virtualisation.oci-containers.containers = {
+      nextcloud-aio-mastercontainer = {
+        image = "ghcr.io/nextcloud-releases/all-in-one:latest";
+        serviceName = "nextcloud-aio-mastercontainer";
+        workdir = "/var/lib/nextcloud";
+        ports = ["8080:8080"];
+        environment = {
+          APACHE_PORT = 11000;
+          APACHE_IP_BINDING = "0.0.0.0";
+          SKIP_DOMAIN_VALIDATION = false;
+          NEXTCLOUD_DATADIR = "/tank/nextcloud";
+          NEXTCLOUD_ENABLE_DRI_DEVICE = true;
         };
-        forwarded_for_headers = [
-          "HTTP_CF_CONNECTING_IP"
+        volumes = [
+          "nextcloud_aio_mastercontainer:/mnt/docker-aio-config"
+          "/var/run/docker.sock:/var/run/docker.sock:ro"
         ];
-        enabledPreviewProviders = [
-          "OC\\Preview\\BMP"
-          "OC\\Preview\\GIF"
-          "OC\\Preview\\JPEG"
-          "OC\\Preview\\Krita"
-          "OC\\Preview\\MarkDown"
-          "OC\\Preview\\MP3"
-          "OC\\Preview\\OpenDocument"
-          "OC\\Preview\\PNG"
-          "OC\\Preview\\TXT"
-          "OC\\Preview\\XBitmap"
-          "OC\\Preview\\HEIC"
+        extraOptions = [
+          "--init"
         ];
       };
-      config = {
-        dbtype = "pgsql";
-        dbuser = "nextcloud";
-        dbhost = "/run/postgresql";
-        dbname = "nextcloud";
-        adminuser = cfg.adminuser;
-        adminpassFile = cfg.adminpassFile;
-      };
-    };
-
-    services.onlyoffice = {
-      enable = true;
-      hostname = "localhost";
-      port = 8084;
     };
 
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:8083
+        reverse_proxy http://127.0.0.1:11000
       '';
     };
   };
