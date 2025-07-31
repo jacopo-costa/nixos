@@ -5,14 +5,14 @@
 }: {
   sops = {
     secrets = {
-      "systemPasswords.ice" = {};
+      "systemPasswords/ice" = {};
     };
   };
 
   users = {
     users = {
       ice = {
-        hashedPasswordFile = config.sops.secrets."systemPasswords.ice".path;
+        hashedPasswordFile = config.sops.secrets."systemPasswords/ice".path;
         shell = pkgs.zsh;
         uid = 1000;
         isNormalUser = true;
