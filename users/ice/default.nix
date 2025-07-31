@@ -3,10 +3,16 @@
   pkgs,
   ...
 }: {
+  sops = {
+    secrets = {
+      "systemPasswords.ice" = {};
+    };
+  };
+
   users = {
     users = {
       ice = {
-        hashedPassword = "$y$j9T$QGK7BBYrIrQoNBLIrPn2W/$./SFj0WhSTuWA6U57wkW3bYjmIJTjj5BhBAcrLvBTQ1";
+        hashedPasswordFile = config.sops.secrets."systemPasswords.ice".path;
         shell = pkgs.zsh;
         uid = 1000;
         isNormalUser = true;
