@@ -5,13 +5,13 @@
 }: {
   sops = {
     secrets = {
-      "systemPasswords.jacopo" = {};
+      "systemPasswords/jacopo" = {};
     };
   };
   users = {
     users = {
       jacopo = {
-        hashedPasswordFile = config.sops.secrets."systemPasswords.jacopo".path;
+        hashedPasswordFile = config.sops.secrets."systemPasswords/jacopo".path;
         shell = pkgs.zsh;
         uid = 1000;
         isNormalUser = true;
