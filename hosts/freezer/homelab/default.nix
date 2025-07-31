@@ -11,6 +11,9 @@ in {
 
     secrets.vaultwardenAdminToken = {};
 
+    secrets.openWebUiClientId = {};
+    secrets.openWebUiClientSecret = {};
+
     templates = {
       cloudflareEnv.content = ''
         CF_DNS_API_TOKEN=${config.sops.placeholder.cloudflareToken}
@@ -42,6 +45,34 @@ in {
         SMTP_USER=${smtpUsername}
         SMTP_PASSWORD=${config.sops.placeholder.smtpPassword}
       '';
+      openWebUiEnv.content = ''
+        ENABLE_OAUTH_SIGNUP=true
+        OAUTH_CLIENT_ID=${config.sops.placeholder.openWebUiClientId}
+        OAUTH_CLIENT_SECRET=${config.sops.placeholder.openWebUiClientSecret}
+        OAUTH_PROVIDER_NAME="Pocket ID"
+        OPENID_PROVIDER_URL=https://chat.dimoracosta.it/.well-known/openid-configuration
+        OAUTH_MERGE_ACCOUNTS_BY_EMAIL=true
+
+        # For group management, you can use the following variables:
+        ENABLE_OAUTH_ROLE_MANAGEMENT=true
+        ENABLE_OAUTH_GROUP_MANAGEMENT=true
+        ENABLE_OAUTH_GROUP_CREATION=true
+        # Make sure those match the ones you set up before in Pocket-ID
+        OAUTH_ALLOWED_ROLES="users, admins"
+        OAUTH_ADMIN_ROLES=admins
+        OAUTH_ROLES_CLAIM=groups
+        OAUTH_SCOPES="openid email profile groups"
+
+        # Optional but useful variables:
+
+        # So users are immediately added instead of being "pending"
+        DEFAULT_USER_ROLE=user
+        # Make Pocket-ID the only auth method
+        # comment out if you need access via password
+        ENABLE_LOGIN_FORM=false
+        # Make Pocket-ID the source of truth for the profile pictures
+        OAUTH_UPDATE_PICTURE_ON_LOGIN=true
+      '';
     };
   };
 
@@ -52,16 +83,19 @@ in {
       enable = true;
       containerizationType = "docker";
 
+      # Reverse proxy
       caddy = {
         enable = true;
         cloudflareEnvPath = config.sops.templates.cloudflareEnv.path;
       };
 
+      # Passwords
       vaultwarden = {
         enable = true;
         vaultwardenEnvPath = config.sops.templates.vaultwardenEnv.path;
       };
 
+      # ARR
       flaresolverr.enable = true;
       jellyseerr.enable = true;
       prowlarr.enable = true;
@@ -72,12 +106,21 @@ in {
 
       jellyfin.enable = true;
 
+      # OIDC Auth
       pocket-id = {
         enable = true;
         pocketIdEnvPath = config.sops.templates.pocketIdEnv.path;
       };
 
+      # Photos
       immich.enable = true;
+
+      # LLM
+      ollama.enable = true;
+      open-webui = {
+        enable = true;
+        openWebUiEnvPath = config.sops.templates.openWebUiEnv.path;
+      };
     };
   };
 }
