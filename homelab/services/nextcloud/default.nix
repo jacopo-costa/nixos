@@ -34,9 +34,9 @@ in {
         environment = {
           APACHE_PORT = "11000";
           APACHE_IP_BINDING = "0.0.0.0";
-          SKIP_DOMAIN_VALIDATION = false;
+          SKIP_DOMAIN_VALIDATION = "false";
           NEXTCLOUD_DATADIR = "/tank/nextcloud";
-          NEXTCLOUD_ENABLE_DRI_DEVICE = true;
+          NEXTCLOUD_ENABLE_DRI_DEVICE = "true";
         };
         volumes = [
           "nextcloud_aio_mastercontainer:/mnt/docker-aio-config"
