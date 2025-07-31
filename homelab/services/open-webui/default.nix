@@ -28,7 +28,6 @@ in {
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
-      host = "0.0.0.0";
       port = cfg.port;
       environmentFile = cfg.openWebUiEnvPath;
     };

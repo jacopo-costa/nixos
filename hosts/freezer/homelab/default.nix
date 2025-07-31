@@ -50,7 +50,7 @@ in {
         OAUTH_CLIENT_ID=${config.sops.placeholder.openWebUiClientId}
         OAUTH_CLIENT_SECRET=${config.sops.placeholder.openWebUiClientSecret}
         OAUTH_PROVIDER_NAME="Pocket ID"
-        OPENID_PROVIDER_URL=https://chat.dimoracosta.it/.well-known/openid-configuration
+        OPENID_PROVIDER_URL=https://login.dimoracosta.it/.well-known/openid-configuration
         OAUTH_MERGE_ACCOUNTS_BY_EMAIL=true
 
         # For group management, you can use the following variables:
