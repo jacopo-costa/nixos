@@ -74,5 +74,5 @@
   # Users
   # set mutable as false because
   # the password is already set as hashable
-  users.mutableUsers = false;
+  users.mutableUsers = true;
 }
