@@ -1,10 +1,12 @@
-{ config, lib, ... }:
-let
+{
+  config,
+  lib,
+  ...
+}: let
   service = "paperless";
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
-in
-{
+in {
   options.homelab.services.${service} = {
     enable = lib.mkEnableOption {
       description = "Enable ${service}";
@@ -31,30 +33,30 @@ in
   };
   config = lib.mkIf cfg.enable {
     services.${service} = {
-        enable = true;
-        passwordFile = cfg.passwordFile;
-        user = homelab.user;
-        mediaDir = cfg.mediaDir;
-        consumptionDir = cfg.consumptionDir;
-        consumptionDirIsPublic = true;
-        settings = {
-          PAPERLESS_URL = "https://${cfg.url}";
-          PAPERLESS_CONSUMER_IGNORE_PATTERN = [
-            ".DS_STORE/*"
-            "desktop.ini"
-          ];
-          PAPERLESS_OCR_LANGUAGE = "ita+eng";
-          PAPERLESS_OCR_USER_ARGS = {
-            optimize = 1;
-            pdfa_image_compression = "lossless";
-          };
+      enable = true;
+      passwordFile = cfg.passwordFile;
+      user = homelab.user;
+      mediaDir = cfg.mediaDir;
+      consumptionDir = cfg.consumptionDir;
+      consumptionDirIsPublic = true;
+      settings = {
+        PAPERLESS_URL = "https://${cfg.url}";
+        PAPERLESS_CONSUMER_IGNORE_PATTERN = [
+          ".DS_STORE/*"
+          "desktop.ini"
+        ];
+        PAPERLESS_OCR_LANGUAGE = "ita+eng";
+        PAPERLESS_OCR_USER_ARGS = {
+          optimize = 1;
+          pdfa_image_compression = "lossless";
         };
       };
-      caddy.virtualHosts."${cfg.url}" = {
-        useACMEHost = homelab.baseDomain;
-        extraConfig = ''
-          reverse_proxy http://127.0.0.1:${toString config.services.${service}.port}
-        '';
-      };
     };
+    services.caddy.virtualHosts."${cfg.url}" = {
+      useACMEHost = homelab.baseDomain;
+      extraConfig = ''
+        reverse_proxy http://127.0.0.1:${toString config.services.${service}.port}
+      '';
+    };
+  };
 }
