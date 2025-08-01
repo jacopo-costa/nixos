@@ -3,16 +3,20 @@
   pkgs,
   ...
 }: {
-  # sops = {
-  #   secrets = {
-  #     "systemPasswords/ice" = {};
-  #   };
-  # };
+  sops = {
+    secrets = {
+      "systemPasswords/ice" = {};
+      "sshKeys/jacopoAtCooler" = {};
+    };
+  };
 
   users = {
     users = {
       ice = {
-        # hashedPasswordFile = config.sops.secrets."systemPasswords/ice".path;
+        hashedPasswordFile = config.sops.secrets."systemPasswords/ice".path;
+        openssh.authorizedKeys.keyFiles = [
+          config.sops.secrets."sshKeys/jacopoAtCooler".path
+        ];
         shell = pkgs.zsh;
         uid = 1000;
         isNormalUser = true;
