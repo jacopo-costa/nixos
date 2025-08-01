@@ -90,7 +90,7 @@ in {
       nextcloud.enable = true;
 
       # Paperless
-      paperless {
+      paperless = {
         enable = true;
         passwordFile = config.sops.secrets.paperlessAdminPass.path;
       };
