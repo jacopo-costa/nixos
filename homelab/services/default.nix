@@ -17,6 +17,7 @@ in {
     ./immich
     ./jellyfin
     ./nextcloud
+    ./paperless
     ./pocket-id
     ./vaultwarden
   ];
