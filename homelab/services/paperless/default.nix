@@ -48,8 +48,6 @@ in
             optimize = 1;
             pdfa_image_compression = "lossless";
           };
-          PAPERLESS_APPS = "allauth.socialaccount.providers.openid_connect";
-          PAPERLESS_SOCIALACCOUNT_PROVIDERS = '{"openid_connect":{"SCOPE":["openid","profile","email"],"OAUTH_PKCE_ENABLED":true,"APPS":[{"provider_id":"pocket-id","name":"Pocket-ID","client_id":"b4e0f75c-8202-4969-a788-0c98152df34d","secret":"RZ5T9CG7B6NoMf7y4kOdEael13nZHS1R","settings":{"server_url":"https://login.dimoracosta.it"}}]}}';
         };
       };
       caddy.virtualHosts."${cfg.url}" = {
