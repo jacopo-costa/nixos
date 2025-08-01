@@ -11,6 +11,8 @@ in {
 
     secrets.vaultwardenAdminToken = {};
 
+    secrets.paperlessAdminPass = {};
+
     templates = {
       cloudflareEnv.content = ''
         CF_DNS_API_TOKEN=${config.sops.placeholder.cloudflareToken}
@@ -86,6 +88,12 @@ in {
 
       # Cloud
       nextcloud.enable = true;
+
+      # Paperless
+      paperless {
+        enable = true;
+        passwordFile = config.sops.secrets.paperlessAdminPass.path;
+      };
     };
   };
 }
