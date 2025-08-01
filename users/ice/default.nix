@@ -6,7 +6,6 @@
   sops = {
     secrets = {
       "systemPasswords/ice" = {};
-      "sshKeys/jacopoAtCooler" = {};
     };
   };
 
