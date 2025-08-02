@@ -57,8 +57,9 @@ in {
 
     # Power Managment
     powerManagement = {
+      enable = true;
       cpuFreqGovernor = "powersave";
-      scsiLinkPolicy = "min_power";
+      powertop.enable = true;
     };
     services.thermald.enable = true;
 
