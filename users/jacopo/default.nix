@@ -5,9 +5,10 @@
 }: {
   sops = {
     secrets = {
-      "systemPasswords/jacopo" = {};
+      "systemPasswords/jacopo".neededForUsers = true;
     };
   };
+
   users = {
     users = {
       jacopo = {
