@@ -12,6 +12,7 @@ in {
     secrets.vaultwardenAdminToken = {};
 
     secrets.paperlessAdminPass = {};
+    secrets.nextcloudAdminPass = {};
 
     templates = {
       cloudflareEnv.content = ''
@@ -87,7 +88,10 @@ in {
       immich.enable = true;
 
       # Cloud
-      nextcloud.enable = true;
+      nextcloud = {
+        enable = true;
+        adminPassFile = config.sops.secrets.nextcloudAdminPass.path;
+      };
 
       # Paperless
       paperless = {
