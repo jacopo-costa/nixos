@@ -96,6 +96,10 @@ in {
       ];
     };
 
+    services.redis.servers.${cfg.instanceName} = {
+      enable = true;
+    };
+
     systemd.services."authelia-${cfg.instanceName}" = let
       dependencies = [
         "postgresql.service"
