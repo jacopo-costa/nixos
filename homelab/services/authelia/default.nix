@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  config,
+  lib,
+  ...
+}: let
   service = "authelia";
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
@@ -34,9 +38,9 @@ in {
         storageEncryptionKeyFile = cfg.storageEncryptionKeyPath;
         jwtSecretFile = cfg.jwtSecretPath;
       };
-      environmentVariables = [
-        "AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE=${cfg.smtpPasswordPath}"
-      ];
+      environmentVariables = {
+        AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE = cfg.smtpPasswordPath;
+      };
       settings = {
         theme = "auto";
 
@@ -53,8 +57,8 @@ in {
 
         storage.postgres = {
           address = "unix:///run/postgresql";
-          database = authelia;
-          username = authelia;
+          database = "authelia-${cfg.instanceName}";
+          username = "authelia-${cfg.instanceName}";
         };
 
         session = {
@@ -75,7 +79,7 @@ in {
         };
 
         smtp = {
-          address = "smtp://${config.email.smtpServer}:${config.email.smtpPort}";
+          address = "smtp://${config.email.smtpServer}:${toString config.email.smtpPort}";
           username = config.email.smtpUsername;
         };
       };
