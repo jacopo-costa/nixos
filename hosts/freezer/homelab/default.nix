@@ -14,6 +14,14 @@ in {
     secrets.paperlessAdminPass = {};
     secrets.nextcloudAdminPass = {};
 
+    # Authelia
+    secrets.storageEncryptionKey = {
+      owner = "authelia-dimoracosta";
+    };
+    secrets.jwtSecret = {
+      owner = "authelia-dimoracosta";
+    };
+
     templates = {
       cloudflareEnv.content = ''
         CF_DNS_API_TOKEN=${config.sops.placeholder.cloudflareToken}
@@ -48,6 +56,23 @@ in {
     };
   };
 
+  environment.etc."authelia/users_database.yml" = {
+    mode = "0400";
+    user = "authelia-dimoracosta";
+    text = ''
+      users:
+        jacopo:
+          disabled: false
+          displayname: Jacopo
+          # password of password
+          password: $argon2id$v=19$m=65536,t=3,p=4$2ohUAfh9yetl+utr4tLcCQ$AsXx0VlwjvNnCsa70u4HKZvFkC8Gwajr2pHGKcND/xs
+          email: costa.jacopo@gmail.com
+          groups:
+            - admin
+            - user
+    '';
+  };
+
   homelab = {
     enable = true;
     timeZone = "Europe/Rome";
@@ -79,9 +104,11 @@ in {
       jellyfin.enable = true;
 
       # OIDC Auth
-      pocket-id = {
+      authelia = {
         enable = true;
-        pocketIdEnvPath = config.sops.templates.pocketIdEnv.path;
+        storageEncryptionKeyPath = config.sops.secrets.storageEncryptionKey.path;
+        jwtSecretPath = config.sops.secrets.jwtSecret.path;
+        smtpPasswordPath = config.sops.secrets."smtp/password".path;
       };
 
       # Photos
@@ -90,13 +117,13 @@ in {
       # Cloud
       nextcloud = {
         enable = true;
-        adminPassFile = config.sops.secrets.nextcloudAdminPass.path;
+        nextcloudAdminPassPath = config.sops.secrets.nextcloudAdminPass.path;
       };
 
       # Paperless
       paperless = {
         enable = true;
-        passwordFile = config.sops.secrets.paperlessAdminPass.path;
+        paperlessAdminPassPath = config.sops.secrets.paperlessAdminPass.path;
       };
     };
   };

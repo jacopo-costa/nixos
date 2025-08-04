@@ -19,7 +19,7 @@ in {
       type = lib.types.str;
       default = "/tank/paperless/import";
     };
-    passwordFile = lib.mkOption {
+    paperlessAdminPassPath = lib.mkOption {
       type = lib.types.path;
     };
     configDir = lib.mkOption {
@@ -34,7 +34,7 @@ in {
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
-      passwordFile = cfg.passwordFile;
+      passwordFile = cfg.paperlessAdminPassPath;
       user = homelab.user;
       mediaDir = cfg.mediaDir;
       consumptionDir = cfg.consumptionDir;

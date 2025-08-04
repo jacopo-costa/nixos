@@ -12,13 +12,13 @@ in {
     ./arr/prowlarr
     ./arr/radarr
     ./arr/sonarr
+    ./authelia
     ./caddy
     ./deluge
     ./immich
     ./jellyfin
     ./nextcloud
     ./paperless
-    ./pocket-id
     ./vaultwarden
   ];
 

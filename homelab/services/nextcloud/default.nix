@@ -20,7 +20,7 @@ in {
       type = lib.types.str;
       default = "admin";
     };
-    adminPassFile = lib.mkOption {
+    nextcloudAdminPassPath = lib.mkOption {
       type = lib.types.path;
     };
   };
@@ -69,7 +69,7 @@ in {
         dbhost = "/run/postgresql";
         dbname = "nextcloud";
         adminuser = cfg.adminUser;
-        adminpassFile = cfg.adminPassFile;
+        adminpassFile = cfg.nextcloudAdminPassPath;
       };
 
       settings = {
