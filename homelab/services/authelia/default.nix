@@ -84,6 +84,29 @@ in {
         };
       };
     };
+
+    services.postgresql = {
+      enable = true;
+      ensureDatabases = ["authelia-${cfg.instanceName}"];
+      ensureUsers = [
+        {
+          name = "authelia-${cfg.instanceName}";
+          ensureDBOwnership = true;
+        }
+      ];
+    };
+
+    systemd.services."authelia-${cfg.instanceName}" = let
+      dependencies = [
+        "postgresql.service"
+        "redis-${cfg.instanceName}.service"
+      ];
+    in {
+      # Authelia requires PostgreSQL and Redis to be running
+      after = dependencies;
+      requires = dependencies;
+    };
+
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
