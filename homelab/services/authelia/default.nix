@@ -105,6 +105,9 @@ in {
 
     services.redis.servers.${cfg.instanceName} = {
       enable = true;
+      user = services.authelia.instances.${cfg.instanceName}.user;
+      group = homelab.group;
+      requirePassFile = cfg.sessionSecretPath;
     };
 
     systemd.services."authelia-${cfg.instanceName}" = let
