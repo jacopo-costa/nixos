@@ -5,7 +5,7 @@
   smtpUsername = "dimoracosta.system@gmail.com";
 in {
   sops = {
-    secrets."smtp/password" = {};
+    secrets."smtp/password".group = config.homelab.group;
 
     secrets.cloudflareToken = {};
 
@@ -15,10 +15,13 @@ in {
     secrets.nextcloudAdminPass = {};
 
     # Authelia
-    secrets.storageEncryptionKey = {
+    secrets."authelia/storageEncryptionKey" = {
       owner = "authelia-dimoracosta";
     };
-    secrets.jwtSecret = {
+    secrets."authelia/jwtSecret" = {
+      owner = "authelia-dimoracosta";
+    };
+    secrets."authelia/sessionSecret" = {
       owner = "authelia-dimoracosta";
     };
 
@@ -106,8 +109,10 @@ in {
       # OIDC Auth
       authelia = {
         enable = true;
-        storageEncryptionKeyPath = config.sops.secrets.storageEncryptionKey.path;
-        jwtSecretPath = config.sops.secrets.jwtSecret.path;
+        instanceName = "dimoracosta";
+        storageEncryptionKeyPath = config.sops.secrets."authelia/storageEncryptionKey".path;
+        jwtSecretPath = config.sops.secrets."authelia/jwtSecret".path;
+        sessionSecretPath = config.sops.secrets."authelia/sessionSecret".path;
         smtpPasswordPath = config.sops.secrets."smtp/password".path;
       };
 

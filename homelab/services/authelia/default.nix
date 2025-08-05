@@ -26,6 +26,10 @@ in {
       type = lib.types.path;
       description = "Path to the SMTP password file";
     };
+    sessionSecretPath = lib.mkOption {
+      type = lib.types.path;
+      description = "Path to the session secret file (for Redis)";
+    };
     url = lib.mkOption {
       type = lib.types.str;
       default = "auth.${homelab.baseDomain}";
@@ -34,12 +38,14 @@ in {
   config = lib.mkIf cfg.enable {
     services.authelia.instances.${cfg.instanceName} = {
       enable = true;
+      group = homelab.group;
       secrets = {
         storageEncryptionKeyFile = cfg.storageEncryptionKeyPath;
         jwtSecretFile = cfg.jwtSecretPath;
       };
       environmentVariables = {
         AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE = cfg.smtpPasswordPath;
+        AUTHELIA_SESSION_SECRET_FILE = cfg.sessionSecretPath;
       };
       settings = {
         theme = "auto";
@@ -78,7 +84,7 @@ in {
           ];
         };
 
-        smtp = {
+        notifier.smtp = {
           address = "smtp://${config.email.smtpServer}:${toString config.email.smtpPort}";
           username = config.email.smtpUsername;
         };
