@@ -87,6 +87,7 @@ in {
         notifier.smtp = {
           address = "smtp://${config.email.smtpServer}:${toString config.email.smtpPort}";
           username = config.email.smtpUsername;
+          sender = "Authelia <${config.email.smtpUsername}>";
         };
       };
     };
