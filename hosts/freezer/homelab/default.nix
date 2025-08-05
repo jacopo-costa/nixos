@@ -5,7 +5,10 @@
   smtpUsername = "dimoracosta.system@gmail.com";
 in {
   sops = {
-    secrets."smtp/password".group = config.homelab.group;
+    secrets."smtp/password" = {
+      mode = "0440";
+      group = config.homelab.group;
+    };
 
     secrets.cloudflareToken = {};
 
