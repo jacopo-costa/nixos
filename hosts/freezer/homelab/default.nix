@@ -27,6 +27,9 @@ in {
     secrets."authelia/sessionSecret" = {
       owner = "authelia-dimoracosta";
     };
+    secrets."authelia/users/jacopo" = {
+      owner = "authelia-dimoracosta";
+    };
 
     templates = {
       cloudflareEnv.content = ''
@@ -70,8 +73,7 @@ in {
         jacopo:
           disabled: false
           displayname: Jacopo
-          # password of password
-          password: $argon2id$v=19$m=65536,t=3,p=4$2ohUAfh9yetl+utr4tLcCQ$AsXx0VlwjvNnCsa70u4HKZvFkC8Gwajr2pHGKcND/xs
+          password: ${config.sops.placeholder."authelia/users/jacopo"}
           email: costa.jacopo@gmail.com
           groups:
             - admin
@@ -83,7 +85,7 @@ in {
     enable = true;
     timeZone = "Europe/Rome";
     services = {
-      enable = true;
+      containerization = false;
       containerizationType = "docker";
 
       # Reverse proxy
