@@ -5,10 +5,7 @@
   smtpUsername = "dimoracosta.system@gmail.com";
 in {
   sops = {
-    secrets."smtp/password" = {
-      mode = "0440";
-      group = config.homelab.group;
-    };
+    secrets."smtp/password" = {};
 
     secrets.cloudflareToken = {};
 
@@ -17,19 +14,8 @@ in {
     secrets.paperlessAdminPass = {};
     secrets.nextcloudAdminPass = {};
 
-    # Authelia
-    secrets."authelia/storageEncryptionKey" = {
-      owner = "authelia-dimoracosta";
-    };
-    secrets."authelia/jwtSecret" = {
-      owner = "authelia-dimoracosta";
-    };
-    secrets."authelia/sessionSecret" = {
-      owner = "authelia-dimoracosta";
-    };
-    secrets."authelia/users/jacopo" = {
-      owner = "authelia-dimoracosta";
-    };
+    # Authentik
+    secrets."authentikSecretKey" = {};
 
     templates = {
       cloudflareEnv.content = ''
@@ -51,32 +37,17 @@ in {
         EXTENDED_LOGGING=true
         LOG_LEVEL=warn
       '';
-      pocketIdEnv.content = ''
-        PUBLIC_APP_URL=https://auth.${hl.baseDomain}
-        TRUST_PROXY=true
-        SMTP_HOST=${smtpHost}
-        SMTP_PORT=${toString smtpPort}
-        SMTP_FROM=${smtpUsername}
-        SMTP_USER=${smtpUsername}
-        SMTP_PASSWORD=${config.sops.placeholder."smtp/password"}
+      authentikEnv.content = ''
+        AUTHENTIK_SECRET_KEY=${config.sops.placeholder."authentikSecretKey"}
+        AUTHENTIK_ERROR_REPORTING__ENABLED=true
+        AUTHENTIK_EMAIL__HOST=${smtpHost}
+        AUTHENTIK_EMAIL__PORT=${toString smtpPort}
+        AUTHENTIK_EMAIL__USERNAME=${smtpUsername}
+        AUTHENTIK_EMAIL__PASSWORD=${config.sops.placeholder."smtp/password"}
+        AUTHENTIK_EMAIL__USE_SSL=true
+        AUTHENTIK_EMAIL__FROM=Authentik <${smtpUsername}>
       '';
     };
-  };
-
-  environment.etc."authelia/users_database.yml" = {
-    mode = "0400";
-    user = "authelia-dimoracosta";
-    text = ''
-      users:
-        jacopo:
-          disabled: false
-          displayname: Jacopo
-          password: ${config.sops.placeholder."authelia/users/jacopo"}
-          email: costa.jacopo@gmail.com
-          groups:
-            - admin
-            - user
-    '';
   };
 
   homelab = {
@@ -110,17 +81,9 @@ in {
       jellyfin.enable = true;
 
       # OIDC Auth
-      # authelia = {
-      #   enable = true;
-      #   instanceName = "dimoracosta";
-      #   storageEncryptionKeyPath = config.sops.secrets."authelia/storageEncryptionKey".path;
-      #   jwtSecretPath = config.sops.secrets."authelia/jwtSecret".path;
-      #   sessionSecretPath = config.sops.secrets."authelia/sessionSecret".path;
-      #   smtpPasswordPath = config.sops.secrets."smtp/password".path;
-      # };
-      pocket-id = {
+      authentik = {
         enable = true;
-        pocketIdEnvPath = config.sops.templates.pocketIdEnv.path;
+        authentikEnvPath = config.sops.templates.authentikEnv.path;
       };
 
       # Photos
