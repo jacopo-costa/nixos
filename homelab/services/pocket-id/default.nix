@@ -15,7 +15,7 @@ in {
     };
     url = lib.mkOption {
       type = lib.types.str;
-      default = "login.${homelab.baseDomain}";
+      default = "auth.${homelab.baseDomain}";
     };
     pocketIdEnvPath = lib.mkOption {
       type = lib.types.path;
@@ -23,30 +23,11 @@ in {
     };
   };
   config = lib.mkIf cfg.enable {
-    # Create network if not already existing
-    system.activationScripts.createPocketIdNet = {
-      text = ''
-        ${pkgs.docker}/bin/docker network inspect pocket-id >/dev/null 2>&1 || ${pkgs.docker}/bin/docker network create pocket-id
-      '';
+    services.pocket-id = {
+      enable = true;
+      environmentFile = cfg.pocketIdEnvPath;
     };
 
-    virtualisation.oci-containers.containers = {
-      pocket-id = {
-        image = "ghcr.io/pocket-id/pocket-id:v1";
-        serviceName = "pocket-id";
-        workdir = "/var/lib/pocket-id";
-        ports = ["1411:1411"];
-        environmentFiles = [
-          "${cfg.pocketIdEnvPath}"
-        ];
-        volumes = [
-          "/var/lib/pocket-id/data:/app/data"
-        ];
-        networks = [
-          "pocket-id"
-        ];
-      };
-    };
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
