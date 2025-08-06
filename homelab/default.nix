@@ -64,8 +64,10 @@ in {
     };
     services.thermald.enable = true;
 
-    environment.systemPackages = [
-      pkgs.hdparm
+    environment.systemPackages = with pkgs; [
+      powertop
+      hdparm
+      smartmontools
     ];
 
     # Activate power save on any sd* disks and spindown after 10 minutes

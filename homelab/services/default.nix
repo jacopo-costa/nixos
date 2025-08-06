@@ -24,7 +24,7 @@ in {
 
   # Options
   options.homelab.services = {
-    enable = lib.mkEnableOption "Settings and services for the homelab";
+    containerization = lib.mkEnableOption "Enable containerization for the homelab";
     containerizationType = lib.mkOption {
       type = with lib.types; nullOr (enum ["docker" "podman"]);
       default = "docker";
@@ -32,7 +32,7 @@ in {
     };
   };
 
-  config = lib.mkIf config.homelab.services.enable {
+  config = lib.mkIf cfg.containerization {
     # Setup containerization
     virtualisation.${cfg.containerizationType} = {
       enable = true;
