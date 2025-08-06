@@ -17,7 +17,8 @@
       availableKernelModules = ["nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "sr_mod"];
       kernelModules = [];
     };
-    kernelModules = ["kvm-intel"];
+    kernelModules = ["kvm-intel" "intel_pstate"];
+    kernelParams = ["intel_idle.max_cstate=10"];
     extraModulePackages = [];
 
     loader = {
