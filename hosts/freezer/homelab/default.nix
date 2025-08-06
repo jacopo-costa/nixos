@@ -44,7 +44,6 @@ in {
         AUTHENTIK_EMAIL__PORT=${toString smtpPort}
         AUTHENTIK_EMAIL__USERNAME=${smtpUsername}
         AUTHENTIK_EMAIL__PASSWORD=${config.sops.placeholder."smtp/password"}
-        AUTHENTIK_EMAIL__USE_SSL=true
         AUTHENTIK_EMAIL__FROM=Authentik <${smtpUsername}>
       '';
     };
