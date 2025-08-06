@@ -52,10 +52,8 @@ in {
         LOG_LEVEL=warn
       '';
       pocketIdEnv.content = ''
-        APP_URL=https://login.${hl.baseDomain}
+        PUBLIC_APP_URL=https://auth.${hl.baseDomain}
         TRUST_PROXY=true
-        PUID=994
-        PGID=993
         SMTP_HOST=${smtpHost}
         SMTP_PORT=${toString smtpPort}
         SMTP_FROM=${smtpUsername}
@@ -112,13 +110,17 @@ in {
       jellyfin.enable = true;
 
       # OIDC Auth
-      authelia = {
+      # authelia = {
+      #   enable = true;
+      #   instanceName = "dimoracosta";
+      #   storageEncryptionKeyPath = config.sops.secrets."authelia/storageEncryptionKey".path;
+      #   jwtSecretPath = config.sops.secrets."authelia/jwtSecret".path;
+      #   sessionSecretPath = config.sops.secrets."authelia/sessionSecret".path;
+      #   smtpPasswordPath = config.sops.secrets."smtp/password".path;
+      # };
+      pocket-id = {
         enable = true;
-        instanceName = "dimoracosta";
-        storageEncryptionKeyPath = config.sops.secrets."authelia/storageEncryptionKey".path;
-        jwtSecretPath = config.sops.secrets."authelia/jwtSecret".path;
-        sessionSecretPath = config.sops.secrets."authelia/sessionSecret".path;
-        smtpPasswordPath = config.sops.secrets."smtp/password".path;
+        pocketIdEnvPath = config.sops.templates.pocketIdEnv.path;
       };
 
       # Photos
