@@ -1,5 +1,4 @@
 {
-  pkgs,
   config,
   lib,
   ...
@@ -14,7 +13,7 @@ in {
     };
     url = lib.mkOption {
       type = lib.types.str;
-      default = "${service}.${homelab.baseDomain}";
+      default = "req.${homelab.baseDomain}";
     };
     port = lib.mkOption {
       type = lib.types.port;
@@ -26,6 +25,7 @@ in {
       enable = true;
       port = cfg.port;
     };
+
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''

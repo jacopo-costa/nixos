@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }: let
   service = "caddy";
@@ -25,7 +24,7 @@ in {
     # ACME certificates service
     security.acme = {
       acceptTerms = true;
-      defaults.email = "dimoracosta.system+acme@gmail.com";
+      defaults.email = "dimoracosta.system@gmail.com";
       certs.${config.homelab.baseDomain} = {
         reloadServices = ["caddy.service"];
         domain = "${config.homelab.baseDomain}";

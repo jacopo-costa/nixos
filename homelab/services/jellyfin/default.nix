@@ -1,6 +1,5 @@
 {
   config,
-  pkgs,
   lib,
   ...
 }: let
@@ -14,7 +13,11 @@ in {
     };
     url = lib.mkOption {
       type = lib.types.str;
-      default = "jellyfin.${homelab.baseDomain}";
+      default = "media.${homelab.baseDomain}";
+    };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8096;
     };
   };
   config = lib.mkIf cfg.enable {
@@ -23,10 +26,11 @@ in {
       user = homelab.user;
       group = homelab.group;
     };
+
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:8096
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };

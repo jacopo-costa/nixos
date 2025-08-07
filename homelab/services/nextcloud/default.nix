@@ -1,6 +1,5 @@
 {
   config,
-  pkgs,
   lib,
   ...
 }: let
@@ -16,6 +15,10 @@ in {
       type = lib.types.str;
       default = "cloud.${homelab.baseDomain}";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8083;
+    };
     adminUser = lib.mkOption {
       type = lib.types.str;
       default = "admin";
@@ -30,7 +33,7 @@ in {
         listen = [
           {
             addr = "127.0.0.1";
-            port = 8083;
+            port = cfg.port;
           }
         ];
       };
@@ -105,7 +108,7 @@ in {
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:8083
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };

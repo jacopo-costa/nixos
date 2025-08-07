@@ -12,16 +12,12 @@ in {
     user = lib.mkOption {
       default = config.homelab.user;
       type = lib.types.str;
-      description = ''
-        User to run the Immich container as
-      '';
+      description = "User to run Immich as";
     };
     group = lib.mkOption {
       default = config.homelab.group;
       type = lib.types.str;
-      description = ''
-        Group to run the Immich container as
-      '';
+      description = "Group to run Immich as";
     };
     mediaDir = lib.mkOption {
       type = lib.types.path;
@@ -30,6 +26,10 @@ in {
     url = lib.mkOption {
       type = lib.types.str;
       default = "photos.${homelab.baseDomain}";
+    };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 2283;
     };
   };
   config = lib.mkIf cfg.enable {
@@ -41,13 +41,14 @@ in {
     services.${service} = {
       group = homelab.group;
       enable = true;
-      port = 2283;
+      port = cfg.port;
       mediaLocation = "${cfg.mediaDir}";
     };
+
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://${config.services.immich.host}:${toString config.services.immich.port}
+        reverse_proxy http://${config.services.immich.host}:${toString cfg.port}
       '';
     };
   };
