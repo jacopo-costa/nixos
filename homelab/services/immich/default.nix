@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   service = "immich";
@@ -44,6 +45,10 @@ in {
       port = cfg.port;
       mediaLocation = "${cfg.mediaDir}";
     };
+
+    environment.systemPackages = with pkgs; [
+      immich-cli
+    ];
 
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
