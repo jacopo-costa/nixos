@@ -18,7 +18,6 @@ in {
         [
           ./hosts/_common
           ./hosts/${machineHostname}
-          # ./modules/auto-aspm
           # Sops-nix
           inputs.sops-nix.nixosModules.sops
           # Disko

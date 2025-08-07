@@ -30,6 +30,10 @@ in {
       type = lib.types.str;
       default = "doc.${homelab.baseDomain}";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 28981;
+    };
   };
   config = lib.mkIf cfg.enable {
     services.${service} = {
@@ -39,6 +43,7 @@ in {
       mediaDir = cfg.mediaDir;
       consumptionDir = cfg.consumptionDir;
       consumptionDirIsPublic = true;
+      port = cfg.port;
       settings = {
         PAPERLESS_URL = "https://${cfg.url}";
         PAPERLESS_CONSUMER_IGNORE_PATTERN = [
@@ -52,10 +57,11 @@ in {
         };
       };
     };
+
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:${toString config.services.${service}.port}
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };

@@ -19,6 +19,10 @@ in {
       type = lib.types.str;
       default = "vault.${homelab.baseDomain}";
     };
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8222;
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -26,10 +30,11 @@ in {
       enable = true;
       environmentFile = cfg.vaultwardenEnvPath;
     };
+
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:8222
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };

@@ -56,7 +56,7 @@
           formatter = pkgs.alejandra;
         }
       ))
-      (mkNixos "cooler" inputs.nixpkgs [
+      (mkNixos "cooler" nixpkgs [
         ./desktop
         # Users
         ./users/jacopo
@@ -67,12 +67,12 @@
           };
         }
       ])
-      (mkNixos "freezer" inputs.nixpkgs [
+      (mkNixos "freezer" nixpkgs [
         ./homelab
         ./modules/email
+        inputs.authentik-nix.nixosModules.default
         # Users
         ./users/ice
-        inputs.authentik-nix.nixosModules.default
         home-manager.nixosModules.home-manager
         {
           home-manager.users = {
@@ -80,7 +80,7 @@
           };
         }
       ])
-      (mkNixos "librovivo" inputs.nixpkgs [
+      (mkNixos "librovivo" nixpkgs [
         ./desktop
         # Users
         ./users/jacopo
