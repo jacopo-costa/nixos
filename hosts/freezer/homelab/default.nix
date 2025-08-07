@@ -98,7 +98,7 @@ in {
 
       # Paperless
       paperless = {
-        enable = true;
+        enable = false;
         paperlessAdminPassPath = config.sops.secrets.paperlessAdminPass.path;
       };
     };
