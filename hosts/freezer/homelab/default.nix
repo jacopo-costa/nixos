@@ -36,6 +36,7 @@ in {
         SMTP_TIMEOUT=10
         EXTENDED_LOGGING=true
         LOG_LEVEL=warn
+        IP_HEADER=X-Forwarded-For
       '';
       authentikEnv.content = ''
         AUTHENTIK_SECRET_KEY=${config.sops.placeholder.authentikSecretKey}
