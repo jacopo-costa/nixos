@@ -18,6 +18,7 @@ in {
     ./immich
     ./jellyfin
     ./nextcloud
+    ./onlyoffice
     ./paperless
     ./vaultwarden
   ];
