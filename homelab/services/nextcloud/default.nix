@@ -106,6 +106,10 @@ in {
         opcache.interned_strings_buffer = 32;
 
         log_type = "file";
+
+        maintenance_window_start = 1;
+
+        integrity.check.disabled = false;
       };
     };
 
