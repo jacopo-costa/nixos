@@ -16,12 +16,6 @@ in {
 
     secrets.nextcloudAdminPass = {};
 
-    secrets.onlyofficeJwtSecret = {
-      owner = "onlyoffice";
-      group = hl.group;
-      mode = "0440";
-    };
-
     secrets.paperlessAdminPass = {};
 
     secrets.authentikSecretKey = {};
@@ -64,7 +58,7 @@ in {
     enable = true;
     timeZone = "Europe/Rome";
     services = {
-      containerization = false;
+      containerization = true;
       containerizationType = "docker";
 
       # Reverse proxy
@@ -100,10 +94,7 @@ in {
       immich.enable = true;
 
       # Cloud
-      nextcloud = {
-        enable = true;
-        nextcloudAdminPassPath = config.sops.secrets.nextcloudAdminPass.path;
-      };
+      nextcloud.enable = true;
 
       # Office
       onlyoffice = {
