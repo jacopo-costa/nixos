@@ -46,10 +46,6 @@ in {
       mediaLocation = "${cfg.mediaDir}";
     };
 
-    environment.systemPackages = with pkgs; [
-      immich-cli
-    ];
-
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''

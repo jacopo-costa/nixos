@@ -87,7 +87,7 @@ in {
         default_phone_region = "IT";
 
         forwarded_for_headers = [
-          "HTTP_CF_CONNECTING_IP"
+          "HTTP_X_FORWARDED_FOR"
         ];
         enabledPreviewProviders = [
           "OC\\Preview\\BMP"
@@ -102,6 +102,8 @@ in {
           "OC\\Preview\\XBitmap"
           "OC\\Preview\\HEIC"
         ];
+
+        opcache.interned_strings_buffer = 16;
       };
     };
 
@@ -109,6 +111,10 @@ in {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
         reverse_proxy http://127.0.0.1:${toString cfg.port}
+
+        header {
+          Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        }
       '';
     };
   };
