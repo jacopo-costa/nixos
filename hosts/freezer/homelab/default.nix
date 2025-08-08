@@ -5,7 +5,11 @@
 in {
   sops = {
     secrets."smtp/user" = {};
-    secrets."smtp/password" = {};
+    secrets."smtp/password" = {
+      owner = "ice";
+      group = hl.group;
+      mode = "0440";
+    };
 
     secrets.cloudflareToken = {};
 
