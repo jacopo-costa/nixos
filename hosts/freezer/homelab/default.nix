@@ -16,7 +16,11 @@ in {
 
     secrets.nextcloudAdminPass = {};
 
-    secrets.onlyofficeJwtSecret = {};
+    secrets.onlyofficeJwtSecret = {
+      owner = "onlyoffice";
+      group = hl.group;
+      mode = "0440";
+    };
 
     secrets.paperlessAdminPass = {};
 
