@@ -27,7 +27,7 @@ in {
       port = cfg.port;
     };
 
-    services.nginx.virtualHosts."${config.services.onlyoffice.hostName}".listen = [
+    services.nginx.virtualHosts."${config.services.onlyoffice.hostname}".listen = [
       {
         addr = "127.0.0.1";
         port = cfg.port;
