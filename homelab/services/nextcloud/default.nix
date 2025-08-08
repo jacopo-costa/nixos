@@ -103,7 +103,9 @@ in {
           "OC\\Preview\\HEIC"
         ];
 
-        opcache.interned_strings_buffer = 16;
+        opcache.interned_strings_buffer = 32;
+
+        log_type = "file";
       };
     };
 
