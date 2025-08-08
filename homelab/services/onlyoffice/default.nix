@@ -19,7 +19,6 @@ in {
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
-      hostName = "localhost";
       port = cfg.port;
     };
   };
