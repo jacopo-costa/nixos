@@ -96,12 +96,6 @@ in {
       # Cloud
       nextcloud.enable = true;
 
-      # Office
-      onlyoffice = {
-        enable = true;
-        onlyofficeJwtSecretPath = config.sops.secrets.onlyofficeJwtSecret.path;
-      };
-
       # Paperless
       paperless = {
         enable = false;
