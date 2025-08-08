@@ -99,6 +99,9 @@ in {
         nextcloudAdminPassPath = config.sops.secrets.nextcloudAdminPass.path;
       };
 
+      # Office
+      onlyoffice.enable = true;
+
       # Paperless
       paperless = {
         enable = false;
