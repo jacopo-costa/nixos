@@ -13,6 +13,6 @@
       ZED_USE_ENCLOSURE_LEDS = true;
       ZED_SCRUB_AFTER_RESILVER = true;
     };
-    zed.enableMail = false;
+    zed.enableMail = true;
   };
 }

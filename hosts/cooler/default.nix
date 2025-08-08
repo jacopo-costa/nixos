@@ -99,7 +99,6 @@
 
   # System
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  system.autoUpgrade.allowReboot = lib.mkForce false;
 
   # Virtualization
   programs.virt-manager.enable = true;
