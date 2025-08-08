@@ -19,20 +19,17 @@ in {
       type = lib.types.port;
       default = 8057;
     };
+    onlyofficeJwtSecretPath = lib.mkOption {
+      type = lib.types.path;
+    };
   };
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
       hostname = "onlyoffice";
       port = cfg.port;
+      jwtSecretFile = cfg.onlyofficeJwtSecretPath;
     };
-
-    services.nginx.virtualHosts."${config.services.onlyoffice.hostname}".listen = [
-      {
-        addr = "127.0.0.1";
-        port = cfg.port;
-      }
-    ];
 
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
