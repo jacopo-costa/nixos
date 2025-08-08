@@ -23,14 +23,24 @@ in {
   config = lib.mkIf cfg.enable {
     services.${service} = {
       enable = true;
-      hostname = cfg.url;
+      hostname = "onlyoffice";
       port = cfg.port;
     };
+
+    services.nginx.virtualHosts."${config.services.onlyoffice.hostName}".listen = [
+      {
+        addr = "127.0.0.1";
+        port = cfg.port;
+      }
+    ];
 
     services.caddy.virtualHosts."${cfg.url}" = {
       useACMEHost = homelab.baseDomain;
       extraConfig = ''
-        reverse_proxy http://127.0.0.1:${toString cfg.port}
+        reverse_proxy http://127.0.0.1:${toString cfg.port} {
+          # Required to circumvent bug of Onlyoffice loading mixed non-https content
+          header_up X-Forwarded-Proto https
+        }
       '';
     };
   };
