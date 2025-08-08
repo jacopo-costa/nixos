@@ -16,6 +16,8 @@ in {
 
     secrets.nextcloudAdminPass = {};
 
+    secrets.onlyofficeJwtSecret = {};
+
     secrets.paperlessAdminPass = {};
 
     secrets.authentikSecretKey = {};
@@ -100,7 +102,10 @@ in {
       };
 
       # Office
-      onlyoffice.enable = true;
+      onlyoffice = {
+        enable = true;
+        onlyofficeJwtSecretPath = config.sops.secrets.onlyofficeJwtSecret.path;
+      };
 
       # Paperless
       paperless = {
