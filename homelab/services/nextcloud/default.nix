@@ -81,9 +81,6 @@ in {
         overwritehost = cfg.url;
         overwrite.cli.url = "https://${cfg.url}";
 
-        mail_smtpmode = "sendmail";
-        mail_sendmailmode = "pipe";
-
         default_phone_region = "IT";
 
         forwarded_for_headers = [
@@ -103,7 +100,7 @@ in {
           "OC\\Preview\\HEIC"
         ];
 
-        opcache.interned_strings_buffer = 32;
+        opcache.interned_strings_buffer = 64;
 
         log_type = "file";
 
