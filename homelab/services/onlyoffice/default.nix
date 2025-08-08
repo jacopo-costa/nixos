@@ -28,18 +28,7 @@ in {
       enable = true;
       hostname = "onlyoffice";
       port = cfg.port;
-      jwtSecretFile = cfg.onlyofficeJwtSecretPath;
-    };
-
-    services.nginx = {
-      virtualHosts."${config.services.onlyoffice.hostname}" = {
-        listen = [
-          {
-            addr = "127.0.0.1";
-            port = cfg.port;
-          }
-        ];
-      };
+      jwtSecretFile = toString cfg.onlyofficeJwtSecretPath;
     };
 
     services.caddy.virtualHosts."${cfg.url}" = {
