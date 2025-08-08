@@ -18,7 +18,7 @@
       kernelModules = [];
     };
     kernelModules = ["kvm-intel" "intel_pstate"];
-    kernelParams = ["intel_idle.max_cstate=10"];
+    kernelParams = [];
     extraModulePackages = [];
 
     loader = {

@@ -25,12 +25,6 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # Authentik
-    authentik-nix = {
-      url = "github:nix-community/authentik-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = {
@@ -70,7 +64,6 @@
       (mkNixos "freezer" nixpkgs [
         ./homelab
         ./modules/email
-        inputs.authentik-nix.nixosModules.default
         # Users
         ./users/ice
         home-manager.nixosModules.home-manager

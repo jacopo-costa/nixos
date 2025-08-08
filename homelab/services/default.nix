@@ -6,21 +6,7 @@
 }: let
   cfg = config.homelab.services;
 in {
-  imports = [
-    ./arr/flaresolverr
-    ./arr/jellyseerr
-    ./arr/prowlarr
-    ./arr/radarr
-    ./arr/sonarr
-    ./authentik
-    ./caddy
-    ./deluge
-    ./immich
-    ./jellyfin
-    ./nextcloud
-    ./paperless
-    ./vaultwarden
-  ];
+  imports = [];
 
   # Options
   options.homelab.services = {

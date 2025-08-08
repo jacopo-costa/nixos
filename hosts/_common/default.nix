@@ -64,7 +64,6 @@
       ];
       dates = "Sat *-*-* 09:00:00";
       randomizedDelaySec = "45min";
-      allowReboot = true;
     };
   };
 
