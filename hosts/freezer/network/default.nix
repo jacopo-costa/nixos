@@ -38,10 +38,9 @@
         linkConfig.RequiredForOnline = "carrier";
         networkConfig = {
           DHCP = "no";
-          Address = "192.168.30.2/29";
-          Gateway = "192.168.30.1";
-          DNS = "192.168.30.1";
-          PrimarySlave = "enp3s0";
+          Address = ["192.168.30.2/29"];
+          Gateway = ["192.168.30.1"];
+          DNS = ["192.168.30.1"];
         };
       };
     };
