@@ -59,7 +59,7 @@
     ports = [22];
     settings = {
       PasswordAuthentication = false;
-      AllowUsers = ["ice"];
+      AllowUsers = ["jacopo"];
       PermitRootLogin = "no";
     };
   };

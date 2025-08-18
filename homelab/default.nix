@@ -10,14 +10,14 @@ in {
   options.homelab = {
     enable = lib.mkEnableOption "The homelab services and configuration variables";
     user = lib.mkOption {
-      default = "share";
+      default = "ice";
       type = lib.types.str;
       description = ''
         User to run the homelab services as
       '';
     };
     group = lib.mkOption {
-      default = "share";
+      default = "ice";
       type = lib.types.str;
       description = ''
         Group to run the homelab services as
@@ -47,10 +47,10 @@ in {
     # Share user
     users = {
       groups.${cfg.group} = {
-        gid = 993;
+        gid = 950;
       };
       users.${cfg.user} = {
-        uid = 994;
+        uid = 950;
         isSystemUser = true;
         group = cfg.group;
       };

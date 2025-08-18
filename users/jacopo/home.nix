@@ -40,18 +40,5 @@
   };
 
   home.packages = with pkgs; [
-    # Utilities
-    htop
-    # Alejandra
-    alejandra
-    # VSCode
-    (vscode-with-extensions.override {
-      vscodeExtensions = with vscode-extensions; [
-        bbenoist.nix
-        jnoortheen.nix-ide
-        kamadorueda.alejandra
-        continue.continue
-      ];
-    })
   ];
 }

@@ -65,11 +65,11 @@
         ./homelab
         ./modules/email
         # Users
-        ./users/ice
+        ./users/jacopo
         home-manager.nixosModules.home-manager
         {
           home-manager.users = {
-            ice = import ./users/ice/home.nix;
+            jacopo = import ./users/jacopo/home.nix;
           };
         }
       ])
