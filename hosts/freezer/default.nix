@@ -28,8 +28,13 @@
     };
 
     # ZFS
-    supportedFilesystems = ["zfs"];
     zfs.extraPools = ["tank"];
+  };
+
+  # Filesystems
+  fileSystems."/mnt/tankette" = {
+    device = "/dev/disk/by-uuid/c0643c74-85f3-4d4b-8ee6-e75cd16ae213";
+    fsType = "ext4";
   };
 
   # Hardware
@@ -68,7 +73,7 @@
   swapDevices = [
     {
       device = "/swapfile";
-      size = 32 * 1024;
+      size = 8 * 1024;
     }
   ];
 

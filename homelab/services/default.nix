@@ -10,23 +10,22 @@ in {
 
   # Options
   options.homelab.services = {
-    containerization = lib.mkEnableOption "Enable containerization for the homelab";
-    containerizationType = lib.mkOption {
-      type = with lib.types; nullOr (enum ["docker" "podman"]);
-      default = "docker";
-      description = "Type of containerization to use (docker or podman)";
-    };
+    enable = lib.mkEnableOption "Enable services for the homelab";
   };
 
-  config = lib.mkIf cfg.containerization {
+  config = lib.mkIf cfg.enable {
     # Setup containerization
-    virtualisation.${cfg.containerizationType} = {
+    virtualisation.docker = {
       enable = true;
       autoPrune.enable = true;
+      daemon.settings = {
+        userland-proxy = false;
+        ipv6 = false;
+      };
     };
 
     virtualisation.oci-containers = {
-      backend = cfg.containerizationType;
+      backend = "docker";
     };
   };
 }
