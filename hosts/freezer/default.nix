@@ -28,7 +28,7 @@
     };
 
     # ZFS
-    boot.supportedFilesystems = ["zfs"];
+    supportedFilesystems = ["zfs"];
     zfs.extraPools = ["tank"];
   };
 
