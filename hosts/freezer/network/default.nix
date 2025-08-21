@@ -23,13 +23,13 @@
     };
 
     networks = {
-      "30-enp3s0" = {
-        matchConfig.Name = "enp3s0";
+      "30-enp4s0" = {
+        matchConfig.Name = "enp4s0";
         networkConfig.Bond = "bond0";
       };
 
-      "30-enp4s0" = {
-        matchConfig.Name = "enp4s0";
+      "30-enp5s0" = {
+        matchConfig.Name = "enp5s0";
         networkConfig.Bond = "bond0";
       };
 
@@ -46,13 +46,13 @@
     };
 
     links = {
-      "30-enp3s0" = {
+      "30-enp4s0" = {
         linkConfig = {
           WakeOnLan = "magic";
         };
       };
 
-      "30-enp4s0" = {
+      "30-enp5s0" = {
         linkConfig = {
           WakeOnLan = "magic";
         };
