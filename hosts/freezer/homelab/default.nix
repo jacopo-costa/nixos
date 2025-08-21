@@ -1,10 +1,12 @@
 {...}: {
   homelab = {
     enable = true;
+    user = "ice";
+    group = "ice";
     timeZone = "Europe/Rome";
+    baseDomain = "dimoracosta.it";
     services = {
-      containerization = true;
-      containerizationType = "docker";
+      enable = true;
     };
   };
 }
