@@ -39,7 +39,6 @@
   environment = {
     systemPackages = with pkgs; [
       openrgb
-      gimp
     ];
   };
 
@@ -74,19 +73,6 @@
     };
 
     hardware.openrgb.enable = true;
-
-    ollama = {
-      enable = true;
-      acceleration = "rocm";
-    };
-
-    # Enable streaming
-    sunshine = {
-      enable = true;
-      autoStart = true;
-      capSysAdmin = true;
-      openFirewall = true;
-    };
   };
 
   # Swap
@@ -99,10 +85,4 @@
 
   # System
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-
-  # Virtualization
-  programs.virt-manager.enable = true;
-  users.groups.libvirtd.members = ["jacopo"];
-  virtualisation.libvirtd.enable = true;
-  virtualisation.spiceUSBRedirection.enable = true;
 }
