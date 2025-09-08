@@ -2,7 +2,9 @@
   config,
   pkgs,
   ...
-}: {
+}: let
+  isServer = builtins.getEnv "HOSTNAME" == "cooler";
+in {
   home.username = "jacopo";
   home.homeDirectory = "/home/jacopo";
   home.stateVersion = "25.05";
@@ -40,5 +42,17 @@
   };
 
   home.packages = with pkgs; [
+    (
+      if !isServer
+      then
+        (vscode-with-extensions.override {
+          vscodeExtensions = with vscode-extensions; [
+            bbenoist.nix
+            jnoortheen.nix-ide
+            kamadorueda.alejandra
+          ];
+        })
+      else null
+    )
   ];
 }
