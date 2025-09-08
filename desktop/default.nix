@@ -79,6 +79,8 @@ in {
       kdePackages.kcalc
       kdePackages.sddm-kcm
       kdePackages.partitionmanager
+      # Cloud
+      nextcloud-client
     ];
 
     # Power management
