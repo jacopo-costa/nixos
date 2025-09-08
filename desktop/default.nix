@@ -81,6 +81,9 @@ in {
       kdePackages.partitionmanager
     ];
 
+    # Power management
+    powerManagement.enable = true;
+
     # Programs
     programs = {
       # Firefox
@@ -108,6 +111,9 @@ in {
 
       # Enable CUPS to print documents.
       printing.enable = true;
+
+      # Enable thermald
+      thermald.enable = true;
     };
   };
 }
