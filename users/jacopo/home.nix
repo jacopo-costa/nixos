@@ -3,7 +3,7 @@
   pkgs,
   ...
 }: let
-  isServer = builtins.getEnv "HOSTNAME" == "cooler";
+  isServer = builtins.getEnv "HOSTNAME" == "freezer";
 in {
   home.username = "jacopo";
   home.homeDirectory = "/home/jacopo";
