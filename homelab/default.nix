@@ -110,13 +110,8 @@ in {
     };
 
     systemd.services."goodnight" = {
-      script = ''
-        /run/current-system/sw/bin/shutdown now
-      '';
-      serviceConfig = {
-        Type = "oneshot";
-        User = "root";
-      };
+      script = "systemctl poweroff";
+      serviceConfig.Type = "oneshot";
     };
   };
 }
