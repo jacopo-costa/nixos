@@ -9,7 +9,7 @@
       ZED_DEBUG_LOG = "/tmp/zed.debug.log";
       ZED_EMAIL_ADDR = config.email.toAddress;
       ZED_EMAIL_PROG = "${pkgs.msmtp}/bin/msmtp";
-      ZED_EMAIL_OPTS = "-t '@SUBJECT@' -m";
+      ZED_EMAIL_OPTS = "@ADDRESS@";
 
       ZED_NOTIFY_INTERVAL_SECS = 3600;
       ZED_NOTIFY_VERBOSE = true;
