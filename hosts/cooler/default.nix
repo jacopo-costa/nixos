@@ -39,6 +39,13 @@
   environment = {
     systemPackages = with pkgs; [
       openrgb
+      (vscode-with-extensions.override {
+        vscodeExtensions = with vscode-extensions; [
+          bbenoist.nix
+          jnoortheen.nix-ide
+          kamadorueda.alejandra
+        ];
+      })
     ];
   };
 

@@ -15,7 +15,6 @@
         hashedPasswordFile = config.sops.secrets."systemPasswords/jacopo".path;
         openssh.authorizedKeys.keys = [
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKK85ZK7b5Y/DxQJm66xjxNSznQUyMW2RN6u2CBNCdM5 jacopo@cooler"
-	  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE6O2XJFHINrXVurQVeo4Vo70o+T5g75DG+bS9zWA/sx jacopo@termix"
         ];
         shell = pkgs.zsh;
         uid = 1000;
