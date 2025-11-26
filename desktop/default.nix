@@ -84,6 +84,8 @@ in {
       kdePackages.kcalc
       kdePackages.sddm-kcm
       kdePackages.partitionmanager
+      # Rounded corners
+      kde-rounded-corners
       # Cloud
       nextcloud-client
     ];
