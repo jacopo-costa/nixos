@@ -76,6 +76,7 @@ in {
       # Multimedia
       spotify
       vlc
+      jellyfin-media-player
       # Spelling
       aspell
       aspellDicts.it
