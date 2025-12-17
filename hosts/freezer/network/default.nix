@@ -4,7 +4,7 @@
     hostName = "freezer";
 
     defaultGateway = "192.168.30.1";
-    bridges.br0.interfaces = ["enp4s0"];
+    bridges.br0.interfaces = ["enp3s0"];
     interfaces.br0 = {
       useDHCP = false;
       ipv4.addresses = [

@@ -33,14 +33,14 @@
   };
 
   # Filesystems
-  fileSystems."/mnt/tankette" = {
-    device = "/dev/disk/by-uuid/c0643c74-85f3-4d4b-8ee6-e75cd16ae213";
-    fsType = "ext4";
-    options = [
-      "defaults"
-      "noatime"
-    ];
-  };
+  # fileSystems."/mnt/tankette" = {
+  #   device = "/dev/disk/by-uuid/c0643c74-85f3-4d4b-8ee6-e75cd16ae213";
+  #   fsType = "ext4";
+  #   options = [
+  #     "defaults"
+  #     "noatime"
+  #   ];
+  # };
 
   # Hardware
   hardware = {
