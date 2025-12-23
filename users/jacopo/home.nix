@@ -7,7 +7,7 @@
 in {
   home.username = "jacopo";
   home.homeDirectory = "/home/jacopo";
-  home.stateVersion = "25.05";
+  home.stateVersion = "25.11";
 
   programs = {
     zsh = {
@@ -32,9 +32,11 @@ in {
 
     git = {
       enable = true;
-      userName = "Jacopo Costa";
-      userEmail = "costa.jacopo@gmail.com";
-      extraConfig = {
+      settings = {
+        user = {
+          name = "Jacopo Costa";
+          email = "costa.jacopo@gmail.com";
+        };
         init.defaultBranch = "main";
         pull.rebase = true;
       };

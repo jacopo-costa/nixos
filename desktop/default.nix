@@ -2,6 +2,7 @@
   lib,
   config,
   pkgs,
+  inputs,
   ...
 }: let
   cfg = config.desktop;
@@ -74,9 +75,8 @@ in {
     # Pkgs
     environment.systemPackages = with pkgs; [
       # Multimedia
-      spotify
       vlc
-      jellyfin-media-player
+      # jellyfin-media-player
       # Spelling
       aspell
       aspellDicts.it
@@ -85,25 +85,25 @@ in {
       kdePackages.kcalc
       kdePackages.sddm-kcm
       kdePackages.partitionmanager
-      # Rounded corners
-      kde-rounded-corners
       # Cloud
       nextcloud-client
+      # Zen Browser
+      inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
 
     # Power management
     powerManagement.enable = true;
 
     # Programs
-    programs = {
-      # Firefox
-      firefox = {
-        enable = true;
-        preferences = {
-          "widget.use-xdg-desktop-portal.file-picker" = 1;
-        };
-      };
-    };
+    # programs = {
+    #   # Firefox
+    #   firefox = {
+    #     enable = true;
+    #     preferences = {
+    #       "widget.use-xdg-desktop-portal.file-picker" = 1;
+    #     };
+    #   };
+    # };
 
     # Flatpak
     services.flatpak.enable = true;

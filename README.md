@@ -22,7 +22,7 @@ This flake leverages NixOS's powerful features to manage system configuration in
 ## Dependencies
 
 *   **NixOS:**  Requires a working NixOS installation.
-*   **Nixpkgs:**  The flake depends on a specific Nixpkgs release (nixos-25.05).
+*   **Nixpkgs:**  The flake depends on a specific Nixpkgs release (nixos-25.11).
 *   **Home Manager:**  Installed and configured to work with the flake.
 *   **Alejandra:**  The flake uses Alejandra for system formatting.
 
@@ -72,9 +72,9 @@ Here's how to apply this NixOS flake to your system:
     ```bash
     nixos-rebuild switch --flake "<flake_name>"
     ```
-    Replace `<flake_name>` with the actual name of the flake.  This can be found in the `flake.nix` file (e.g., `https://nixos.nixos.org/channels/costa-flake/nixos-25.05`).  For example:
+    Replace `<flake_name>` with the actual name of the flake.  This can be found in the `flake.nix` file (e.g., `https://nixos.nixos.org/channels/costa-flake/nixos-25.11`).  For example:
     ```bash
-    nixos-rebuild switch --flake "https://nixos.nixos.org/channels/costa-flake/nixos-25.05"
+    nixos-rebuild switch --flake "https://nixos.nixos.org/channels/costa-flake/nixos-25.11"
     ```
 
 4.  **Reboot (if necessary):**  After the rebuild completes, you might need to reboot your system for the changes to fully take effect.
