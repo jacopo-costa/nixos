@@ -53,7 +53,7 @@
 
   # System
   system = {
-    stateVersion = "25.05";
+    stateVersion = "25.11";
     autoUpgrade = {
       enable = true;
       flake = inputs.self.outPath;

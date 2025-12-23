@@ -1,4 +1,4 @@
-{...}: {
+{
   # Sops secrets
   sops = {
     # Where the generated secrets with sops <filename> is

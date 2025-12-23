@@ -26,7 +26,6 @@
     # OpenGL
     graphics.extraPackages = with pkgs; [
       rocmPackages.clr.icd
-      amdvlk
     ];
   };
 
@@ -38,6 +37,7 @@
   # Pkgs
   environment = {
     systemPackages = with pkgs; [
+      protonup-qt
       openrgb
       (vscode-with-extensions.override {
         vscodeExtensions = with vscode-extensions; [

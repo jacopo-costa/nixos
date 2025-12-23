@@ -1,4 +1,4 @@
-{...}: {
+{
   homelab = {
     enable = true;
     user = "ice";
