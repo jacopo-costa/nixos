@@ -99,6 +99,17 @@ in {
       };
     };
 
+    # Virtualisation
+    virtualisation = {
+      libvirtd = {
+        enable = true;
+
+        onBoot = "start";
+        onShutdown = "shutdown";
+      };
+      spiceUSBRedirection.enable = true;
+    };
+
     # Turn off every night at 2AM
     # systemd.timers."goodnight" = {
     #   wantedBy = ["timers.target"];

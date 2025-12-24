@@ -9,4 +9,8 @@
       enable = true;
     };
   };
+
+  virtualisation.libvirtd.allowedBridges = [
+    "br0"
+  ];
 }
