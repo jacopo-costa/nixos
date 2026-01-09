@@ -68,6 +68,9 @@ in {
       powertop
       hdparm
       smartmontools
+
+      # Virtualisation
+      virt-manager
     ];
 
     # Activate power save on any sd* disks and spindown after 10 minutes
@@ -109,6 +112,7 @@ in {
       };
       spiceUSBRedirection.enable = true;
     };
+
 
     # Turn off every night at 2AM
     # systemd.timers."goodnight" = {
