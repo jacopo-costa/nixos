@@ -5,14 +5,7 @@
 }: let
   cfg = config.homelab.containers;
 in {
-  imports = [
-    ./crowdsec
-    ./immich
-    ./jellyfin
-    ./pocket-id
-    ./traefik
-    ./vaultwarden
-  ];
+  imports = [];
 
   # Options
   options.homelab.containers = {
@@ -21,22 +14,17 @@ in {
 
   config = lib.mkIf cfg.enable {
     # Setup containerization
-    virtualisation.podman = {
+    virtualisation.docker = {
       enable = true;
-      dockerCompat = true;
-      autoPrune = {
-        enable = true;
-        dates = "weekly";
-        flags = [
-          "--filter=until=24h"
-          "--filter=label!=important"
-        ];
+      autoPrune.enable = true;
+      daemon.settings = {
+        userland-proxy = false;
+        ipv6 = false;
       };
-      defaultNetwork.settings.dns_enabled = true;
     };
 
     virtualisation.oci-containers = {
-      backend = "podman";
+      backend = "docker";
     };
   };
 }
