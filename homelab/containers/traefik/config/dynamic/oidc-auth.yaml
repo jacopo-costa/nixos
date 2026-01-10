@@ -1,0 +1,12 @@
+http:
+  middlewares:
+    oidc-auth:
+      plugin:
+        traefik-oidc-auth:
+          Secret: "tz7whhvL9j58kBimymHVLY2TrQro3K6W" # Please change this secret for your setup
+          Provider:
+            Url: "https://auth.dimoracosta.it"
+            ClientId: "8a03f661-9f4e-4cc6-9448-26d87df59230"
+            ClientSecret: "a90Exvz8nf6IZXA6I9TxuPQq6PoVTBXa"
+            #UsePkce: true # Or use PKCE if your Provider supports this
+          Scopes: ["openid", "profile", "email"]

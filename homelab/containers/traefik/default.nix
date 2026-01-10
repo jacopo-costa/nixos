@@ -15,17 +15,22 @@ in {
     };
   };
   config = lib.mkIf cfg.enable {
-    system.activationScripts.createTraefikNet = lib.mkAfter ''
-      podman network exists traefik || podman network create traefik
-    '';
-
     system.activationScripts.createTraefikLogVol = lib.mkAfter ''
       podman volume exists traefik_logs || podman volume create traefik_logs
     '';
 
+    systemd.tmpfiles.rules = [
+      "d /srv/traefik/config/dynamic 0755 root root -"
+      "d /srv/traefik/config/data/certs 0755 root root -"
+    ];
+
     virtualisation.oci-containers.containers = {
       traefik = {
         image = "traefik:latest";
+
+        dependsOn = [
+          "crowdsec"
+        ];
 
         networks = [
           "traefik"
@@ -41,8 +46,8 @@ in {
 
         volumes = [
           "/run/podman/podman.sock:/var/run/docker.sock:z"
-          "/srv/traefik/traefik.yaml:/etc/traefik/traefik.yaml:ro"
-          "/srv/traefik/dynamic/:/etc/traefik/dynamic/:ro"
+          "/srv/traefik/config/traefik.yaml:/etc/traefik/traefik.yaml:ro"
+          "/srv/traefik/config/dynamic/:/etc/traefik/dynamic/:ro"
           "/srv/traefik/data/certs/:/var/traefik/certs/:rw"
           "traefik_logs:/var/log/traefik"
         ];
