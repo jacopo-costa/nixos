@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   container = "crowdsec";
@@ -12,15 +13,15 @@ in {
   };
   config = lib.mkIf cfg.enable {
     system.activationScripts.createCrowdsecDBVol = lib.mkAfter ''
-      podman volume exists crowdsec_db || podman volume create crowdsec_db
+      ${pkgs.podman}/bin/podman volume exists crowdsec_db || ${pkgs.podman}/bin/podman volume create crowdsec_db
     '';
 
     system.activationScripts.createCrowdsecConfVol = lib.mkAfter ''
-      podman volume exists crowdsec_config || podman volume create crowdsec_config
+      ${pkgs.podman}/bin/podman volume exists crowdsec_config || ${pkgs.podman}/bin/podman volume create crowdsec_config
     '';
 
     system.activationScripts.createTraefikNet = lib.mkAfter ''
-      podman network exists traefik || podman network create traefik
+      ${pkgs.podman}/bin/podman network exists traefik || ${pkgs.podman}/bin/podman network create traefik
     '';
 
     systemd.tmpfiles.rules = [
