@@ -1,0 +1,70 @@
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+api: {}
+
+certificatesResolvers:
+  cloudflare:
+    acme:
+      email: "dimoracosta.system@gmail.com"
+      storage: "/var/traefik/certs/cloudflare-acme.json"
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "8.8.8.8:53"
+
+entryPoints:
+  web:
+    address: :80
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: :443
+    http:
+      tls:
+        certResolver: cloudflare
+        domains:
+          - main: dimoracosta.it
+            sans:
+              - '*.dimoracosta.it'
+      middlewares:
+        - security-headers@file
+        - ratelimiter@file
+        - crowdsec-bouncer@file
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+
+accessLog:
+  filePath: "/var/log/traefik/access.log"
+  format: json
+  filters:
+    statusCodes:
+      - "200-299" # log successful http requests
+      - "400-599" # log failed http requests
+  # collect logs as in-memory buffer before writing into log file
+  bufferingSize: 0
+  fields:
+    headers:
+      defaultMode: drop # drop all headers per default
+      names:
+        User-Agent: keep # log user agent strings
+
+experimental:
+  plugins:
+    crowdsec-bouncer-traefik-plugin:
+      moduleName: "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
+      version: "v1.4.5"
+    traefik-oidc-auth:
+      moduleName: "github.com/sevensolutions/traefik-oidc-auth"
+      version: "v0.17.0"

@@ -1,0 +1,25 @@
+http:
+  middlewares:
+    security-headers:
+      headers:
+        contentTypeNosniff: true
+        browserXssFilter: true
+        frameDeny: true
+        customFrameOptionsValue: "SAMEORIGIN"
+        sslRedirect: true
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        referrerPolicy: "strict-origin-when-cross-origin"
+        contentSecurityPolicy: >
+          default-src 'none';
+          script-src 'self';
+          style-src 'self';
+          img-src 'self';
+          font-src 'self';
+          object-src 'none';
+          base-uri 'self';
+          frame-ancestors 'none';
+        customResponseHeaders:
+          server: ""
+          x-powered-by: ""

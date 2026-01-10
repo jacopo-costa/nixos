@@ -5,7 +5,12 @@
 }: let
   cfg = config.homelab.containers;
 in {
-  imports = [];
+  imports = [
+    ./crowdsec
+    ./pocket-id
+    ./traefik
+    ./vaultwarden
+  ];
 
   # Options
   options.homelab.containers = {
