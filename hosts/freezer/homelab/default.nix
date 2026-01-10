@@ -53,23 +53,23 @@ in {
       enable = true;
 
       # Crowdsec
-      crowdsec.enable = false;
+      crowdsec.enable = true;
 
       # Traefik
       traefik = {
-        enable = false;
+        enable = true;
         cloudflareEnvPath = config.sops.templates.cloudflareEnv.path;
       };
 
       # Pocket ID
       pocket-id = {
-        enable = false;
+        enable = true;
         pocketIdEnvPath = config.sops.templates.pocketIdEnv.path;
       };
 
       # Vaultwarden
       vaultwarden = {
-        enable = false;
+        enable = true;
         vaultwardenEnvPath = config.sops.templates.vaultwardenEnv.path;
       };
     };

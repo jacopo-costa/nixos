@@ -40,11 +40,11 @@ in {
         ];
 
         labels = {
-          "traefik.enable" = true;
+          "traefik.enable" = "true";
           "traefik.docker.network" = "traefik";
           "traefik.http.routers.vaultwarden.rule" = "Host(`vault.dimoracosta.it`)";
           "traefik.http.routers.vaultwarden.entrypoints" = "websecure";
-          "traefik.http.services.vaultwarden.loadbalancer.server.port" = 80;
+          "traefik.http.services.vaultwarden.loadbalancer.server.port" = "80";
         };
 
         autoStart = true;

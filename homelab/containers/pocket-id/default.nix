@@ -40,11 +40,11 @@ in {
         ];
 
         labels = {
-          "traefik.enable" = true;
+          "traefik.enable" = "true";
           "traefik.docker.network" = "traefik";
           "traefik.http.routers.pocket-id.rule" = "Host(`auth.dimoracosta.it`)";
           "traefik.http.routers.pocket-id.entrypoints" = "websecure";
-          "traefik.http.services.pocket-id.loadbalancer.server.port" = 1411;
+          "traefik.http.services.pocket-id.loadbalancer.server.port" = "1411";
         };
 
         extraOptions = [

@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   container = "traefik";
@@ -16,7 +17,7 @@ in {
   };
   config = lib.mkIf cfg.enable {
     system.activationScripts.createTraefikLogVol = lib.mkAfter ''
-      podman volume exists traefik_logs || podman volume create traefik_logs
+      ${pkgs.podman}/bin/podman volume exists traefik_logs || ${pkgs.podman}/bin/podman volume create traefik_logs
     '';
 
     systemd.tmpfiles.rules = [
