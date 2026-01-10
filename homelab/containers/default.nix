@@ -7,6 +7,8 @@
 in {
   imports = [
     ./crowdsec
+    ./immich
+    ./jellyfin
     ./pocket-id
     ./traefik
     ./vaultwarden

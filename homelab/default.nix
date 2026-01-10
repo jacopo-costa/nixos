@@ -113,7 +113,6 @@ in {
       spiceUSBRedirection.enable = true;
     };
 
-
     # Turn off every night at 2AM
     # systemd.timers."goodnight" = {
     #   wantedBy = ["timers.target"];
