@@ -16,7 +16,7 @@ in {
   };
   config = lib.mkIf cfg.enable {
     systemd.tmpfiles.rules = [
-      "d /srv/vaultwarden 0755 root root -"
+      "d /srv/${container} 0755 root root -"
     ];
 
     virtualisation.oci-containers.containers = {
@@ -42,7 +42,7 @@ in {
         labels = {
           "traefik.enable" = "true";
           "traefik.docker.network" = "traefik";
-          "traefik.http.routers.vaultwarden.rule" = "Host(`vault.dimoracosta.it`)";
+          "traefik.http.routers.vaultwarden.rule" = "Host(`vault.${homelab.baseDomain}`)";
           "traefik.http.routers.vaultwarden.entrypoints" = "websecure";
           "traefik.http.services.vaultwarden.loadbalancer.server.port" = "80";
         };

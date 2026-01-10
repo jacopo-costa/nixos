@@ -1,5 +1,5 @@
 {config, ...}: let
-  hl = config.homelab;
+  homelab = config.homelab;
   smtpHost = "smtp.gmail.com";
   smtpPort = 587;
 in {
@@ -14,16 +14,21 @@ in {
     secrets.maxmindLicenseKey = {};
     secrets.pocketIdEncKey = {};
 
+    # Immich
+    secrets."immich/db_username" = {};
+    secrets."immich/db_password" = {};
+    secrets."immich/db_name" = {};
+
     templates = {
       cloudflareEnv.content = ''
         CF_DNS_API_TOKEN=${config.sops.placeholder.cloudflareToken}
       '';
       vaultwardenEnv.content = ''
-        DOMAIN=https://vault.${hl.baseDomain}
+        DOMAIN=https://vault.${homelab.baseDomain}
         SIGNUPS_ALLOWED=false
         ADMIN_TOKEN='${config.sops.placeholder.vaultwardenAdminToken}'
         ROCKET_ADDRESS=127.0.0.1
-        ROCKET_PORT=8222
+        ROCKET_PORT=80
         SMTP_HOST=${smtpHost}
         SMTP_PORT=${toString smtpPort}
         SMTP_FROM=${config.sops.placeholder."smtp/user"}
@@ -36,10 +41,27 @@ in {
         IP_HEADER=X-Forwarded-For
       '';
       pocketIdEnv.content = ''
-        APP_URL=https://auth.${hl.baseDomain}
+        APP_URL=https://auth.${homelab.baseDomain}
         TRUST_PROXY=true
         MAXMIND_LICENSE_KEY=${config.sops.placeholder.maxmindLicenseKey}
         ENCRYPTION_KEY=${config.sops.placeholder.pocketIdEncKey}
+      '';
+      immichEnv.content = ''
+        UPLOAD_LOCATION=/mnt/tank/immich
+        DB_DATA_LOCATION=/srv/immich/postgres
+
+        TZ=Europe/Rome
+
+        IMMICH_VERSION=release
+
+        DB_PASSWORD=${config.sops.placeholder."immich/db_password"}
+        DB_USERNAME=${config.sops.placeholder."immich/db_username"}
+        DB_DATABASE_NAME=${config.sops.placeholder."immich/db_name"}
+
+        POSTGRES_PASSWORD=${config.sops.placeholder."immich/db_password"}
+        POSTGRES_USER=${config.sops.placeholder."immich/db_username"}
+        POSTGRES_DB=${config.sops.placeholder."immich/db_name"}
+        POSTGRES_INITDB_ARGS=--data-checksums
       '';
     };
   };
@@ -71,6 +93,12 @@ in {
       vaultwarden = {
         enable = true;
         vaultwardenEnvPath = config.sops.templates.vaultwardenEnv.path;
+      };
+
+      # Immich
+      immich = {
+        enable = true;
+        immichEnvPath = config.sops.templates.immichEnv.path;
       };
     };
   };

@@ -21,12 +21,12 @@ in {
     '';
 
     systemd.tmpfiles.rules = [
-      "d /srv/traefik/config/dynamic 0755 root root -"
-      "d /srv/traefik/config/data/certs 0755 root root -"
+      "d /srv/${container}/config/dynamic 0755 root root -"
+      "d /srv/${container}/config/data/certs 0755 root root -"
     ];
 
     virtualisation.oci-containers.containers = {
-      traefik = {
+      ${container} = {
         image = "traefik:latest";
 
         dependsOn = [

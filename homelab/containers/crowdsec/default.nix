@@ -25,7 +25,7 @@ in {
     '';
 
     systemd.tmpfiles.rules = [
-      "d /srv/crowdsec 0755 root root -"
+      "d /srv/${container} 0755 root root -"
     ];
 
     virtualisation.oci-containers.containers = {

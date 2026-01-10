@@ -16,7 +16,7 @@ in {
   };
   config = lib.mkIf cfg.enable {
     systemd.tmpfiles.rules = [
-      "d /srv/pocket-id 0755 root root -"
+      "d /srv/${container} 0755 root root -"
     ];
 
     virtualisation.oci-containers.containers = {
@@ -42,7 +42,7 @@ in {
         labels = {
           "traefik.enable" = "true";
           "traefik.docker.network" = "traefik";
-          "traefik.http.routers.pocket-id.rule" = "Host(`auth.dimoracosta.it`)";
+          "traefik.http.routers.pocket-id.rule" = "Host(`auth.${homelab.baseDomain}`)";
           "traefik.http.routers.pocket-id.entrypoints" = "websecure";
           "traefik.http.services.pocket-id.loadbalancer.server.port" = "1411";
         };
