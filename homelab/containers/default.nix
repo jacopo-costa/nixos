@@ -20,6 +20,7 @@ in {
       daemon.settings = {
         userland-proxy = false;
         ipv6 = false;
+        no-new-privileges = true;
       };
     };
 
