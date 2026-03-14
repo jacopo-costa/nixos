@@ -47,12 +47,6 @@
         system: let
           pkgs = nixpkgs.legacyPackages.${system};
         in {
-          packages.default = pkgs.mkShell {
-            packages = [
-              pkgs.just
-              pkgs.nixos-rebuild
-            ];
-          };
           formatter = pkgs.alejandra;
         }
       ))

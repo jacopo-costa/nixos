@@ -76,7 +76,7 @@ in {
     environment.systemPackages = with pkgs; [
       # Multimedia
       vlc
-      # jellyfin-media-player
+      jellyfin-media-player
       # Spelling
       aspell
       aspellDicts.it
