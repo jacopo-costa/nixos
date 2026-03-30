@@ -84,5 +84,15 @@
           };
         }
       ])
+      (mkNixos "wsl" nixpkgs [
+        # Users
+        ./users/jacopo
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.users = {
+            jacopo = import ./users/jacopo/home.nix;
+          };
+        }
+      ])
     ];
 }
