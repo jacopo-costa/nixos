@@ -1,10 +1,10 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
-  service = "caddy";
-  cfg = config.homelab.services.${service};
+  cfg = config.homelab.services.caddy;
   homelab = config.homelab;
 in {
   options.homelab.services.caddy = {
@@ -14,6 +14,7 @@ in {
       description = "Path to the Cloudflare environment file";
     };
   };
+
   config = lib.mkIf cfg.enable {
     # HTTP & HTTPS ports
     networking.firewall.allowedTCPPorts = [
@@ -21,39 +22,46 @@ in {
       443
     ];
 
-    # ACME certificates service
-    security.acme = {
-      acceptTerms = true;
-      defaults.email = "dimoracosta.system@gmail.com";
-      certs.${config.homelab.baseDomain} = {
-        reloadServices = ["caddy.service"];
-        domain = "${config.homelab.baseDomain}";
-        extraDomainNames = ["*.${config.homelab.baseDomain}"];
-        dnsProvider = "cloudflare";
-        dnsResolver = "1.1.1.1:53";
-        dnsPropagationCheck = true;
-        group = config.services.caddy.group;
-        environmentFile = "${cfg.cloudflareEnvPath}";
-      };
-    };
-
-    services.${service} = {
+    services.caddy = {
       enable = true;
-      globalConfig = ''
-        auto_https off
-      '';
-      virtualHosts = {
-        "https://${config.homelab.baseDomain}" = {
-          extraConfig = ''
-            redir https://{host}{uri}
-          '';
-        };
-        "https://*.${config.homelab.baseDomain}" = {
-          extraConfig = ''
-            redir https://{host}{uri}
-          '';
-        };
+      package = pkgs.caddy.withPlugins {
+        plugins = ["github.com/caddy-dns/cloudflare@v0.2.4"];
+        hash = lib.fakeHash;
       };
+
+      # Load the Cloudflare token into Caddy's environment
+      environmentFiles = [cfg.cloudflareEnvPath];
+
+      globalConfig = lib.mkAfter ''
+        email dimoracosta.system@gmail.com
+
+        (cloudflare_tls) {
+          tls {
+            dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+            resolvers 1.1.1.1
+          }
+        }
+
+        (security_headers) {
+          header {
+            # Prevent clickjacking
+            X-Frame-Options "SAMEORIGIN"
+            # Prevent MIME type sniffing
+            X-Content-Type-Options "nosniff"
+            # Force HTTPS
+            Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+            # Control referrer information
+            Referrer-Policy "strict-origin-when-cross-origin"
+            # Disable FLoC/interest-cohort tracking
+            Permissions-Policy "interest-cohort=()"
+            # Basic CSP — tighten per-service as needed
+            Content-Security-Policy "default-src 'self'; script-src 'self'; object-src 'none'"
+            # Remove server identity headers
+            -Server
+            -X-Powered-By
+          }
+        }
+      '';
     };
   };
 }

@@ -6,7 +6,10 @@
 }: let
   cfg = config.homelab.services;
 in {
-  imports = [];
+  imports = [
+    ./caddy
+    ./vaultwarden
+  ];
 
   # Options
   options.homelab.services = {
@@ -21,6 +24,7 @@ in {
       daemon.settings = {
         userland-proxy = false;
         ipv6 = false;
+        no-new-privileges = true;
       };
     };
 

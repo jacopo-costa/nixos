@@ -80,6 +80,14 @@
     };
 
     hardware.openrgb.enable = true;
+
+    # AI
+    ollama = {
+      enable = true;
+      package = pkgs.ollama-rocm;
+      # results in environment variable "HSA_OVERRIDE_GFX_VERSION=10.3.0"
+      rocmOverrideGfx = "10.3.0";
+    };
   };
 
   # Swap
