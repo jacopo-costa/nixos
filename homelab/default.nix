@@ -40,7 +40,7 @@ in {
   };
 
   imports = [
-    ./containers
+    ./services
   ];
 
   config = lib.mkIf cfg.enable {

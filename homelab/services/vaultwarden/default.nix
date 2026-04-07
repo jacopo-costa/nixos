@@ -3,17 +3,16 @@
   lib,
   ...
 }: let
-  service = "vaultwarden";
-  cfg = config.homelab.services.${service};
+  cfg = config.homelab.services.vaultwarden;
   homelab = config.homelab;
 in {
-  options.homelab.services.${service} = {
+  options.homelab.services.vaultwarden = {
     enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+      description = "Enable Vaultwarden";
     };
     vaultwardenEnvPath = lib.mkOption {
       type = lib.types.path;
-      description = "Path to the ${service} environment file";
+      description = "Path to the Vaultwarden environment file";
     };
     url = lib.mkOption {
       type = lib.types.str;
@@ -26,14 +25,15 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    services.${service} = {
+    services.vaultwarden = {
       enable = true;
       environmentFile = cfg.vaultwardenEnvPath;
     };
 
     services.caddy.virtualHosts."${cfg.url}" = {
-      useACMEHost = homelab.baseDomain;
       extraConfig = ''
+        import cloudflare_tls
+        import security_headers
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
