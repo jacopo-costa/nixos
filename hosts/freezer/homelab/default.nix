@@ -10,20 +10,27 @@ in {
       mode = "0440";
     };
 
+    # Caddy + Crowdsec
     secrets.cloudflareToken = {};
+    secrets.crowdsecBouncerKey = {};
+
+    # Pocket-ID
+    secrets."pocket-id/maxmindLicenseKey" = {};
+    secrets."pocket-id/encryptionKey" = {};
 
     secrets.vaultwardenAdminToken = {};
-
-    secrets.nextcloudAdminPass = {};
-
-    secrets.paperlessAdminPass = {};
-
-    secrets.authentikSecretKey = {};
 
     templates = {
       cloudflareEnv.content = ''
         CF_DNS_API_TOKEN=${config.sops.placeholder.cloudflareToken}
+        CROWDSEC_BOUNCER_KEY=${config.sops.placeholder.crowdsecBouncerKey}
       '';
+
+      pocketIdEnv.content = ''
+        MAXMIND_LICENSE_KEY=${config.sops.placeholder."pocket-id/maxmindLicenseKey"}
+        ENCRYPTION_KEY=${config.sops.placeholder."pocket-id/encryptionKey"}
+      '';
+
       vaultwardenEnv.content = ''
         DOMAIN=https://vault.${hl.baseDomain}
         SIGNUPS_ALLOWED=false
@@ -39,17 +46,7 @@ in {
         SMTP_TIMEOUT=10
         EXTENDED_LOGGING=true
         LOG_LEVEL=warn
-        IP_HEADER=X-Forwarded-For
-      '';
-      authentikEnv.content = ''
-        AUTHENTIK_SECRET_KEY=${config.sops.placeholder.authentikSecretKey}
-        AUTHENTIK_ERROR_REPORTING__ENABLED=true
-        AUTHENTIK_EMAIL__HOST=${smtpHost}
-        AUTHENTIK_EMAIL__PORT=${toString smtpPort}
-        AUTHENTIK_EMAIL__USERNAME=${config.sops.placeholder."smtp/user"}
-        AUTHENTIK_EMAIL__PASSWORD=${config.sops.placeholder."smtp/password"}
-        AUTHENTIK_EMAIL__USE_TLS=true
-        AUTHENTIK_EMAIL__FROM=Authentik <${config.sops.placeholder."smtp/user"}>
+        IP_HEADER=X-Real-IP
       '';
     };
   };
@@ -68,6 +65,12 @@ in {
       caddy = {
         enable = true;
         cloudflareEnvPath = config.sops.templates.cloudflareEnv.path;
+      };
+
+      # OIDC Auth
+      pocket-id = {
+        enable = true;
+        pocketIdEnvPath = config.sops.templates.pocketIdEnv.path;
       };
 
       # Passwords

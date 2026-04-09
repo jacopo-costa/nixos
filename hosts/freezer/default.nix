@@ -32,16 +32,6 @@
     zfs.extraPools = ["tank"];
   };
 
-  # Filesystems
-  # fileSystems."/mnt/tankette" = {
-  #   device = "/dev/disk/by-uuid/c0643c74-85f3-4d4b-8ee6-e75cd16ae213";
-  #   fsType = "ext4";
-  #   options = [
-  #     "defaults"
-  #     "noatime"
-  #   ];
-  # };
-
   # Hardware
   hardware = {
     cpu.intel.updateMicrocode = true;
@@ -58,10 +48,13 @@
     };
   };
 
-  ## Hardware acceleration for jellyfin
+  # Hardware acceleration for jellyfin
   nixpkgs.config.packageOverrides = pkgs: {
     vaapiIntel = pkgs.vaapiIntel.override {enableHybridCodec = true;};
   };
+
+  # Programs
+  programs.nix-ld.enable = true;
 
   # Services
   services.openssh = {

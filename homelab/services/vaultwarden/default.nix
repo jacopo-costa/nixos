@@ -32,10 +32,15 @@ in {
 
     services.caddy.virtualHosts."${cfg.url}" = {
       extraConfig = ''
-        import cloudflare_tls
-        import security_headers
+        import crowdsec_protected
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
+    };
+
+    # Start Vaultwarden only after caddy
+    systemd.services.vaultwarden = {
+      after = ["caddy.service"];
+      wants = ["caddy.service"];
     };
   };
 }

@@ -8,6 +8,7 @@
 in {
   imports = [
     ./caddy
+    ./pocket-id
     ./vaultwarden
   ];
 
