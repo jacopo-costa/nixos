@@ -3,13 +3,12 @@
   lib,
   ...
 }: let
-  service = "ollama";
-  cfg = config.homelab.services.${service};
+  cfg = config.homelab.services.ollama;
   homelab = config.homelab;
 in {
-  options.homelab.services.${service} = {
+  options.homelab.services.ollama = {
     enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+      description = "Enable ollama";
     };
     port = lib.mkOption {
       type = lib.types.port;
@@ -17,7 +16,7 @@ in {
     };
   };
   config = lib.mkIf cfg.enable {
-    services.${service} = {
+    services.ollama = {
       enable = true;
       port = cfg.port;
       openFirewall = true;

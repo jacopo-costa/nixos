@@ -3,31 +3,34 @@
   lib,
   ...
 }: let
-  cfg = config.homelab.services.vaultwarden;
+  cfg = config.homelab.services.pocket-id;
   homelab = config.homelab;
 in {
-  options.homelab.services.vaultwarden = {
+  options.homelab.services.pocket-id = {
     enable = lib.mkEnableOption {
-      description = "Enable Vaultwarden";
+      description = "Enable Pocket-ID";
     };
-    vaultwardenEnvPath = lib.mkOption {
+    pocketIdEnvPath = lib.mkOption {
       type = lib.types.path;
-      description = "Path to the Vaultwarden environment file";
+      description = "Path to the Pocket-ID environment file";
     };
     url = lib.mkOption {
       type = lib.types.str;
-      default = "vault.${homelab.baseDomain}";
+      default = "auth.${homelab.baseDomain}";
     };
+
     port = lib.mkOption {
       type = lib.types.port;
-      default = 8222;
+      default = 1411;
     };
   };
-
   config = lib.mkIf cfg.enable {
-    services.vaultwarden = {
+    services.pocket-id = {
       enable = true;
-      environmentFile = cfg.vaultwardenEnvPath;
+      settings = {
+        APP_URL = cfg.url;
+        TRUST_PROXY = true;
+      };
     };
 
     services.caddy.virtualHosts."${cfg.url}" = {
@@ -37,8 +40,8 @@ in {
       '';
     };
 
-    # Start Vaultwarden only after caddy
-    systemd.services.vaultwarden = {
+    # Start Pocket-ID only after caddy
+    systemd.services.pocket-id = {
       after = ["caddy.service"];
       wants = ["caddy.service"];
     };
