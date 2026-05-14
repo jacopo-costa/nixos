@@ -7,9 +7,7 @@
   homelab = config.homelab;
 in {
   options.homelab.services.pocket-id = {
-    enable = lib.mkEnableOption {
-      description = "Enable Pocket-ID";
-    };
+    enable = lib.mkEnableOption "Enable Pocket-ID";
     pocketIdEnvPath = lib.mkOption {
       type = lib.types.path;
       description = "Path to the Pocket-ID environment file";
@@ -25,23 +23,38 @@ in {
     };
   };
   config = lib.mkIf cfg.enable {
-    services.pocket-id = {
-      enable = true;
-      settings = {
-        APP_URL = cfg.url;
-        TRUST_PROXY = true;
+    virtualisation.oci-containers.containers = {
+      pocket-id = {
+        image = "ghcr.io/pocket-id/pocket-id:latest";
+        ports = [
+          "127.0.0.1:${toString cfg.port}:1411"
+        ];
+        volumes = [
+          "/var/lib/pocket-id:/app/data"
+        ];
+        pull = "always";
+        environmentFiles = [
+          cfg.pocketIdEnvPath
+        ];
+
+        extraOptions = [
+          "--health-cmd=['/app/pocket-id', 'healthcheck']"
+          "--health-interval=90s"
+          "--health-timeout=5s"
+          "--health-retries=2"
+          "--health-start-period=10s"
+        ];
       };
     };
 
     services.caddy.virtualHosts."${cfg.url}" = {
       extraConfig = ''
-        import crowdsec_protected
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
 
     # Start Pocket-ID only after caddy
-    systemd.services.pocket-id = {
+    systemd.services.docker-pocket-id = {
       after = ["caddy.service"];
       wants = ["caddy.service"];
     };

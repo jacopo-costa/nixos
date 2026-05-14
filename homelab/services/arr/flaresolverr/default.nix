@@ -3,13 +3,12 @@
   lib,
   ...
 }: let
-  service = "flaresolverr";
-  cfg = config.homelab.services.${service};
+  cfg = config.homelab.services.flaresolverr;
   homelab = config.homelab;
 in {
-  options.homelab.services.${service} = {
+  options.homelab.services.flaresolverr = {
     enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+      description = "Enable Flaresolverr";
     };
     port = lib.mkOption {
       type = lib.types.port;
@@ -17,7 +16,7 @@ in {
     };
   };
   config = lib.mkIf cfg.enable {
-    services.${service} = {
+    services.flaresolverr = {
       enable = true;
       port = cfg.port;
     };

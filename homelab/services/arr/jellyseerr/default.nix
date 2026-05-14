@@ -3,13 +3,12 @@
   lib,
   ...
 }: let
-  service = "jellyseerr";
-  cfg = config.homelab.services.${service};
+  cfg = config.homelab.services.jellyseerr;
   homelab = config.homelab;
 in {
-  options.homelab.services.${service} = {
+  options.homelab.services.jellyseerr = {
     enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+      description = "Enable Jellyseerr";
     };
     url = lib.mkOption {
       type = lib.types.str;
@@ -21,16 +20,21 @@ in {
     };
   };
   config = lib.mkIf cfg.enable {
-    services.${service} = {
+    services.jellyseerr = {
       enable = true;
       port = cfg.port;
     };
 
     services.caddy.virtualHosts."${cfg.url}" = {
-      useACMEHost = homelab.baseDomain;
       extraConfig = ''
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
+    };
+
+    # Start Jellyseerr only after caddy
+    systemd.services.jellyseerr = {
+      after = ["caddy.service"];
+      wants = ["caddy.service"];
     };
   };
 }

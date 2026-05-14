@@ -3,13 +3,12 @@
   lib,
   ...
 }: let
-  service = "prowlarr";
-  cfg = config.homelab.services.${service};
+  cfg = config.homelab.services.prowlarr;
   homelab = config.homelab;
 in {
-  options.homelab.services.${service} = {
+  options.homelab.services.prowlarr = {
     enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+      description = "Enable Prowlarr";
     };
     port = lib.mkOption {
       type = lib.types.port;
@@ -17,7 +16,7 @@ in {
     };
   };
   config = lib.mkIf cfg.enable {
-    services.${service} = {
+    services.prowlarr = {
       enable = true;
       settings.server.port = cfg.port;
       openFirewall = true;
