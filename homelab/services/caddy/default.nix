@@ -136,8 +136,6 @@ in {
         extraConfig = ''
           (security_headers) {
             header {
-              # Prevent clickjacking
-              X-Frame-Options "SAMEORIGIN"
               # Prevent MIME type sniffing
               X-Content-Type-Options "nosniff"
               # Force HTTPS
@@ -146,8 +144,6 @@ in {
               Referrer-Policy "strict-origin-when-cross-origin"
               # Disable FLoC/interest-cohort tracking
               Permissions-Policy "interest-cohort=()"
-              # Basic CSP — tighten per-service as needed
-              Content-Security-Policy "default-src 'self'; script-src 'self'; object-src 'none'"
               # Remove server identity headers
               -Server
               -X-Powered-By
@@ -176,11 +172,6 @@ in {
               dns cloudflare {$CF_DNS_API_TOKEN}
               resolvers 1.1.1.1
             }
-          '';
-
-          "hello.${homelab.baseDomain}".extraConfig = ''
-            import crowdsec_protected
-            respond "Hello, world!"
           '';
         };
       };

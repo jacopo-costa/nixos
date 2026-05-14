@@ -3,13 +3,12 @@
   lib,
   ...
 }: let
-  service = "radarr";
-  cfg = config.homelab.services.${service};
+  cfg = config.homelab.services.radarr;
   homelab = config.homelab;
 in {
-  options.homelab.services.${service} = {
+  options.homelab.services.radarr = {
     enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+      description = "Enable Radarr";
     };
     port = lib.mkOption {
       type = lib.types.port;
@@ -17,7 +16,7 @@ in {
     };
   };
   config = lib.mkIf cfg.enable {
-    services.${service} = {
+    services.radarr = {
       enable = true;
       settings.server.port = cfg.port;
       openFirewall = true;

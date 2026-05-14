@@ -4,11 +4,10 @@
   pkgs,
   ...
 }: let
-  service = "immich";
-  cfg = config.homelab.services.${service};
+  cfg = config.homelab.services.immich;
   homelab = config.homelab;
 in {
-  options.homelab.services.${service} = {
+  options.homelab.services.immich = {
     enable = lib.mkEnableOption "Self-hosted photo and video management solution";
     user = lib.mkOption {
       default = config.homelab.user;
@@ -22,7 +21,7 @@ in {
     };
     mediaDir = lib.mkOption {
       type = lib.types.path;
-      default = "/tank/immich";
+      default = "/mnt/tank/immich";
     };
     url = lib.mkOption {
       type = lib.types.str;
@@ -39,15 +38,15 @@ in {
       "video"
       "render"
     ];
-    services.${service} = {
-      group = homelab.group;
+    services.immich = {
       enable = true;
+      group = homelab.group;
       port = cfg.port;
       mediaLocation = "${cfg.mediaDir}";
+      accelerationDevices = ["/dev/dri/renderD128"];
     };
 
     services.caddy.virtualHosts."${cfg.url}" = {
-      useACMEHost = homelab.baseDomain;
       extraConfig = ''
         reverse_proxy http://${config.services.immich.host}:${toString cfg.port}
       '';

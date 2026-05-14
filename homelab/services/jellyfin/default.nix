@@ -3,13 +3,12 @@
   lib,
   ...
 }: let
-  service = "jellyfin";
-  cfg = config.homelab.services.${service};
+  cfg = config.homelab.services.jellyfin;
   homelab = config.homelab;
 in {
-  options.homelab.services.${service} = {
+  options.homelab.services.jellyfin = {
     enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+      description = "Enable Jellyfin";
     };
     url = lib.mkOption {
       type = lib.types.str;
@@ -21,14 +20,13 @@ in {
     };
   };
   config = lib.mkIf cfg.enable {
-    services.${service} = {
+    services.jellyfin = {
       enable = true;
       user = homelab.user;
       group = homelab.group;
     };
 
     services.caddy.virtualHosts."${cfg.url}" = {
-      useACMEHost = homelab.baseDomain;
       extraConfig = ''
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';

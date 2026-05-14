@@ -3,13 +3,12 @@
   lib,
   ...
 }: let
-  service = "sonarr";
-  cfg = config.homelab.services.${service};
+  cfg = config.homelab.services.sonarr;
   homelab = config.homelab;
 in {
-  options.homelab.services.${service} = {
+  options.homelab.services.sonarr = {
     enable = lib.mkEnableOption {
-      description = "Enable ${service}";
+      description = "Enable Sonarr";
     };
     port = lib.mkOption {
       type = lib.types.port;
@@ -17,7 +16,7 @@ in {
     };
   };
   config = lib.mkIf cfg.enable {
-    services.${service} = {
+    services.sonarr = {
       enable = true;
       settings.server.port = cfg.port;
       openFirewall = true;

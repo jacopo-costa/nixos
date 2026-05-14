@@ -27,6 +27,7 @@ in {
       '';
 
       pocketIdEnv.content = ''
+        TRUST_PROXY=true
         MAXMIND_LICENSE_KEY=${config.sops.placeholder."pocket-id/maxmindLicenseKey"}
         ENCRYPTION_KEY=${config.sops.placeholder."pocket-id/encryptionKey"}
       '';
@@ -63,19 +64,19 @@ in {
 
       # Reverse proxy
       caddy = {
-        enable = true;
+        enable = false;
         cloudflareEnvPath = config.sops.templates.cloudflareEnv.path;
       };
 
       # OIDC Auth
       pocket-id = {
-        enable = true;
+        enable = false;
         pocketIdEnvPath = config.sops.templates.pocketIdEnv.path;
       };
 
       # Passwords
       vaultwarden = {
-        enable = true;
+        enable = false;
         vaultwardenEnvPath = config.sops.templates.vaultwardenEnv.path;
       };
 
