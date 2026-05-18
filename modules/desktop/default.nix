@@ -2,7 +2,6 @@
   lib,
   config,
   pkgs,
-  inputs,
   ...
 }: let
   cfg = config.desktop;
@@ -32,6 +31,7 @@ in {
           devices = ["nodev"];
           efiSupport = true;
           useOSProber = true;
+          # Set to default the Windows boot entry
           default = "2";
         };
 
@@ -74,9 +74,6 @@ in {
 
     # Pkgs
     environment.systemPackages = with pkgs; [
-      # Multimedia
-      vlc
-      jellyfin-media-player
       # Spelling
       aspell
       aspellDicts.it
@@ -85,25 +82,10 @@ in {
       kdePackages.kcalc
       kdePackages.sddm-kcm
       kdePackages.partitionmanager
-      # Cloud
-      nextcloud-client
-      # Zen Browser
-      inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
 
     # Power management
     powerManagement.enable = true;
-
-    # Programs
-    # programs = {
-    #   # Firefox
-    #   firefox = {
-    #     enable = true;
-    #     preferences = {
-    #       "widget.use-xdg-desktop-portal.file-picker" = 1;
-    #     };
-    #   };
-    # };
 
     # Flatpak
     services.flatpak.enable = true;

@@ -1,13 +1,4 @@
-inputs: let
-  homeManagerCfg = userPackages: {
-    home-manager.useGlobalPkgs = true;
-    home-manager.useUserPackages = userPackages;
-    home-manager.extraSpecialArgs = {
-      inherit inputs;
-    };
-    home-manager.backupFileExtension = "bak";
-  };
-in {
+inputs: {
   mkNixos = machineHostname: nixpkgsVersion: extraModules: {
     nixosConfigurations.${machineHostname} = nixpkgsVersion.lib.nixosSystem {
       system = "x86_64-linux";
@@ -23,12 +14,11 @@ in {
           # Disko
           inputs.disko.nixosModules.disko
           ./hosts/${machineHostname}/disko-config.nix
-          (homeManagerCfg true)
         ]
         ++ extraModules;
     };
   };
-  mkMerge = inputs.nixpkgs.lib.lists.foldl' (
+  mergeOutputs = inputs.nixpkgs.lib.lists.foldl' (
     a: b: inputs.nixpkgs.lib.attrsets.recursiveUpdate a b
   ) {};
 }
