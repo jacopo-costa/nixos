@@ -5,9 +5,6 @@
     # Stable release
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
 
-    # Flake Utils
-    flake-utils.url = "github:numtide/flake-utils";
-
     # Home Manager
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
@@ -34,55 +31,36 @@
   };
 
   outputs = {
-    flake-utils,
     nixpkgs,
     home-manager,
     ...
   } @ inputs: let
     helpers = import ./flakeHelpers.nix inputs;
-    inherit (helpers) mkMerge mkNixos;
+    inherit (helpers) mergeOutputs mkNixos;
+
+    systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
+    forAllSystems = f:
+      nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
   in
-    mkMerge [
-      (flake-utils.lib.eachDefaultSystem (
-        system: let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in {
-          formatter = pkgs.alejandra;
-        }
-      ))
+    mergeOutputs [
+      {
+        formatter = forAllSystems (pkgs: pkgs.alejandra);
+      }
       (mkNixos "cooler" nixpkgs [
-        ./desktop
+        ./modules/desktop
         # Users
         ./users/jacopo
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.users = {
-            jacopo = import ./users/jacopo/home.nix;
-          };
-        }
       ])
       (mkNixos "freezer" nixpkgs [
-        ./homelab
+        ./modules/homelab
         ./modules/email
         # Users
         ./users/jacopo
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.users = {
-            jacopo = import ./users/jacopo/home.nix;
-          };
-        }
       ])
       (mkNixos "librovivo" nixpkgs [
-        ./desktop
+        ./modules/desktop
         # Users
         ./users/jacopo
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.users = {
-            jacopo = import ./users/jacopo/home.nix;
-          };
-        }
       ])
     ];
 }

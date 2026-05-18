@@ -59,7 +59,6 @@ in {
     # Power Managment
     powerManagement = {
       enable = true;
-      cpuFreqGovernor = "powersave";
       powertop.enable = true;
     };
     services.thermald.enable = true;
@@ -74,19 +73,7 @@ in {
     ];
 
     # Activate power save on any sd* disks and spindown after 10 minutes
-    services.udev.extraRules = let
-      mkRule = as: lib.concatStringsSep ", " as;
-      mkRules = rs: lib.concatStringsSep "\n" rs;
-    in
-      mkRules [
-        (mkRule [
-          ''ACTION=="add|change"''
-          ''SUBSYSTEM=="block"''
-          ''KERNEL=="sd[a-z]"''
-          ''ATTR{queue/rotational}=="1"''
-          ''RUN+="${pkgs.hdparm}/bin/hdparm -B 90 -S 120 /dev/%k"''
-        ])
-      ];
+    services.udev.extraRules = ''ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", RUN+="${pkgs.hdparm}/bin/hdparm -B 90 -S 120 /dev/%k"'';
 
     # SMARTd
     services.smartd = {
@@ -112,20 +99,5 @@ in {
       };
       spiceUSBRedirection.enable = true;
     };
-
-    # Turn off every night at 2AM
-    # systemd.timers."goodnight" = {
-    #   wantedBy = ["timers.target"];
-    #   timerConfig = {
-    #     OnCalendar = "*-*-* 02:00:00";
-    #     AccuracySec = "1min";
-    #     Persistent = false;
-    #   };
-    # };
-
-    # systemd.services."goodnight" = {
-    #   script = "systemctl poweroff";
-    #   serviceConfig.Type = "oneshot";
-    # };
   };
 }

@@ -1,12 +1,19 @@
 {
   config,
+  lib,
   pkgs,
+  osConfig,
+  inputs,
   ...
-}: {
+}: let
+  isDesktop = osConfig.desktop.enable or false;
+  system = pkgs.stdenv.hostPlatform.system;
+in {
   home.username = "jacopo";
   home.homeDirectory = "/home/jacopo";
   home.stateVersion = "25.11";
 
+  # Always present
   programs = {
     zsh = {
       enable = true;
@@ -25,19 +32,25 @@
         ga = "git add .";
       };
 
-      history.size = 10000;
+      history.size = 5000;
     };
 
     git = {
       enable = true;
-      settings = {
-        user = {
-          name = "Jacopo Costa";
-          email = "costa.jacopo@gmail.com";
-        };
+      userName = "Jacopo Costa";
+      userEmail = "costa.jacopo@gmail.com";
+      extraConfig = {
         init.defaultBranch = "main";
         pull.rebase = true;
       };
     };
   };
+
+  # Desktop-only
+  home.packages = lib.mkIf isDesktop (with pkgs; [
+    nextcloud-client
+    vlc
+    jellyfin-media-player
+    inputs.zen-browser.packages.${system}.default
+  ]);
 }

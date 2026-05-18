@@ -4,65 +4,61 @@ Personal NixOS flake for three machines: a desktop (`cooler`), a homelab server 
 
 ## Hosts
 
-| Host        | Role                | CPU/GPU | Boot loader   | Notable bits                                          |
-| ----------- | ------------------- | ------- | ------------- | ----------------------------------------------------- |
-| `cooler`    | Desktop / gaming    | AMD     | GRUB          | Steam, Gamemode, ROCm Ollama, OpenRGB, KDE Plasma     |
-| `freezer`   | Homelab server      | Intel   | systemd-boot  | ZFS (`tank`), libvirt, Docker, Caddy + CrowdSec, sops |
-| `librovivo` | Laptop              | AMD     | systemd-boot  | KDE Plasma, Italian keymap, no auto-reboot on upgrade |
+| Host        | Role             | CPU/GPU | Boot loader  | Disk                       | Notable bits                                             |
+| ----------- | ---------------- | ------- | ------------ | -------------------------- | -------------------------------------------------------- |
+| `cooler`    | Desktop / gaming | AMD     | GRUB         | ext4 on `nvme0n1`          | Steam, Gamemode, ROCm Ollama, OpenRGB, KDE Plasma 6      |
+| `freezer`   | Homelab server   | Intel   | systemd-boot | ext4 root + ZFS pool `tank`| systemd-networkd bridge, libvirt, Docker, smartd, sops   |
+| `librovivo` | Laptop           | AMD     | systemd-boot | LUKS on `nvme0n1`, ext4    | KDE Plasma 6, Italian keymap, systemd-style initrd       |
 
-All hosts share the `hosts/_common` module (locale `it_IT.UTF-8`, timezone `Europe/Rome`, Nix GC + optimise, zsh, weekly `system.autoUpgrade`, sops-nix, disko).
+All hosts share the `hosts/_common` module (locale `it_IT.UTF-8`, timezone `Europe/Rome`, Nix GC + optimise, zsh, sops-nix, disko, Home Manager via `users/jacopo`).
 
 ## Layout
 
 ```
 .
-├── flake.nix              # 3 nixosConfigurations via mkNixos
-├── flakeHelpers.nix       # mkNixos + attr-merge helper
-├── .sops.yaml             # age recipients for secrets.yaml
+├── flake.nix                # 3 nixosConfigurations via mkNixos + forAllSystems formatter
+├── flakeHelpers.nix         # mkNixos + mergeOutputs helper
+├── .sops.yaml               # age recipients for secrets.yaml
 │
 ├── hosts/
-│   ├── _common/           # shared baseline for every host
-│   │   ├── nix/           # nix.gc, optimise, allowUnfree
-│   │   └── secrets/       # sops defaults + secrets.yaml
-│   ├── cooler/            # desktop host
-│   │   ├── desktop/       # enables the `desktop` module (GRUB)
+│   ├── _common/             # shared baseline for every host
+│   │   ├── nix/             # nix.gc, optimise, allowUnfree
+│   │   └── secrets/         # sops defaults + secrets.yaml
+│   ├── cooler/              # desktop host (AMD, GRUB, Steam, ROCm Ollama)
 │   │   └── disko-config.nix
-│   ├── freezer/           # homelab host
-│   │   ├── email/         # configures the `email` module (msmtp)
-│   │   ├── homelab/       # enables the `homelab` module + per-service flags
-│   │   ├── network/       # bridge br0, static IP
-│   │   ├── zfs/           # autoScrub, ZED email notifications
+│   ├── freezer/             # homelab host
+│   │   ├── email/           # configures the `email` module (msmtp)
+│   │   ├── homelab/         # enables the `homelab` module + per-service flags
+│   │   ├── network/         # systemd-networkd: br0 with enp3s0 enslaved
+│   │   ├── zfs/             # autoScrub, autoSnapshot, ZED email notifications
 │   │   └── disko-config.nix
-│   └── librovivo/         # laptop host
-│       ├── desktop/       # enables the `desktop` module (systemd-boot)
+│   └── librovivo/           # laptop host (AMD, systemd-boot, LUKS)
 │       └── disko-config.nix
 │
-├── desktop/               # `desktop` module: Plasma 6, SDDM, PipeWire, Flatpak, Zen
-├── homelab/               # `homelab` module: shared user/group, libvirt, smartd, power mgmt
-│   └── services/          # per-service submodules (Caddy, Pocket-ID, Vaultwarden, …)
 ├── modules/
-│   └── email/             # `email` module: msmtp w/ sops-managed password
+│   ├── desktop/             # Plasma 6, SDDM, PipeWire, Flatpak, plymouth silent boot
+│   ├── email/               # msmtp w/ sops-managed password
+│   └── homelab/             # shared user/group, libvirt, smartd, power mgmt
+│       └── services/        # per-service submodules (WIP — see below)
 │
 └── users/
-    └── jacopo/            # system user + Home Manager config (zsh, git, oh-my-zsh)
+    └── jacopo/              # NixOS user + Home Manager wire-up + home.nix
 ```
 
 ### Module entry points
 
-- `desktop/default.nix` — `options.desktop.{enable,grub,systemd-boot}`
-- `homelab/default.nix` — `options.homelab.{enable,user,group,timeZone,baseDomain}`
-- `homelab/services/default.nix` — `options.homelab.services.enable` + sets up Docker for OCI containers
+- `modules/desktop/default.nix` — `options.desktop.{enable,grub,systemd-boot}`
+- `modules/homelab/default.nix` — `options.homelab.{enable,user,group,timeZone,baseDomain}`
+- `modules/homelab/services/default.nix` — `options.homelab.services.enable` + sets up Docker for OCI containers
 - `modules/email/default.nix` — `options.email.{enable,fromAddress,toAddress,smtp*}`
 
-### Homelab services
+### Home Manager
 
-Defined under `homelab/services/`. The ones currently imported by `homelab/services/default.nix` are:
+Wired in `users/jacopo/default.nix` (imports the `home-manager.nixosModules.home-manager` module and sets `home-manager.users.jacopo = import ./home.nix`). Reads `osConfig.desktop.enable` to gate desktop-only packages (Zen Browser, VLC, nextcloud-client, jellyfin-media-player) so they only land on `cooler` and `librovivo`.
 
-- `caddy` — reverse proxy with the Cloudflare DNS plugin and the CrowdSec bouncer plugin; pulls hub collections for Caddy / Linux / HTTP CVEs
-- `pocket-id` — OIDC provider (runs as an OCI container behind Caddy)
-- `vaultwarden` — password vault (native NixOS service behind Caddy with CrowdSec protection)
+### Homelab services (WIP)
 
-Additional service modules exist on disk (`immich`, `jellyfin`, `nextcloud`, `paperless`, `qbittorrent`, `ollama`, `open-webui`, `arr/*`) but are not currently wired into `homelab/services/default.nix`.
+`modules/homelab/services/` contains submodules for Caddy (with CrowdSec bouncer + Cloudflare DNS plugin), Pocket-ID (OIDC), Vaultwarden, Immich, Jellyfin, Nextcloud, Paperless, qBittorrent, Ollama, Open-WebUI, and the *arr stack. **Currently being migrated from Docker to native NixOS modules** — most are present on disk but disabled in `hosts/freezer/homelab/default.nix` until reworked.
 
 ## Secrets
 
@@ -70,7 +66,7 @@ Managed with [sops-nix](https://github.com/Mic92/sops-nix) using age.
 
 - Encrypted store: `hosts/_common/secrets/secrets.yaml`
 - Recipient: see `.sops.yaml`
-- Private key on each host: `/etc/sops/age/keys.txt` (`generateKey = false` — provision out of band)
+- Private key on each host: `/etc/sops/age/keys.txt` (`generateKey = false` — provision out of band before the first rebuild)
 
 Secrets currently consumed:
 
@@ -85,7 +81,10 @@ Several of these are composed into `sops.templates` (e.g. `cloudflareEnv`, `pock
 
 ## Disko
 
-Disk layout is declarative via [disko](https://github.com/nix-community/disko). Each host has a `disko-config.nix` under `hosts/<host>/`. `freezer` uses ext4 root + ZFS for the `tank` pool (declared via `boot.zfs.extraPools`, not in the disko config itself).
+Disk layout is declarative via [disko](https://github.com/nix-community/disko). Each host has a `disko-config.nix` under `hosts/<host>/`:
+
+- `cooler` and `freezer` — plain ext4 root on `nvme0n1`. `freezer` additionally imports the ZFS `tank` pool via `boot.zfs.extraPools` (the pool itself is not declared in disko).
+- `librovivo` — LUKS-encrypted root (mapper `cryptroot`), ext4 inside. `boot.initrd.systemd.enable = true` so the unlock prompt honors the Italian keymap and so TPM2/FIDO2 enrollment is possible post-install.
 
 ## Inputs
 
@@ -95,8 +94,7 @@ Pinned in `flake.nix` (all follow `nixpkgs`):
 - `home-manager` — `release-25.11`
 - `disko`
 - `sops-nix`
-- `zen-browser` (desktop only)
-- `flake-utils` (just to expose `formatter = alejandra`)
+- `zen-browser` (desktop hosts only, exposed to Home Manager via `extraSpecialArgs`)
 
 ## Building
 
@@ -116,11 +114,9 @@ sudo nix --experimental-features "nix-command flakes" run github:nix-community/d
 sudo nixos-install --flake .#<hostname>
 ```
 
+For `librovivo`, disko prompts for the LUKS passphrase interactively during the `--mode disko` step. After install, optionally enroll the TPM and/or a recovery key with `systemd-cryptenroll` and add `boot.initrd.luks.devices.cryptroot.crypttabExtraOpts = ["tpm2-device=auto"];` to enable auto-unlock on trusted firmware state.
+
 After install, place the age private key at `/etc/sops/age/keys.txt` before the next rebuild so sops-managed users and services can decrypt.
-
-## Auto-upgrade
-
-`system.autoUpgrade` runs weekly (Sat 09:00 + up to 45 min jitter) on every host, updating the `nixpkgs` input from the flake. `librovivo` has `allowReboot = false` forced; the others use the default.
 
 ## Formatting
 
@@ -128,4 +124,4 @@ After install, place the age private key at `/etc/sops/age/keys.txt` before the 
 nix fmt
 ```
 
-Uses [alejandra](https://github.com/kamadorueda/alejandra), exposed as the flake's `formatter` for `x86_64-linux`.
+Uses [alejandra](https://github.com/kamadorueda/alejandra), exposed as the flake's `formatter` across `x86_64-linux`, `aarch64-linux`, `x86_64-darwin`, `aarch64-darwin` via the `forAllSystems` helper in `flake.nix`.

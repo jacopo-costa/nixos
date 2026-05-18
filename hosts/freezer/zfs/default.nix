@@ -5,6 +5,7 @@
 }: {
   services.zfs = {
     autoScrub.enable = true;
+    autoSnapshot.enable = true;
     zed.settings = {
       ZED_DEBUG_LOG = "/tmp/zed.debug.log";
       ZED_EMAIL_ADDR = config.email.toAddress;

@@ -115,7 +115,7 @@ in {
         # Load the Cloudflare token into Caddy's environment
         environmentFile = cfg.cloudflareEnvPath;
 
-        email = "dimoracosta.system@gmail.com";
+        email = config.email.fromAddress;
 
         globalConfig = ''
           acme_dns cloudflare {$CF_DNS_API_TOKEN}

@@ -17,9 +17,7 @@
       availableKernelModules = ["nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "sr_mod"];
       kernelModules = [];
     };
-    kernelModules = ["kvm-intel" "intel_pstate"];
-    kernelParams = [];
-    extraModulePackages = [];
+    kernelModules = ["kvm-intel"];
 
     loader = {
       # Systemd boot
@@ -47,9 +45,6 @@
       ];
     };
   };
-
-  # Programs
-  programs.nix-ld.enable = true;
 
   # Services
   services.openssh = {

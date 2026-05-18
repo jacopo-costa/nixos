@@ -1,12 +1,13 @@
 {
-  config,
   lib,
   pkgs,
   ...
 }: {
-  imports = [
-    ./desktop
-  ];
+  desktop = {
+    enable = true;
+    grub = true;
+    systemd-boot = false;
+  };
 
   # Boot
   boot = {
@@ -16,7 +17,6 @@
       kernelModules = ["amdgpu"];
     };
     kernelModules = ["kvm-amd"];
-    extraModulePackages = [];
   };
 
   # Hardware
