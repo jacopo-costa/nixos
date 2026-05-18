@@ -6,7 +6,7 @@
   cfg = config.homelab.services.qbittorrent;
   homelab = config.homelab;
 in {
-  options.homelab.services.deluge = {
+  options.homelab.services.qbittorrent = {
     enable = lib.mkEnableOption "qBittorrent torrent client";
     port = lib.mkOption {
       type = lib.types.port;

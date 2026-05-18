@@ -2,9 +2,7 @@
   config,
   pkgs,
   ...
-}: let
-  isServer = builtins.getEnv "HOSTNAME" == "freezer";
-in {
+}: {
   home.username = "jacopo";
   home.homeDirectory = "/home/jacopo";
   home.stateVersion = "25.11";
@@ -42,19 +40,4 @@ in {
       };
     };
   };
-
-  home.packages = with pkgs; [
-    # (
-    #   if !isServer
-    #   then
-    #     (vscode-with-extensions.override {
-    #       vscodeExtensions = with vscode-extensions; [
-    #         bbenoist.nix
-    #         jnoortheen.nix-ide
-    #         kamadorueda.alejandra
-    #       ];
-    #     })
-    #   else null
-    # )
-  ];
 }

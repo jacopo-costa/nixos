@@ -1,100 +1,131 @@
-# My Costa Flake - NixOS Configuration
+# nixos
 
-This is a NixOS flake configuration designed for a Linux system with a focus on experimentation and flexibility. It utilizes a modular approach to configuration, promoting maintainability and easy customization.
+Personal NixOS flake for three machines: a desktop (`cooler`), a homelab server (`freezer`), and a laptop (`librovivo`).
 
-## Overview
+## Hosts
 
-This flake leverages NixOS's powerful features to manage system configuration in a declarative way. It includes configurations for:
+| Host        | Role                | CPU/GPU | Boot loader   | Notable bits                                          |
+| ----------- | ------------------- | ------- | ------------- | ----------------------------------------------------- |
+| `cooler`    | Desktop / gaming    | AMD     | GRUB          | Steam, Gamemode, ROCm Ollama, OpenRGB, KDE Plasma     |
+| `freezer`   | Homelab server      | Intel   | systemd-boot  | ZFS (`tank`), libvirt, Docker, Caddy + CrowdSec, sops |
+| `librovivo` | Laptop              | AMD     | systemd-boot  | KDE Plasma, Italian keymap, no auto-reboot on upgrade |
 
-*   **Base System:** Includes a stable Nixpkgs release.
-*   **Home Manager:**  Used for managing user environments and packages.
-*   **Modular Configuration:** Configured using modules for clarity and organization.
-*   **Cooler & Freezer:**  Distinct configurations for development and production environments.
+All hosts share the `hosts/_common` module (locale `it_IT.UTF-8`, timezone `Europe/Rome`, Nix GC + optimise, zsh, weekly `system.autoUpgrade`, sops-nix, disko).
 
-## Key Features
-
-*   **Modular Design:** Separated configurations into modules (e.g., `bluetooth`, `network`, `desktop`).
-*   **Home Manager Integration:**  Provides a robust environment for user accounts, packages, and configuration.
-*   **Distinct Environments:**  Configurations for "Cooler" (development) and "Freezer" (production).
-*   **Declarative Configuration:**  Ensures consistent and reproducible system states.
-*   **Automatic Updates:** Leveraging Nixpkgs for easy updates.
-
-## Dependencies
-
-*   **NixOS:**  Requires a working NixOS installation.
-*   **Nixpkgs:**  The flake depends on a specific Nixpkgs release (nixos-25.11).
-*   **Home Manager:**  Installed and configured to work with the flake.
-*   **Alejandra:**  The flake uses Alejandra for system formatting.
-
-## Configuration Structure
+## Layout
 
 ```
-/nixos/
-├── flake.nix          # Main flake configuration
+.
+├── flake.nix              # 3 nixosConfigurations via mkNixos
+├── flakeHelpers.nix       # mkNixos + attr-merge helper
+├── .sops.yaml             # age recipients for secrets.yaml
+│
 ├── hosts/
-│   ├── cooler/         # Development configuration
-│   │   ├── hardware-configuration.nix
-│   │   ├── default.nix
-│   │   └── ...
-│   └── freezer/        # Production configuration
-│       ├── default.nix
-│       └── ...
+│   ├── _common/           # shared baseline for every host
+│   │   ├── nix/           # nix.gc, optimise, allowUnfree
+│   │   └── secrets/       # sops defaults + secrets.yaml
+│   ├── cooler/            # desktop host
+│   │   ├── desktop/       # enables the `desktop` module (GRUB)
+│   │   └── disko-config.nix
+│   ├── freezer/           # homelab host
+│   │   ├── email/         # configures the `email` module (msmtp)
+│   │   ├── homelab/       # enables the `homelab` module + per-service flags
+│   │   ├── network/       # bridge br0, static IP
+│   │   ├── zfs/           # autoScrub, ZED email notifications
+│   │   └── disko-config.nix
+│   └── librovivo/         # laptop host
+│       ├── desktop/       # enables the `desktop` module (systemd-boot)
+│       └── disko-config.nix
+│
+├── desktop/               # `desktop` module: Plasma 6, SDDM, PipeWire, Flatpak, Zen
+├── homelab/               # `homelab` module: shared user/group, libvirt, smartd, power mgmt
+│   └── services/          # per-service submodules (Caddy, Pocket-ID, Vaultwarden, …)
 ├── modules/
-│   ├── desktop/
-│   │   ├── default.nix
-│   │   └── ...
-│   ├── bluetooth.nix
-│   ├── boot.nix
-│   ├── network.nix
-│   ├── packages.nix
-│   ├── programs.nix
-│   ├── services.nix
-│   └── sound.nix
+│   └── email/             # `email` module: msmtp w/ sops-managed password
+│
 └── users/
-    ├── jacopo/
-    │   └── home.nix
+    └── jacopo/            # system user + Home Manager config (zsh, git, oh-my-zsh)
 ```
 
-## Applying the Configuration
+### Module entry points
 
-Here's how to apply this NixOS flake to your system:
+- `desktop/default.nix` — `options.desktop.{enable,grub,systemd-boot}`
+- `homelab/default.nix` — `options.homelab.{enable,user,group,timeZone,baseDomain}`
+- `homelab/services/default.nix` — `options.homelab.services.enable` + sets up Docker for OCI containers
+- `modules/email/default.nix` — `options.email.{enable,fromAddress,toAddress,smtp*}`
 
-1.  **Ensure NixOS is Installed:** Verify that you have a functioning NixOS installation.
+### Homelab services
 
-2.  **Clone the Repository:** Clone the repository containing the `flake.nix` file to your system.
-    ```bash
-    git clone <repository_url> /nixos
-    cd /nixos
-    ```
+Defined under `homelab/services/`. The ones currently imported by `homelab/services/default.nix` are:
 
-3.  **Apply the Configuration:** Use `nixos-rebuild` to rebuild your system with the flake configuration:
+- `caddy` — reverse proxy with the Cloudflare DNS plugin and the CrowdSec bouncer plugin; pulls hub collections for Caddy / Linux / HTTP CVEs
+- `pocket-id` — OIDC provider (runs as an OCI container behind Caddy)
+- `vaultwarden` — password vault (native NixOS service behind Caddy with CrowdSec protection)
 
-    ```bash
-    nixos-rebuild switch --flake "<flake_name>"
-    ```
-    Replace `<flake_name>` with the actual name of the flake.  This can be found in the `flake.nix` file (e.g., `https://nixos.nixos.org/channels/costa-flake/nixos-25.11`).  For example:
-    ```bash
-    nixos-rebuild switch --flake "https://nixos.nixos.org/channels/costa-flake/nixos-25.11"
-    ```
+Additional service modules exist on disk (`immich`, `jellyfin`, `nextcloud`, `paperless`, `qbittorrent`, `ollama`, `open-webui`, `arr/*`) but are not currently wired into `homelab/services/default.nix`.
 
-4.  **Reboot (if necessary):**  After the rebuild completes, you might need to reboot your system for the changes to fully take effect.
+## Secrets
 
-5. **Verify:**  After rebooting, check that the new configuration is applied correctly. You can check the system's hostname, network settings, and installed packages.
+Managed with [sops-nix](https://github.com/Mic92/sops-nix) using age.
 
-## Customization
+- Encrypted store: `hosts/_common/secrets/secrets.yaml`
+- Recipient: see `.sops.yaml`
+- Private key on each host: `/etc/sops/age/keys.txt` (`generateKey = false` — provision out of band)
 
-*   **User Accounts:**  The `jacopo` user is pre-configured. You can adapt the `users/jacopo/home.nix` file to manage additional users.
-*   **Modules:**  Extend the existing modules or create new ones to tailor the configuration to your specific needs.
-*   **Environment Variables:** Configure environment variables in the `modules/desktop/default.nix` file.
+Secrets currently consumed:
 
-## Further Exploration
+- `systemPasswords/jacopo` — login password hash for the `jacopo` user (`neededForUsers = true`)
+- `smtp/{user,password}` — for the `email` module (msmtp) and Vaultwarden SMTP
+- `cloudflareToken` — Caddy ACME DNS-01 challenge
+- `crowdsecBouncerKey` — Caddy ↔ CrowdSec LAPI
+- `pocket-id/{maxmindLicenseKey,encryptionKey}`
+- `vaultwardenAdminToken`
 
-*   **NixOS Documentation:** [https://nixos.org/](https://nixos.org/) - The official NixOS documentation is an invaluable resource.
-*   **Nixpkgs:** [https://github.com/NixOS/nixpkgs](https://github.com/NixOS/nixpkgs) - Explore the Nixpkgs repository to discover available packages and configurations.
-*   **Home Manager Documentation:** [https://nix-community.github.io/home-manager/](https://nix-community.github.io/home-manager/) -  Learn about Home Manager's features and capabilities.
-*   **Alejandra Documentation:** [https://alejandra.rs/docs/](https://alejandra.rs/docs/) - Learn how to use Alejandra for system formatting.
+Several of these are composed into `sops.templates` (e.g. `cloudflareEnv`, `pocketIdEnv`, `vaultwardenEnv`) which are then passed to services as `environmentFile`s.
 
-## Notes
+## Disko
 
-*   This is a basic configuration, and you'll likely want to adapt it to your specific hardware and software requirements.
-*   Always test changes in a non-production environment before deploying them to a critical system.
+Disk layout is declarative via [disko](https://github.com/nix-community/disko). Each host has a `disko-config.nix` under `hosts/<host>/`. `freezer` uses ext4 root + ZFS for the `tank` pool (declared via `boot.zfs.extraPools`, not in the disko config itself).
+
+## Inputs
+
+Pinned in `flake.nix` (all follow `nixpkgs`):
+
+- `nixpkgs` — `nixos-25.11`
+- `home-manager` — `release-25.11`
+- `disko`
+- `sops-nix`
+- `zen-browser` (desktop only)
+- `flake-utils` (just to expose `formatter = alejandra`)
+
+## Building
+
+```bash
+# from a checkout of this repo on the target host
+sudo nixos-rebuild switch --flake .#<hostname>
+```
+
+where `<hostname>` is `cooler`, `freezer`, or `librovivo`.
+
+First-time install (with disko) is roughly:
+
+```bash
+sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- \
+  --mode disko ./hosts/<hostname>/disko-config.nix
+
+sudo nixos-install --flake .#<hostname>
+```
+
+After install, place the age private key at `/etc/sops/age/keys.txt` before the next rebuild so sops-managed users and services can decrypt.
+
+## Auto-upgrade
+
+`system.autoUpgrade` runs weekly (Sat 09:00 + up to 45 min jitter) on every host, updating the `nixpkgs` input from the flake. `librovivo` has `allowReboot = false` forced; the others use the default.
+
+## Formatting
+
+```bash
+nix fmt
+```
+
+Uses [alejandra](https://github.com/kamadorueda/alejandra), exposed as the flake's `formatter` for `x86_64-linux`.
