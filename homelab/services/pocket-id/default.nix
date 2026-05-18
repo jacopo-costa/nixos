@@ -38,7 +38,7 @@ in {
         ];
 
         extraOptions = [
-          "--health-cmd=['/app/pocket-id', 'healthcheck']"
+          "--health-cmd=/app/pocket-id healthcheck"
           "--health-interval=90s"
           "--health-timeout=5s"
           "--health-retries=2"

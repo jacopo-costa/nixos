@@ -48,11 +48,6 @@
     };
   };
 
-  # Hardware acceleration for jellyfin
-  nixpkgs.config.packageOverrides = pkgs: {
-    vaapiIntel = pkgs.vaapiIntel.override {enableHybridCodec = true;};
-  };
-
   # Programs
   programs.nix-ld.enable = true;
 

@@ -109,7 +109,7 @@ in {
             "github.com/caddy-dns/cloudflare@v0.2.4"
             "github.com/hslatman/caddy-crowdsec-bouncer@v0.11.0"
           ];
-          hash = "sha256-2QRJs2wHlYz+hLuB0v5a+iGWd34Yihwt/uPwqBBFEAo=";
+          hash = lib.fakeHash;
         };
 
         # Load the Cloudflare token into Caddy's environment

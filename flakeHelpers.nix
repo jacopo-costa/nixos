@@ -8,7 +8,7 @@ inputs: let
     home-manager.backupFileExtension = "bak";
   };
 in {
-  mkNixos = machineHostname: nixpkgsVersion: extraModules: rec {
+  mkNixos = machineHostname: nixpkgsVersion: extraModules: {
     nixosConfigurations.${machineHostname} = nixpkgsVersion.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = {

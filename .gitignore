@@ -1,0 +1,49 @@
+# Nix build outputs
+result
+result-*
+
+# Nix flake lock (uncomment if you want to ignore it, but usually you want to commit this)
+# flake.lock
+
+# Nix store symlinks
+.nix-*
+
+# direnv
+.direnv/
+.envrc.local
+
+# Nix develop shell garbage
+.devenv/
+.devenv.flake.nix
+
+# devbox
+.devbox/
+
+# Agenix secrets (generated files)
+hosts/_common/secrets/*.age.bak
+
+# Editor and IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Local overrides / personal config (keep out of shared repo)
+local.nix
+secrets.nix
+
+# Home Manager generation links
+home-manager-generation
+home-files
+
+# NixOS hardware config (machine-specific, often kept local)
+# Uncomment if you don't want to track this:
+# nixos/hardware-configuration.nix
+
+# Temporary / misc
+*.bak
+*.tmp
+*.log

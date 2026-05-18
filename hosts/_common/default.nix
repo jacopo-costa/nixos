@@ -47,24 +47,13 @@
     doas.enable = lib.mkDefault false;
     sudo = {
       enable = lib.mkDefault true;
-      wheelNeedsPassword = lib.mkDefault false;
+      wheelNeedsPassword = lib.mkDefault true;
     };
   };
 
   # System
   system = {
     stateVersion = "25.11";
-    autoUpgrade = {
-      enable = true;
-      flake = inputs.self.outPath;
-      flags = [
-        "--update-input"
-        "nixpkgs"
-        "-L"
-      ];
-      dates = "Sat *-*-* 09:00:00";
-      randomizedDelaySec = "45min";
-    };
   };
 
   # Timezone
