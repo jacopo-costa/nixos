@@ -23,6 +23,13 @@ in {
         Group to run the homelab services as
       '';
     };
+    mainUser = lib.mkOption {
+      default = "jacopo";
+      type = lib.types.str;
+      description = ''
+        Main user to add in the homelab group
+      '';
+    };
     timeZone = lib.mkOption {
       default = "Europe/Rome";
       type = lib.types.str;
@@ -49,14 +56,17 @@ in {
       groups.${cfg.group} = {
         gid = 950;
       };
-      users.${cfg.user} = {
-        uid = 950;
-        isSystemUser = true;
-        group = cfg.group;
+      users = {
+        ${cfg.user} = {
+          uid = 950;
+          isSystemUser = true;
+          group = cfg.group;
+        };
+        ${cfg.mainUser}.extraGroups = [cfg.group];
       };
     };
 
-    # Power Managment
+    # Power Management
     powerManagement = {
       enable = true;
       powertop.enable = true;
@@ -87,6 +97,11 @@ in {
           recipient = config.email.toAddress;
         };
       };
+    };
+
+    security.apparmor = {
+      enable = true;
+      killUnconfinedConfinables = true;
     };
 
     # Virtualisation

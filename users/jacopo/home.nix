@@ -1,19 +1,15 @@
 {
-  config,
   lib,
   pkgs,
   osConfig,
-  inputs,
   ...
 }: let
   isDesktop = osConfig.desktop.enable or false;
-  system = pkgs.stdenv.hostPlatform.system;
 in {
   home.username = "jacopo";
   home.homeDirectory = "/home/jacopo";
   home.stateVersion = "25.11";
 
-  # Always present
   programs = {
     zsh = {
       enable = true;
@@ -37,11 +33,27 @@ in {
 
     git = {
       enable = true;
-      userName = "Jacopo Costa";
-      userEmail = "costa.jacopo@gmail.com";
-      extraConfig = {
+      settings = {
+        user.name = "Jacopo Costa";
+        user.email = "costa.jacopo@gmail.com";
         init.defaultBranch = "main";
         pull.rebase = true;
+      };
+    };
+
+    vscode = {
+      enable = true;
+      profiles.default = {
+        extensions = with pkgs.vscode-extensions; [
+          bbenoist.nix
+          jnoortheen.nix-ide
+          kamadorueda.alejandra
+        ];
+        userSettings = {
+          "editor.formatOnSave" = true;
+          "[nix]"."editor.defaultFormatter" = "kamadorueda.alejandra";
+        };
+        keybindings = [];
       };
     };
   };
@@ -51,6 +63,6 @@ in {
     nextcloud-client
     vlc
     jellyfin-media-player
-    inputs.zen-browser.packages.${system}.default
+    ungoogled-chromium
   ]);
 }
