@@ -1,5 +1,4 @@
 {
-  config,
   lib,
   pkgs,
   ...
@@ -22,7 +21,10 @@
     loader = {
       # Systemd boot
       efi.canTouchEfiVariables = true;
-      systemd-boot.enable = true;
+      systemd-boot = {
+        enable = true;
+        editor = false;
+      };
     };
 
     # ZFS
@@ -52,6 +54,7 @@
     ports = [22];
     settings = {
       PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
       AllowUsers = ["jacopo"];
       PermitRootLogin = "no";
     };

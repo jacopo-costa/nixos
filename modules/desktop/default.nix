@@ -38,6 +38,7 @@ in {
         # Systemd boot
         systemd-boot = lib.mkIf cfg.systemd-boot {
           enable = true;
+          editor = false;
         };
       };
 
