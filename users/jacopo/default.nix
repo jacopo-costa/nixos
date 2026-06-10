@@ -4,13 +4,13 @@
   pkgs,
   ...
 }: {
-  imports = [ inputs.home-manager.nixosModules.home-manager ];
+  imports = [inputs.home-manager.nixosModules.home-manager];
 
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "bak";
-    extraSpecialArgs = { inherit inputs; };
+    extraSpecialArgs = {inherit inputs;};
     users.jacopo = import ./home.nix;
   };
 
