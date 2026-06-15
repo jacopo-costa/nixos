@@ -1,15 +1,17 @@
 {
   lib,
   pkgs,
+  config,
   osConfig,
   ...
 }: let
   isDesktop = osConfig.desktop.enable or false;
-  homeDir = "/home/jacopo";
 in {
-  home.username = "jacopo";
-  home.homeDirectory = homeDir;
-  home.stateVersion = "26.05";
+  home = {
+    username = "jacopo";
+    homeDirectory = "/home/jacopo";
+    stateVersion = "26.05";
+  };
 
   programs = {
     zsh = {
@@ -27,6 +29,16 @@ in {
         ll = "ls -lAh --group-directories-first --color=auto";
         gs = "git status";
         ga = "git add .";
+        gd = "git diff";
+        gc = "git commit -m";
+        gp = "git push";
+        gpl = "git pull";
+        ".." = "cd ..";
+      };
+
+      sessionVariables = {
+        EDITOR = "nano";
+        PAGER = "less";
       };
 
       history.size = 5000;
@@ -39,6 +51,8 @@ in {
         user.email = "costa.jacopo@gmail.com";
         init.defaultBranch = "main";
         pull.rebase = true;
+        core.editor = "nano";
+        color.ui = true;
       };
     };
 
@@ -62,8 +76,8 @@ in {
       enable = true;
 
       languagePacks = [
-        "en-US"
         "it"
+        "en-US"
       ];
 
       policies = {
@@ -88,13 +102,13 @@ in {
         DontCheckDefaultBrowser = true;
         HardwareAcceleration = true;
         OfferToSaveLogins = false;
-        DefaultDownloadDirectory = "${homeDir}/Scaricati";
+        DefaultDownloadDirectory = "${config.home.homeDirectory}/Scaricati";
         SkipTermsOfUse = true;
 
         # Locale
         RequestedLocales = [
-          "en-US"
           "it"
+          "en-US"
         ];
 
         # Permissions
@@ -106,6 +120,11 @@ in {
           moz = short: "https://addons.mozilla.org/firefox/downloads/latest/${short}/latest.xpi";
         in {
           "*".installation_mode = "blocked";
+
+          "it-IT@dictionaries.addons.mozilla.org" = {
+            install_url = "https://addons.mozilla.org/it/firefox/addon/dizionario-italiano/";
+            installation_mode = "force_installed";
+          };
 
           "uBlock0@raymondhill.net" = {
             default_area = "navbar";
@@ -144,66 +163,115 @@ in {
         };
       };
 
-      profiles.default.search = {
-        force = true;
-        default = "DuckDuckGo";
-        privateDefault = "DuckDuckGo";
+      profiles.default = {
+        name = "default";
+        isDefault = true;
 
-        engines = {
-          "Nix Packages" = {
-            urls = [
-              {
-                template = "https://search.nixos.org/packages";
-                params = [
-                  {
-                    name = "channel";
-                    value = "unstable";
-                  }
-                  {
-                    name = "query";
-                    value = "{searchTerms}";
-                  }
-                ];
-              }
-            ];
-            icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = ["@np"];
-          };
+        settings = {
+          # Privacy
+          "privacy.globalprivacycontrol.enabled" = true;
+          "network.dns.disablePrefetch" = true;
+          "network.prefetch-next" = false;
+          "browser.contentblocking.category" = "standard";
+          "privacy.clearOnShutdown_v2.formdata" = true;
+          "privacy.bounceTrackingProtection.hasMigratedUserActivationData" = true;
 
-          "Nix Options" = {
-            urls = [
-              {
-                template = "https://search.nixos.org/options";
-                params = [
-                  {
-                    name = "channel";
-                    value = "unstable";
-                  }
-                  {
-                    name = "query";
-                    value = "{searchTerms}";
-                  }
-                ];
-              }
-            ];
-            icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = ["@no"];
-          };
+          # Localization
+          "intl.locale.requested" = "it,en-US";
+          "intl.regional_prefs.use_os_locales" = true;
+          "browser.urlbar.placeholderName" = "DuckDuckGo";
+          "browser.search.region" = "IT";
 
-          "NixOS Wiki" = {
-            urls = [
-              {
-                template = "https://wiki.nixos.org/w/index.php";
-                params = [
-                  {
-                    name = "search";
-                    value = "{searchTerms}";
-                  }
-                ];
-              }
-            ];
-            icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = ["@nw"];
+          # AI
+          "browser.ai.control.default" = "blocked";
+          "browser.ai.control.pdfjsAltText" = "blocked";
+          "browser.ai.control.translations" = "blocked";
+          "extensions.ml.enabled" = false;
+          "browser.ml.linkPreview.enabled" = false;
+          "browser.translations.enable" = false;
+
+          # UI & Behavior
+          "browser.toolbars.bookmarks.visibility" = "always";
+          "sidebar.verticalTabs" = true;
+          "sidebar.revamp" = true;
+          "browser.tabs.groups.smart.enabled" = false;
+          "accessibility.typeaheadfind.flashBar" = 0;
+          "full-screen-api.warning.timeout" = 0;
+
+          # Forms & Autofill
+          "extensions.formautofill.addresses.enabled" = false;
+          "extensions.formautofill.creditCards.enabled" = false;
+          "dom.forms.autocomplete.formautofill" = true;
+
+          # New tab
+          "browser.newtabpage.activity-stream.feeds.section.topstories" = false;
+          "browser.newtabpage.activity-stream.showSponsored" = false;
+          "browser.newtabpage.activity-stream.showSponsoredCheckboxes" = false;
+          "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+          "browser.newtabpage.activity-stream.system.showWeatherOptIn" = false;
+        };
+
+        search = {
+          force = true;
+          default = "ddg";
+          privateDefault = "ddg";
+
+          engines = {
+            "Nix Packages" = {
+              urls = [
+                {
+                  template = "https://search.nixos.org/packages";
+                  params = [
+                    {
+                      name = "channel";
+                      value = "unstable";
+                    }
+                    {
+                      name = "query";
+                      value = "{searchTerms}";
+                    }
+                  ];
+                }
+              ];
+              icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+              definedAliases = ["@np"];
+            };
+
+            "Nix Options" = {
+              urls = [
+                {
+                  template = "https://search.nixos.org/options";
+                  params = [
+                    {
+                      name = "channel";
+                      value = "unstable";
+                    }
+                    {
+                      name = "query";
+                      value = "{searchTerms}";
+                    }
+                  ];
+                }
+              ];
+              icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+              definedAliases = ["@no"];
+            };
+
+            "NixOS Wiki" = {
+              urls = [
+                {
+                  template = "https://wiki.nixos.org/w/index.php";
+                  params = [
+                    {
+                      name = "search";
+                      value = "{searchTerms}";
+                    }
+                  ];
+                }
+              ];
+              icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+              definedAliases = ["@nw"];
+            };
           };
         };
       };
@@ -212,8 +280,11 @@ in {
 
   # Desktop-only
   home.packages = lib.mkIf isDesktop (with pkgs; [
+    # Cloud & Sync
     nextcloud-client
+
+    # Media
     vlc
-    jellyfin-media-player
+    jellyfin-desktop
   ]);
 }
