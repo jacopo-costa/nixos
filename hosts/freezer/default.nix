@@ -29,7 +29,10 @@
 
     # ZFS
     supportedFilesystems = ["zfs"];
-    zfs.extraPools = ["tank"];
+    zfs = {
+      extraPools = ["tank"];
+      forceImportRoot = false;
+    };
   };
 
   # Hardware
