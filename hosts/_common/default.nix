@@ -13,9 +13,12 @@
     "kernel.kptr_restrict" = 2;
     # dmesg only for root
     "kernel.dmesg_restrict" = 1;
-    # Don't let userspace see /proc/<pid> of other users
-    # (caution: breaks some monitoring tools — test)
-    # "kernel.yama.ptrace_scope" = 2;
+    # Restrict ptrace to parent processes only (level 1 = safer than level 2 which breaks too much)
+    "kernel.yama.ptrace_scope" = 1;
+    # Prevent non-root BPF program loading
+    "kernel.unprivileged_bpf_disabled" = 1;
+    # Prevent null pointer dereference exploits
+    "vm.mmap_min_addr" = 65536;
 
     # Reverse path filter (drop spoofed source addresses)
     "net.ipv4.conf.all.rp_filter" = 1;
@@ -59,9 +62,7 @@
 
   # Programs
   programs = {
-    git.enable = true;
     htop.enable = true;
-    zsh.enable = true;
   };
 
   # Security

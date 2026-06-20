@@ -44,17 +44,17 @@
         ./modules/desktop
         # Users
         ./users/jacopo
-      ])
+      ] "x86_64-linux")
       (mkNixos "freezer" nixpkgs [
         ./modules/homelab
         ./modules/email
         # Users
         ./users/jacopo
-      ])
+      ] "x86_64-linux")
       (mkNixos "librovivo" nixpkgs [
         ./modules/desktop
         # Users
         ./users/jacopo
-      ])
+      ] "x86_64-linux")
     ];
 }

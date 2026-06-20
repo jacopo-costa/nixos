@@ -7,9 +7,7 @@
   homelab = config.homelab;
 in {
   options.homelab.services.flaresolverr = {
-    enable = lib.mkEnableOption {
-      description = "Enable Flaresolverr";
-    };
+    enable = lib.mkEnableOption "Enable Flaresolverr";
     port = lib.mkOption {
       type = lib.types.port;
       default = 8191;

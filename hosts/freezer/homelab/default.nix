@@ -10,9 +10,9 @@ in {
       mode = "0440";
     };
 
-    # Caddy + Crowdsec
-    secrets.cloudflareToken = {};
-    secrets.crowdsecBouncerKey = {};
+    # Newt
+    secrets."newt/id" = {};
+    secrets."newt/secret" = {};
 
     # Pocket-ID
     secrets."pocket-id/maxmindLicenseKey" = {};
@@ -20,10 +20,19 @@ in {
 
     secrets.vaultwardenAdminToken = {};
 
+    # secrets."gluetun/privateKey" = {};
+    # secrets."gluetun/addresses" = {};
+
+    # secrets."nextcloud/adminPass" = {};
+
+    # secrets."frigate/mqttPassword" = {};
+    # secrets."frigate/rtspPassword" = {};
+
     templates = {
-      cloudflareEnv.content = ''
-        CF_DNS_API_TOKEN=${config.sops.placeholder.cloudflareToken}
-        CROWDSEC_BOUNCER_KEY=${config.sops.placeholder.crowdsecBouncerKey}
+
+      newtEnv.content = ''
+        NEWT_ID=${config.sops.placeholder."newt/id"}
+        NEWT_SECRET=${config.sops.placeholder."newt/secret"}
       '';
 
       pocketIdEnv.content = ''
@@ -32,12 +41,33 @@ in {
         ENCRYPTION_KEY=${config.sops.placeholder."pocket-id/encryptionKey"}
       '';
 
+      # gluetunEnv.content = ''
+      #   WIREGUARD_PRIVATE_KEY=${config.sops.placeholder."gluetun/privateKey"}
+      #   WIREGUARD_ADDRESSES=${config.sops.placeholder."gluetun/addresses"}
+      # '';
+
+      # frigateEnv.content = ''
+      #   FRIGATE_MQTT_PASSWORD=${config.sops.placeholder."frigate/mqttPassword"}
+      #   FRIGATE_RTSP_PASSWORD=${config.sops.placeholder."frigate/rtspPassword"}
+      # '';
+
+      # # Nextcloud SMTP password as a PHP config file auto-loaded by Nextcloud
+      # nextcloudSmtp = {
+      #   content = ''
+      #     <?php
+      #     $CONFIG = ['mail_smtppassword' => '${config.sops.placeholder."smtp/password"}'];
+      #   '';
+      #   path = "/var/lib/nextcloud/config/smtp.config.php";
+      #   owner = "nextcloud";
+      #   mode = "0600";
+      # };
+
       vaultwardenEnv.content = ''
         DOMAIN=https://vault.${hl.baseDomain}
         SIGNUPS_ALLOWED=false
         ADMIN_TOKEN='${config.sops.placeholder.vaultwardenAdminToken}'
         ROCKET_ADDRESS=127.0.0.1
-        ROCKET_PORT=8222
+        ROCKET_PORT=${toString hl.services.vaultwarden.port}
         SMTP_HOST=${smtpHost}
         SMTP_PORT=${toString smtpPort}
         SMTP_FROM=${config.sops.placeholder."smtp/user"}
@@ -45,9 +75,10 @@ in {
         SMTP_USERNAME=${config.sops.placeholder."smtp/user"}
         SMTP_PASSWORD=${config.sops.placeholder."smtp/password"}
         SMTP_TIMEOUT=10
+        SMTP_SECURITY=starttls
         EXTENDED_LOGGING=true
         LOG_LEVEL=warn
-        IP_HEADER=X-Real-IP
+        IP_HEADER=X-Forwarded-For
       '';
     };
   };
@@ -58,46 +89,156 @@ in {
     group = "ice";
     timeZone = "Europe/Rome";
     baseDomain = "dimoracosta.it";
+    localDomain = "freezer.lan";
 
     services = {
       enable = true;
 
-      # Reverse proxy
-      caddy = {
-        enable = false;
-        cloudflareEnvPath = config.sops.templates.cloudflareEnv.path;
-      };
+      # Local LAN reverse proxy
+      nginx-local.enable = true;
 
       # OIDC Auth
       pocket-id = {
-        enable = false;
+        enable = true;
         pocketIdEnvPath = config.sops.templates.pocketIdEnv.path;
       };
 
       # Passwords
       vaultwarden = {
-        enable = false;
+        enable = true;
         vaultwardenEnvPath = config.sops.templates.vaultwardenEnv.path;
       };
 
       # ARR
-      # flaresolverr.enable = true;
-      # jellyseerr.enable = true;
-      # prowlarr.enable = true;
-      # radarr.enable = true;
-      # sonarr.enable = true;
+      flaresolverr.enable = false;
+      jellyseerr.enable = false;
+      prowlarr.enable = false;
+      radarr.enable = false;
+      sonarr.enable = false;
+      lidarr.enable = false;
+      bazarr.enable = false;
+      sabnzbd.enable = false;
+      # qbittorrent = {
+      #   enable = false;
+      #   gluetunEnvPath = config.sops.templates.gluetunEnv.path;
+      # };
 
-      # deluge.enable = true;
+      jellyfin.enable = false;
 
-      # jellyfin.enable = true;
+      # Surveillance
+      frigate = {
+        enable = false;
+        vaapiDriver = "iHD";
+        environmentFilePath = config.sops.templates.frigateEnv.path;
+        openRtsp = true;
+        openWebRtc = true;
+        settings = {
+          tls.enabled = false;
 
-      # # OIDC Auth
+          mqtt = {
+            enabled = true;
+            host = "192.168.30.3";
+            port = 1883;
+            user = "mqtt-user";
+            # resolved at runtime via FRIGATE_MQTT_PASSWORD env var
+            password = "{FRIGATE_MQTT_PASSWORD}";
+          };
 
-      # # Photos
-      # immich.enable = true;
+          detectors.ov = {
+            type = "openvino";
+            device = "AUTO";
+          };
 
-      # # Cloud
-      # nextcloud.enable = true;
+          # NOTE: these paths are Docker-specific (/openvino-model/...).
+          # On NixOS, verify the correct path with:
+          #   find $(nix-build '<nixpkgs>' -A frigate --no-out-link) -name '*.xml' 2>/dev/null
+          model = {
+            width = 300;
+            height = 300;
+            input_tensor = "nhwc";
+            input_pixel_format = "bgr";
+            path = "/openvino-model/ssdlite_mobilenet_v2.xml";
+            labelmap_path = "/openvino-model/coco_91cl_bkgr.txt";
+          };
+
+          detect = {
+            enabled = true;
+            fps = 15;
+          };
+
+          motion = {
+            enabled = true;
+            threshold = 30;
+            contour_area = 50;
+            improve_contrast = false;
+          };
+
+          record = {
+            enabled = true;
+            continuous.days = 0;
+            motion.days = 3;
+          };
+
+          snapshots = {
+            enabled = true;
+            retain.default = 30;
+          };
+
+          audio = {
+            enabled = true;
+            max_not_heard = 30;
+            min_volume = 500;
+          };
+
+          cameras = {
+            portico = {
+              enabled = true;
+              type = "generic";
+              detect = { width = 640; height = 360; };
+              ffmpeg.inputs = [
+                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.2:8554/profile1"; roles = ["detect" "audio"]; }
+                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.2:8554/profile0"; roles = ["record"]; }
+              ];
+            };
+            mutine = {
+              enabled = true;
+              type = "generic";
+              detect = { width = 640; height = 360; };
+              ffmpeg.inputs = [
+                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.3:8554/profile1"; roles = ["detect" "audio"]; }
+                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.3:8554/profile0"; roles = ["record"]; }
+              ];
+            };
+            galline = {
+              enabled = true;
+              type = "generic";
+              detect = { width = 640; height = 360; };
+              ffmpeg.inputs = [
+                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.4:8554/profile1"; roles = ["detect" "audio"]; }
+                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.4:8554/profile0"; roles = ["record"]; }
+              ];
+            };
+            giardino = {
+              enabled = true;
+              type = "generic";
+              detect = { width = 640; height = 360; };
+              ffmpeg.inputs = [
+                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:8554/profile1"; roles = ["detect" "audio"]; }
+                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:8554/profile0"; roles = ["record"]; }
+              ];
+            };
+          };
+        };
+      };
+
+      # Photos
+      immich.enable = false;
+
+      # Cloud
+      # nextcloud = {
+      #   enable = false;
+      #   nextcloudAdminPassPath = config.sops.secrets."nextcloud/adminPass".path;
+      # };
     };
   };
 

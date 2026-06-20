@@ -41,7 +41,14 @@ in {
       default = "dimoracosta.it";
       type = lib.types.str;
       description = ''
-        Base domain name to be used to access the homelab services via Caddy reverse proxy
+        Base domain for external access via Pangolin.
+      '';
+    };
+    localDomain = lib.mkOption {
+      default = "freezer.lan";
+      type = lib.types.str;
+      description = ''
+        Local LAN domain used by the nginx reverse proxy for internal access.
       '';
     };
   };
@@ -77,9 +84,6 @@ in {
       powertop
       hdparm
       smartmontools
-
-      # Virtualisation
-      virt-manager
     ];
 
     # Activate power save on any sd* disks and spindown after 10 minutes
@@ -99,10 +103,7 @@ in {
       };
     };
 
-    security.apparmor = {
-      enable = true;
-      killUnconfinedConfinables = true;
-    };
+    security.apparmor.enable = true;
 
     # Virtualisation
     virtualisation = {
@@ -112,7 +113,6 @@ in {
         onBoot = "start";
         onShutdown = "shutdown";
       };
-      spiceUSBRedirection.enable = true;
     };
   };
 }

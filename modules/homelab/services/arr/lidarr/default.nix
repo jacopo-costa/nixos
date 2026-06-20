@@ -3,19 +3,22 @@
   lib,
   ...
 }: let
-  cfg = config.homelab.services.prowlarr;
+  cfg = config.homelab.services.lidarr;
   homelab = config.homelab;
 in {
-  options.homelab.services.prowlarr = {
-    enable = lib.mkEnableOption "Enable Prowlarr";
+  options.homelab.services.lidarr = {
+    enable = lib.mkEnableOption "Lidarr music manager";
     port = lib.mkOption {
       type = lib.types.port;
-      default = 9696;
+      default = 8686;
     };
   };
+
   config = lib.mkIf cfg.enable {
-    services.prowlarr = {
+    services.lidarr = {
       enable = true;
+      user = homelab.user;
+      group = homelab.group;
       settings.server.port = cfg.port;
     };
   };

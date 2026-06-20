@@ -3,23 +3,23 @@
   lib,
   ...
 }: let
-  cfg = config.homelab.services.qbittorrent;
+  cfg = config.homelab.services.bazarr;
   homelab = config.homelab;
 in {
-  options.homelab.services.qbittorrent = {
-    enable = lib.mkEnableOption "qBittorrent torrent client";
+  options.homelab.services.bazarr = {
+    enable = lib.mkEnableOption "Bazarr subtitle manager";
     port = lib.mkOption {
       type = lib.types.port;
-      default = 8090;
+      default = 6767;
     };
   };
+
   config = lib.mkIf cfg.enable {
-    services.qbittorrent = {
+    services.bazarr = {
       enable = true;
       user = homelab.user;
       group = homelab.group;
-      webuiPort = cfg.port;
-      openFirewall = true;
+      listenPort = cfg.port;
     };
   };
 }
