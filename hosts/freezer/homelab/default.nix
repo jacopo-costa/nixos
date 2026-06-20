@@ -29,8 +29,8 @@ in {
     # secrets."frigate/rtspPassword" = {};
 
     templates = {
-
       newtEnv.content = ''
+        PANGOLIN_ENDPOINT=https://pangolin.${hl.baseDomain}
         NEWT_ID=${config.sops.placeholder."newt/id"}
         NEWT_SECRET=${config.sops.placeholder."newt/secret"}
       '';
@@ -93,6 +93,12 @@ in {
 
     services = {
       enable = true;
+
+      # Newt
+      newt = {
+        enable = true;
+        newtEnvPath = config.sops.templates.newtEnv.path;
+      };
 
       # Local LAN reverse proxy
       nginx-local.enable = true;
@@ -194,37 +200,73 @@ in {
             portico = {
               enabled = true;
               type = "generic";
-              detect = { width = 640; height = 360; };
+              detect = {
+                width = 640;
+                height = 360;
+              };
               ffmpeg.inputs = [
-                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.2:8554/profile1"; roles = ["detect" "audio"]; }
-                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.2:8554/profile0"; roles = ["record"]; }
+                {
+                  path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.2:8554/profile1";
+                  roles = ["detect" "audio"];
+                }
+                {
+                  path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.2:8554/profile0";
+                  roles = ["record"];
+                }
               ];
             };
             mutine = {
               enabled = true;
               type = "generic";
-              detect = { width = 640; height = 360; };
+              detect = {
+                width = 640;
+                height = 360;
+              };
               ffmpeg.inputs = [
-                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.3:8554/profile1"; roles = ["detect" "audio"]; }
-                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.3:8554/profile0"; roles = ["record"]; }
+                {
+                  path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.3:8554/profile1";
+                  roles = ["detect" "audio"];
+                }
+                {
+                  path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.3:8554/profile0";
+                  roles = ["record"];
+                }
               ];
             };
             galline = {
               enabled = true;
               type = "generic";
-              detect = { width = 640; height = 360; };
+              detect = {
+                width = 640;
+                height = 360;
+              };
               ffmpeg.inputs = [
-                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.4:8554/profile1"; roles = ["detect" "audio"]; }
-                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.4:8554/profile0"; roles = ["record"]; }
+                {
+                  path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.4:8554/profile1";
+                  roles = ["detect" "audio"];
+                }
+                {
+                  path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.4:8554/profile0";
+                  roles = ["record"];
+                }
               ];
             };
             giardino = {
               enabled = true;
               type = "generic";
-              detect = { width = 640; height = 360; };
+              detect = {
+                width = 640;
+                height = 360;
+              };
               ffmpeg.inputs = [
-                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:8554/profile1"; roles = ["detect" "audio"]; }
-                { path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:8554/profile0"; roles = ["record"]; }
+                {
+                  path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:8554/profile1";
+                  roles = ["detect" "audio"];
+                }
+                {
+                  path = "rtsp://admin:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:8554/profile0";
+                  roles = ["record"];
+                }
               ];
             };
           };

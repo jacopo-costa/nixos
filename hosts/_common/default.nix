@@ -62,7 +62,9 @@
 
   # Programs
   programs = {
+    zsh.enable = true;
     htop.enable = true;
+    git.enable = true;
   };
 
   # Security

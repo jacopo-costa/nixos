@@ -47,9 +47,11 @@ in {
       # Disable build-time config check since {VARIABLE} placeholders
       # in the config are only resolved at runtime via EnvironmentFile
       checkConfig = false;
-      settings = lib.recursiveUpdate {
-        ffmpeg.hwaccel_args = "preset-vaapi";
-      } cfg.settings;
+      settings =
+        lib.recursiveUpdate {
+          ffmpeg.hwaccel_args = "preset-vaapi";
+        }
+        cfg.settings;
     };
 
     # Serve cam.freezer.lan from the same nginx vhost as the external URL
