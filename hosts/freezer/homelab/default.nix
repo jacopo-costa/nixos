@@ -129,7 +129,7 @@ in {
       #   gluetunEnvPath = config.sops.templates.gluetunEnv.path;
       # };
 
-      jellyfin.enable = false;
+      jellyfin.enable = true;
 
       # Surveillance
       frigate = {
