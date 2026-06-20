@@ -5,7 +5,7 @@
 }: {
   services.zfs = {
     autoScrub.enable = true;
-    
+
     zed.settings = {
       ZED_DEBUG_LOG = "/var/log/zed/debug.log";
       ZED_EMAIL_ADDR = config.email.toAddress;
@@ -19,7 +19,7 @@
       ZED_SCRUB_AFTER_RESILVER = true;
     };
   };
-  
+
   services.logrotate.settings.zed = {
     files = "/var/log/zed/debug.log";
     frequency = "weekly";

@@ -20,7 +20,7 @@ in {
       enable = true;
       user = homelab.user;
       group = homelab.group;
-      settings.misc.port = cfg.port; 
+      settings.misc.port = cfg.port;
     };
   };
 }

@@ -25,7 +25,6 @@
     # OpenGL
     graphics.extraPackages = with pkgs; [
       rocmPackages.clr.icd
-      libva-mesa-driver
     ];
   };
 
