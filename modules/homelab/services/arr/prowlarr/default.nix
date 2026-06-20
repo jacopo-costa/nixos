@@ -7,9 +7,7 @@
   homelab = config.homelab;
 in {
   options.homelab.services.prowlarr = {
-    enable = lib.mkEnableOption {
-      description = "Enable Prowlarr";
-    };
+    enable = lib.mkEnableOption "Enable Prowlarr";
     port = lib.mkOption {
       type = lib.types.port;
       default = 9696;
@@ -19,7 +17,6 @@ in {
     services.prowlarr = {
       enable = true;
       settings.server.port = cfg.port;
-      openFirewall = true;
     };
   };
 }

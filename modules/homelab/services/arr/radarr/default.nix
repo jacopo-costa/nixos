@@ -7,9 +7,7 @@
   homelab = config.homelab;
 in {
   options.homelab.services.radarr = {
-    enable = lib.mkEnableOption {
-      description = "Enable Radarr";
-    };
+    enable = lib.mkEnableOption "Enable Radarr";
     port = lib.mkOption {
       type = lib.types.port;
       default = 7878;
@@ -19,7 +17,6 @@ in {
     services.radarr = {
       enable = true;
       settings.server.port = cfg.port;
-      openFirewall = true;
       user = homelab.user;
       group = homelab.group;
     };

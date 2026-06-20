@@ -7,9 +7,7 @@
   homelab = config.homelab;
 in {
   options.homelab.services.jellyseerr = {
-    enable = lib.mkEnableOption {
-      description = "Enable Jellyseerr";
-    };
+    enable = lib.mkEnableOption "Enable Jellyseerr";
     url = lib.mkOption {
       type = lib.types.str;
       default = "req.${homelab.baseDomain}";
@@ -25,16 +23,9 @@ in {
       port = cfg.port;
     };
 
-    services.caddy.virtualHosts."${cfg.url}" = {
-      extraConfig = ''
-        reverse_proxy http://127.0.0.1:${toString cfg.port}
-      '';
-    };
-
-    # Start Jellyseerr only after caddy
     systemd.services.jellyseerr = {
-      after = ["caddy.service"];
-      wants = ["caddy.service"];
+      after = ["newt.service"];
+      wants = ["newt.service"];
     };
   };
 }

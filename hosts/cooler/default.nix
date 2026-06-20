@@ -13,8 +13,6 @@
   boot = {
     initrd = {
       availableKernelModules = ["nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod"];
-      # Make the kernel use the correct driver early
-      kernelModules = ["amdgpu"];
     };
     kernelModules = ["kvm-amd"];
   };
@@ -22,10 +20,12 @@
   # Hardware
   hardware = {
     cpu.amd.updateMicrocode = true;
+    amdgpu.initrd.enable = true;
 
     # OpenGL
     graphics.extraPackages = with pkgs; [
       rocmPackages.clr.icd
+      libva-mesa-driver
     ];
   };
 
@@ -73,13 +73,14 @@
     };
 
     hardware.openrgb.enable = true;
+    lact.enable = true;
 
     # AI
     ollama = {
       enable = true;
       package = pkgs.ollama-rocm;
-      # results in environment variable "HSA_OVERRIDE_GFX_VERSION=10.3.0"
-      rocmOverrideGfx = "10.3.0";
+      # results in environment variable "HSA_OVERRIDE_GFX_VERSION=11.0.0"
+      rocmOverrideGfx = "11.0.0";
     };
   };
 

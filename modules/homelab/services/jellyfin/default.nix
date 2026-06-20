@@ -7,9 +7,7 @@
   homelab = config.homelab;
 in {
   options.homelab.services.jellyfin = {
-    enable = lib.mkEnableOption {
-      description = "Enable Jellyfin";
-    };
+    enable = lib.mkEnableOption "Jellyfin media server";
     url = lib.mkOption {
       type = lib.types.str;
       default = "media.${homelab.baseDomain}";
@@ -19,6 +17,7 @@ in {
       default = 8096;
     };
   };
+
   config = lib.mkIf cfg.enable {
     services.jellyfin = {
       enable = true;
@@ -26,10 +25,15 @@ in {
       group = homelab.group;
     };
 
-    services.caddy.virtualHosts."${cfg.url}" = {
-      extraConfig = ''
-        reverse_proxy http://127.0.0.1:${toString cfg.port}
-      '';
+    # Required for VA-API hardware transcoding
+    users.users.${homelab.user}.extraGroups = ["render" "video"];
+
+    systemd.services.jellyfin = {
+      after = ["newt.service"];
+      wants = ["newt.service"];
+      environment = {
+        JELLYFIN_PublishedServerUrl = "https://${cfg.url}";
+      };
     };
   };
 }

@@ -7,7 +7,13 @@
   cfg = config.homelab.services;
 in {
   imports = [
-    ./caddy
+    ./arr
+    ./frigate
+    ./immich
+    ./jellyfin
+    ./newt
+    ./nextcloud
+    ./nginx-local
     ./pocket-id
     ./vaultwarden
   ];

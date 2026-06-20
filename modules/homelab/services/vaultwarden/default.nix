@@ -7,9 +7,7 @@
   homelab = config.homelab;
 in {
   options.homelab.services.vaultwarden = {
-    enable = lib.mkEnableOption {
-      description = "Enable Vaultwarden";
-    };
+    enable = lib.mkEnableOption "Enable Vaultwarden";
     vaultwardenEnvPath = lib.mkOption {
       type = lib.types.path;
       description = "Path to the Vaultwarden environment file";
@@ -30,17 +28,9 @@ in {
       environmentFile = cfg.vaultwardenEnvPath;
     };
 
-    services.caddy.virtualHosts."${cfg.url}" = {
-      extraConfig = ''
-        import crowdsec_protected
-        reverse_proxy http://127.0.0.1:${toString cfg.port}
-      '';
-    };
-
-    # Start Vaultwarden only after caddy
     systemd.services.vaultwarden = {
-      after = ["caddy.service"];
-      wants = ["caddy.service"];
+      after = ["newt.service"];
+      wants = ["newt.service"];
     };
   };
 }

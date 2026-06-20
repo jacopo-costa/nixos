@@ -6,11 +6,10 @@
   service = "nextcloud";
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
+  ncHome = config.services.nextcloud.home;
 in {
   options.homelab.services.${service} = {
-    enable = lib.mkEnableOption {
-      description = "Enable ${service}";
-    };
+    enable = lib.mkEnableOption "Nextcloud cloud storage";
     url = lib.mkOption {
       type = lib.types.str;
       default = "cloud.${homelab.baseDomain}";
@@ -25,18 +24,29 @@ in {
     };
     nextcloudAdminPassPath = lib.mkOption {
       type = lib.types.path;
+      description = "Path to file containing the Nextcloud admin password";
+    };
+    dataDir = lib.mkOption {
+      type = lib.types.path;
+      default = "/mnt/tank/nextcloud";
+      description = "Directory for Nextcloud user data (bind-mounted into the Nextcloud home)";
     };
   };
+
   config = lib.mkIf cfg.enable {
-    services.nginx = {
-      virtualHosts."${config.services.nextcloud.hostName}" = {
-        listen = [
-          {
-            addr = "127.0.0.1";
-            port = cfg.port;
-          }
-        ];
-      };
+    # Keep user data on the ZFS tank via bind mount
+    fileSystems."${ncHome}/data" = {
+      device = cfg.dataDir;
+      options = ["bind"];
+    };
+
+    services.nginx.virtualHosts."${config.services.nextcloud.hostName}" = {
+      listen = [
+        {
+          addr = "127.0.0.1";
+          port = cfg.port;
+        }
+      ];
     };
 
     services.postgresql = {
@@ -50,19 +60,11 @@ in {
       ];
     };
 
-    systemd.services."nextcloud-setup" = {
-      requires = ["postgresql.service"];
-      after = ["postgresql.service"];
-    };
-
     services.${service} = {
       enable = true;
       hostName = "nextcloud";
 
       configureRedis = true;
-      caching = {
-        redis = true;
-      };
 
       maxUploadSize = "50G";
 
@@ -82,10 +84,19 @@ in {
         overwrite.cli.url = "https://${cfg.url}";
 
         default_phone_region = "IT";
+        forwarded_for_headers = ["HTTP_X_FORWARDED_FOR"];
 
-        forwarded_for_headers = [
-          "HTTP_X_FORWARDED_FOR"
-        ];
+        # SMTP (non-secret — password goes in ${ncHome}/config/smtp.config.php via sops)
+        mail_smtpmode = "smtp";
+        mail_smtphost = config.email.smtpServer;
+        mail_smtpport = config.email.smtpPort;
+        mail_smtpname = config.email.smtpUsername;
+        mail_smtpauth = 1;
+        mail_smtpauth_type = "LOGIN";
+        mail_smtpsecure = "tls";
+        mail_from_address = lib.head (lib.splitString "@" config.email.fromAddress);
+        mail_domain = lib.last (lib.splitString "@" config.email.fromAddress);
+
         enabledPreviewProviders = [
           "OC\\Preview\\BMP"
           "OC\\Preview\\GIF"
@@ -101,23 +112,16 @@ in {
         ];
 
         opcache.interned_strings_buffer = 64;
-
         log_type = "file";
-
         maintenance_window_start = 1;
-
         integrity.check.disabled = false;
       };
     };
 
-    services.caddy.virtualHosts."${cfg.url}" = {
-      extraConfig = ''
-        reverse_proxy http://127.0.0.1:${toString cfg.port}
-
-        header {
-          Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-        }
-      '';
+    systemd.services."nextcloud-setup" = {
+      requires = ["postgresql.service" "${ncHome}/data.mount"];
+      after = ["postgresql.service" "${ncHome}/data.mount" "newt.service"];
+      wants = ["newt.service"];
     };
   };
 }
