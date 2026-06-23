@@ -56,7 +56,7 @@ in {
         image = "linuxserver/qbittorrent:5.2.2";
         environment = {
           PUID = toString config.users.users.${homelab.user}.uid;
-          PGID = toString config.users.users.${homelab.user}.gid;
+          PGID = toString config.users.groups.${homelab.group}.gid;
           TZ = homelab.timeZone;
           WEBUI_PORT = toString cfg.webuiPort;
           TORRENTING_PORT = "6881";

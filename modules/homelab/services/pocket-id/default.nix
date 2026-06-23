@@ -23,7 +23,6 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-
     systemd.services.create-pocket-id-network = {
       description = "Create pocket-id Docker network";
       after = ["docker.service"];
