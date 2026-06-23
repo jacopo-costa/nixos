@@ -3,11 +3,11 @@
   lib,
   ...
 }: let
-  cfg = config.homelab.services.jellyseerr;
+  cfg = config.homelab.services.seerr;
   homelab = config.homelab;
 in {
-  options.homelab.services.jellyseerr = {
-    enable = lib.mkEnableOption "Enable Jellyseerr";
+  options.homelab.services.seerr = {
+    enable = lib.mkEnableOption "Enable Seerr";
     url = lib.mkOption {
       type = lib.types.str;
       default = "req.${homelab.baseDomain}";
@@ -18,12 +18,12 @@ in {
     };
   };
   config = lib.mkIf cfg.enable {
-    services.jellyseerr = {
+    services.seerr = {
       enable = true;
       port = cfg.port;
     };
 
-    systemd.services.jellyseerr = {
+    systemd.services.seerr = {
       wants = ["newt.service"];
     };
   };
