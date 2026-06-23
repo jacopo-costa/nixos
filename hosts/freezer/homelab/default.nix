@@ -116,7 +116,7 @@ in {
 
       # ARR
       flaresolverr.enable = true;
-      jellyseerr.enable = true;
+      seerr.enable = true;
       prowlarr.enable = true;
       radarr.enable = true;
       sonarr.enable = true;
