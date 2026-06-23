@@ -68,7 +68,6 @@ in {
     networking.firewall.allowedUDPPorts = lib.optionals cfg.openWebRtc [8555];
 
     systemd.services.frigate = {
-      after = ["newt.service"];
       wants = ["newt.service"];
       serviceConfig.TimeoutStopSec = 30;
     };

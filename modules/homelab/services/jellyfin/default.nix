@@ -21,7 +21,6 @@ in {
   config = lib.mkIf cfg.enable {
     services.jellyfin = {
       enable = true;
-      user = homelab.user;
       group = homelab.group;
     };
 
@@ -29,8 +28,6 @@ in {
     users.users.${homelab.user}.extraGroups = ["render" "video"];
 
     systemd.services.jellyfin = {
-      after = ["newt.service"];
-      wants = ["newt.service"];
       environment = {
         JELLYFIN_PublishedServerUrl = "https://${cfg.url}";
       };

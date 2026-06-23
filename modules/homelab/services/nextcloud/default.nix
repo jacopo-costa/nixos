@@ -120,7 +120,7 @@ in {
 
     systemd.services."nextcloud-setup" = {
       requires = ["postgresql.service" "${ncHome}/data.mount"];
-      after = ["postgresql.service" "${ncHome}/data.mount" "newt.service"];
+      after = ["postgresql.service" "${ncHome}/data.mount"];
       wants = ["newt.service"];
     };
   };

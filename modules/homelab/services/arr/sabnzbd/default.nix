@@ -18,7 +18,6 @@ in {
   config = lib.mkIf cfg.enable {
     services.sabnzbd = {
       enable = true;
-      user = homelab.user;
       group = homelab.group;
       settings.misc.port = cfg.port;
     };

@@ -3,6 +3,9 @@
   pkgs,
   ...
 }: {
+  # Limit the ZFS ARC to 8GB
+  boot.kernelParams = ["zfs.zfs_arc_max=8589934592"];
+
   services.zfs = {
     autoScrub.enable = true;
 

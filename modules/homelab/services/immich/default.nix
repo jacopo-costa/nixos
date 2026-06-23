@@ -41,7 +41,6 @@ in {
     };
 
     systemd.services.immich-server = {
-      after = ["newt.service"];
       wants = ["newt.service"];
     };
   };
