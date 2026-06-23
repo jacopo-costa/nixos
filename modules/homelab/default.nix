@@ -77,8 +77,9 @@ in {
     powerManagement = {
       enable = true;
       powertop.enable = true;
+      cpuFreqGovernor = "powersave";
     };
-    services.thermald.enable = true;
+    boot.kernelParams = ["pcie_aspm=force" "pcie_aspm.policy=powersupersave"];
 
     environment.systemPackages = with pkgs; [
       powertop
@@ -87,14 +88,18 @@ in {
     ];
 
     # Activate power save on any sd* disks and spindown after 10 minutes
-    services.udev.extraRules = ''ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", RUN+="${pkgs.hdparm}/bin/hdparm -B 90 -S 120 /dev/%k"'';
+    # Turn off WoL
+    services.udev.extraRules = ''
+      ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", RUN+="${pkgs.hdparm}/bin/hdparm -B 90 -S 120 /dev/%k"
+      ACTION=="add", SUBSYSTEM=="net", RUN+="${pkgs.ethtool}/bin/ethtool -s %k wol d"
+    '';
 
     # SMARTd
     services.smartd = {
       enable = true;
       defaults.autodetected = "-a -o on -S on -s (S/../.././10|L/../../7/11) -n standby,q";
 
-      notifications = {
+      notifications = lib.mkIf config.email.enable {
         mail = {
           enable = true;
           sender = config.email.fromAddress;

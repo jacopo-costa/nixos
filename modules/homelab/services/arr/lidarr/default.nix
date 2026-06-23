@@ -17,7 +17,6 @@ in {
   config = lib.mkIf cfg.enable {
     services.lidarr = {
       enable = true;
-      user = homelab.user;
       group = homelab.group;
       settings.server.port = cfg.port;
     };

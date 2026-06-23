@@ -10,18 +10,16 @@ in {
       mode = "0440";
     };
 
-    # Newt
     secrets."newt/id" = {};
     secrets."newt/secret" = {};
 
-    # Pocket-ID
     secrets."pocket-id/maxmindLicenseKey" = {};
     secrets."pocket-id/encryptionKey" = {};
 
     secrets.vaultwardenAdminToken = {};
 
-    # secrets."gluetun/privateKey" = {};
-    # secrets."gluetun/addresses" = {};
+    secrets."gluetun/privateKey" = {};
+    secrets."gluetun/addresses" = {};
 
     # secrets."nextcloud/adminPass" = {};
 
@@ -36,15 +34,16 @@ in {
       '';
 
       pocketIdEnv.content = ''
+        APP_URL=https://auth.${hl.baseDomain}
         TRUST_PROXY=true
         MAXMIND_LICENSE_KEY=${config.sops.placeholder."pocket-id/maxmindLicenseKey"}
         ENCRYPTION_KEY=${config.sops.placeholder."pocket-id/encryptionKey"}
       '';
 
-      # gluetunEnv.content = ''
-      #   WIREGUARD_PRIVATE_KEY=${config.sops.placeholder."gluetun/privateKey"}
-      #   WIREGUARD_ADDRESSES=${config.sops.placeholder."gluetun/addresses"}
-      # '';
+      gluetunEnv.content = ''
+        WIREGUARD_PRIVATE_KEY=${config.sops.placeholder."gluetun/privateKey"}
+        WIREGUARD_ADDRESSES=${config.sops.placeholder."gluetun/addresses"}
+      '';
 
       # frigateEnv.content = ''
       #   FRIGATE_MQTT_PASSWORD=${config.sops.placeholder."frigate/mqttPassword"}
@@ -116,18 +115,20 @@ in {
       };
 
       # ARR
-      flaresolverr.enable = false;
-      jellyseerr.enable = false;
-      prowlarr.enable = false;
-      radarr.enable = false;
-      sonarr.enable = false;
+      flaresolverr.enable = true;
+      jellyseerr.enable = true;
+      prowlarr.enable = true;
+      radarr.enable = true;
+      sonarr.enable = true;
       lidarr.enable = false;
-      bazarr.enable = false;
-      sabnzbd.enable = false;
-      # qbittorrent = {
-      #   enable = false;
-      #   gluetunEnvPath = config.sops.templates.gluetunEnv.path;
-      # };
+      bazarr.enable = true;
+
+      # Downloaders
+      sabnzbd.enable = true;
+      qbittorrent = {
+        enable = true;
+        gluetunEnvPath = config.sops.templates.gluetunEnv.path;
+      };
 
       jellyfin.enable = true;
 

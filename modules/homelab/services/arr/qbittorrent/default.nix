@@ -20,25 +20,23 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    # Create the arr Docker network before gluetun starts
-    systemd.services.docker-network-arr = {
+    systemd.services.create-arr-network = {
       description = "Create arr Docker network";
       after = ["docker.service"];
       requires = ["docker.service"];
       before = ["docker-gluetun.service"];
-      wantedBy = ["multi-user.target"];
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        ExecStart = "${pkgs.docker}/bin/docker network create --driver bridge arr || true";
-      };
+      wantedBy = ["docker-gluetun.service"];
+      serviceConfig.Type = "oneshot";
+      script = ''
+        ${pkgs.docker}/bin/docker network inspect arr > /dev/null 2>&1 || ${pkgs.docker}/bin/docker network create arr
+      '';
     };
 
     virtualisation.oci-containers.containers = {
       gluetun = {
         image = "qmcgaw/gluetun:v3";
         # Exposes qbittorrent WebUI since qbittorrent shares this network namespace
-        ports = ["${toString cfg.webuiPort}:${toString cfg.webuiPort}"];
+        ports = ["127.0.0.1:${toString cfg.webuiPort}:${toString cfg.webuiPort}"];
         environmentFiles = [cfg.gluetunEnvPath];
         environment = {
           VPN_SERVICE_PROVIDER = "mullvad";
@@ -47,18 +45,18 @@ in {
           SERVER_COUNTRIES = "Italy,France,Germany,Switzerland,Spain,Netherlands,Austria,Belgium";
         };
         volumes = ["/var/lib/gluetun:/gluetun"];
-        extraOptions = [
-          "--network=arr"
-          "--cap-add=NET_ADMIN"
-          "--device=/dev/net/tun:/dev/net/tun"
-        ];
+        networks = ["arr"];
+        devices = ["/dev/net/tun:/dev/net/tun"];
+        capabilities = {
+          NET_ADMIN = true;
+        };
       };
 
       qbittorrent = {
-        image = "lscr.io/linuxserver/qbittorrent:latest";
+        image = "linuxserver/qbittorrent:5.2.2";
         environment = {
-          PUID = "950";
-          PGID = "950";
+          PUID = toString config.users.users.${homelab.user}.uid;
+          PGID = toString config.users.users.${homelab.user}.gid;
           TZ = homelab.timeZone;
           WEBUI_PORT = toString cfg.webuiPort;
           TORRENTING_PORT = "6881";

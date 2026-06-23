@@ -24,7 +24,6 @@ in {
     };
 
     systemd.services.jellyseerr = {
-      after = ["newt.service"];
       wants = ["newt.service"];
     };
   };

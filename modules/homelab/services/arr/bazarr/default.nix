@@ -17,7 +17,6 @@ in {
   config = lib.mkIf cfg.enable {
     services.bazarr = {
       enable = true;
-      user = homelab.user;
       group = homelab.group;
       listenPort = cfg.port;
     };

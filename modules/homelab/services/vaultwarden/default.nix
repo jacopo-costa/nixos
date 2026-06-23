@@ -29,7 +29,6 @@ in {
     };
 
     systemd.services.vaultwarden = {
-      after = ["newt.service"];
       wants = ["newt.service"];
     };
   };

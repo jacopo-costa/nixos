@@ -16,9 +16,8 @@ in {
   config = lib.mkIf cfg.enable {
     services.radarr = {
       enable = true;
-      settings.server.port = cfg.port;
-      user = homelab.user;
       group = homelab.group;
+      settings.server.port = cfg.port;
     };
   };
 }
