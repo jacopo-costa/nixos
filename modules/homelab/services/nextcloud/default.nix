@@ -3,12 +3,11 @@
   lib,
   ...
 }: let
-  service = "nextcloud";
-  cfg = config.homelab.services.${service};
+  cfg = config.homelab.services.nextcloud;
   homelab = config.homelab;
   ncHome = config.services.nextcloud.home;
 in {
-  options.homelab.services.${service} = {
+  options.homelab.services.nextcloud = {
     enable = lib.mkEnableOption "Nextcloud cloud storage";
     url = lib.mkOption {
       type = lib.types.str;
@@ -34,19 +33,8 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    # Keep user data on the ZFS tank via bind mount
-    fileSystems."${ncHome}/data" = {
-      device = cfg.dataDir;
-      options = ["bind"];
-    };
-
-    services.nginx.virtualHosts."${config.services.nextcloud.hostName}" = {
-      listen = [
-        {
-          addr = "127.0.0.1";
-          port = cfg.port;
-        }
-      ];
+    services.nginx.virtualHosts.${cfg.url} = {
+      listen = [{ addr = "127.0.0.1"; port = cfg.port; }];
     };
 
     services.postgresql = {
@@ -60,13 +48,23 @@ in {
       ];
     };
 
-    services.${service} = {
+    services.nextcloud = {
       enable = true;
-      hostName = "nextcloud";
+      hostName = cfg.url;
+      datadir = cfg.dataDir;
+
+      autoUpdateApps.enable = true;
+      extraApps = {
+        inherit (config.services.nextcloud.package.packages.apps) contacts calendar tasks notes bookmarks user_oidc;
+      };
 
       configureRedis = true;
-
       maxUploadSize = "50G";
+
+      notify_push = {
+        enable = true;
+        nextcloudUrl = "http://127.0.0.1:${toString cfg.port}";
+      };
 
       config = {
         dbtype = "pgsql";
@@ -81,7 +79,7 @@ in {
         trusted_proxies = ["127.0.0.1"];
         overwriteprotocol = "https";
         overwritehost = cfg.url;
-        overwrite.cli.url = "https://${cfg.url}";
+        "overwrite.cli.url" = "https://${cfg.url}";
 
         default_phone_region = "IT";
         forwarded_for_headers = ["HTTP_X_FORWARDED_FOR"];
@@ -91,7 +89,7 @@ in {
         mail_smtphost = config.email.smtpServer;
         mail_smtpport = config.email.smtpPort;
         mail_smtpname = config.email.smtpUsername;
-        mail_smtpauth = 1;
+        mail_smtpauth = true;
         mail_smtpauth_type = "LOGIN";
         mail_smtpsecure = "tls";
         mail_from_address = lib.head (lib.splitString "@" config.email.fromAddress);
@@ -111,16 +109,16 @@ in {
           "OC\\Preview\\HEIC"
         ];
 
-        opcache.interned_strings_buffer = 64;
+        "opcache.interned_strings_buffer" = 64;
         log_type = "file";
         maintenance_window_start = 1;
-        integrity.check.disabled = false;
+        "integrity.check.disabled" = false;
       };
     };
 
     systemd.services."nextcloud-setup" = {
-      requires = ["postgresql.service" "${ncHome}/data.mount"];
-      after = ["postgresql.service" "${ncHome}/data.mount"];
+      requires = ["postgresql.target"];
+      after = ["postgresql.target" "newt.service"];
       wants = ["newt.service"];
     };
   };
