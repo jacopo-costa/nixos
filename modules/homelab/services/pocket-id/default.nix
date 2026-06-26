@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   cfg = config.homelab.services.pocket-id;
@@ -31,7 +32,7 @@ in {
       wantedBy = ["docker-pocket-id.service"];
       serviceConfig.Type = "oneshot";
       script = ''
-        docker network inspect pocket-id > /dev/null 2>&1 || docker network create pocket-id
+        ${pkgs.docker}/bin/docker network inspect pocket-id > /dev/null 2>&1 || ${pkgs.docker}/bin/docker network create pocket-id
       '';
     };
 

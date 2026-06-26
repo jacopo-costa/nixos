@@ -19,6 +19,7 @@ in {
     services.sabnzbd = {
       enable = true;
       group = homelab.group;
+      allowConfigWrite = true;
       settings.misc.port = cfg.port;
     };
   };
