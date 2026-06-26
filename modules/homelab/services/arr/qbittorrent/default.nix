@@ -63,7 +63,7 @@ in {
         };
         volumes = [
           "/var/lib/qbittorrent:/config"
-          "/mnt/tank/arr/torrents:/arr/torrents"
+          "/mnt/tank/arr/torrents:/mnt/tank/arr/torrents"
         ];
         # Share gluetun's network namespace for VPN killswitch
         extraOptions = ["--network=container:gluetun"];
