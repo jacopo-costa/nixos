@@ -21,7 +21,9 @@ in {
     secrets."gluetun/privateKey" = {};
     secrets."gluetun/addresses" = {};
 
-    # secrets."nextcloud/adminPass" = {};
+    secrets."nextcloud/mariadbRootPass" = {};
+    secrets."nextcloud/mariadbPass" = {};
+    secrets."nextcloud/adminPass" = {};
 
     # secrets."frigate/mqttPassword" = {};
     # secrets."frigate/rtspPassword" = {};
@@ -45,21 +47,32 @@ in {
         WIREGUARD_ADDRESSES=${config.sops.placeholder."gluetun/addresses"}
       '';
 
-      # frigateEnv.content = ''
-      #   FRIGATE_MQTT_PASSWORD=${config.sops.placeholder."frigate/mqttPassword"}
-      #   FRIGATE_RTSP_PASSWORD=${config.sops.placeholder."frigate/rtspPassword"}
-      # '';
+      nextcloudEnv.content = ''
+        # MariaDB
+        MYSQL_ROOT_PASSWORD=${config.sops.placeholder."nextcloud/mariadbRootPass"}
+        MYSQL_PASSWORD=${config.sops.placeholder."nextcloud/mariadbPass"}
+        MYSQL_DATABASE=nextcloud
+        MYSQL_USER=nextcloud
 
-      # # Nextcloud SMTP password as a PHP config file auto-loaded by Nextcloud
-      # nextcloudSmtp = {
-      #   content = ''
-      #     <?php
-      #     $CONFIG = ['mail_smtppassword' => '${config.sops.placeholder."smtp/password"}'];
-      #   '';
-      #   path = "/var/lib/nextcloud/config/smtp.config.php";
-      #   owner = "nextcloud";
-      #   mode = "0600";
-      # };
+        MYSQL_HOST=nextcloud_mariadb
+        REDIS_HOST=nextcloud_redis
+
+        # Admin
+        NEXTCLOUD_ADMIN_USER=admin
+        NEXTCLOUD_ADMIN_PASSWORD='${config.sops.placeholder."nextcloud/adminPass"}'
+
+        NEXTCLOUD_TRUSTED_DOMAINS=cloud.dimoracosta.it
+        APACHE_DISABLE_REWRITE_IP=1
+        TRUSTED_PROXIES=172.17.0.1
+
+        # SMTP
+        SMTP_HOST=${smtpHost}
+        SMTP_PORT=${toString smtpPort}
+        SMTP_NAME=${config.sops.placeholder."smtp/user"}
+        SMTP_PASSWORD=${config.sops.placeholder."smtp/password"}
+        MAIL_FROM_ADDRESS=dimoracosta.system
+        MAIL_DOMAIN=gmail.com
+      '';
 
       vaultwardenEnv.content = ''
         DOMAIN=https://vault.${hl.baseDomain}
@@ -278,10 +291,10 @@ in {
       immich.enable = false;
 
       # Cloud
-      # nextcloud = {
-      #   enable = false;
-      #   nextcloudAdminPassPath = config.sops.secrets."nextcloud/adminPass".path;
-      # };
+      nextcloud = {
+        enable = false;
+        nextcloudEnvPath = config.sops.templates.nextcloudEnv.path;
+      };
     };
   };
 
