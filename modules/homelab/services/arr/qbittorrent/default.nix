@@ -13,6 +13,11 @@ in {
       type = lib.types.path;
       description = "Path to Gluetun environment file containing Mullvad WireGuard credentials";
     };
+    torrentDir = lib.mkOption {
+      type = lib.types.path;
+      default = "/mnt/tank/arr/torrents";
+      description = "Directory for qBittorrent downloads";
+    };
     webuiPort = lib.mkOption {
       type = lib.types.port;
       default = 8090;
@@ -63,7 +68,7 @@ in {
         };
         volumes = [
           "/var/lib/qbittorrent:/config"
-          "/mnt/tank/arr/torrents:/mnt/tank/arr/torrents"
+          "${cfg.torrentDir}:${cfg.torrentDir}"
         ];
         # Share gluetun's network namespace for VPN killswitch
         extraOptions = ["--network=container:gluetun"];
