@@ -45,12 +45,12 @@ in {
       setSendmail = true;
       accounts.default = {
         auth = true;
-        host = config.email.smtpServer;
-        port = config.email.smtpPort;
-        from = config.email.fromAddress;
-        user = config.email.smtpUsername;
+        host = cfg.smtpServer;
+        port = cfg.smtpPort;
+        from = cfg.fromAddress;
+        user = cfg.smtpUsername;
         tls = true;
-        passwordeval = "${pkgs.coreutils}/bin/cat ${config.email.smtpPasswordPath}";
+        passwordeval = "${pkgs.coreutils}/bin/cat ${cfg.smtpPasswordPath}";
       };
     };
   };

@@ -30,32 +30,7 @@ in {
         Main user to add in the homelab group
       '';
     };
-    timeZone = lib.mkOption {
-      default = "Europe/Rome";
-      type = lib.types.str;
-      description = ''
-        Time zone to be used for the homelab services
-      '';
-    };
-    baseDomain = lib.mkOption {
-      default = "dimoracosta.it";
-      type = lib.types.str;
-      description = ''
-        Base domain for external access via Pangolin.
-      '';
-    };
-    localDomain = lib.mkOption {
-      default = "freezer.lan";
-      type = lib.types.str;
-      description = ''
-        Local LAN domain used by the nginx reverse proxy for internal access.
-      '';
-    };
   };
-
-  imports = [
-    ./services
-  ];
 
   config = lib.mkIf cfg.enable {
     # Share user
@@ -108,8 +83,6 @@ in {
       };
     };
 
-    security.apparmor.enable = true;
-
     # Virtualisation
     virtualisation = {
       libvirtd = {
@@ -117,6 +90,17 @@ in {
 
         onBoot = "start";
         onShutdown = "shutdown";
+      };
+
+      # Every app is in a docker compose under /srv/stacks
+      docker = {
+        enable = true;
+        autoPrune.enable = true;
+        daemon.settings = {
+          userland-proxy = false;
+          ipv6 = false;
+          no-new-privileges = true;
+        };
       };
     };
   };
