@@ -5,6 +5,7 @@
 }: {
   desktop = {
     enable = true;
+    intel = false;
     grub = true;
     systemd-boot = false;
   };
@@ -14,7 +15,12 @@
     initrd = {
       availableKernelModules = ["nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod"];
     };
+    # Reduce swappiness
+    kernel.sysctl."vm.swappiness" = 10;
+
     kernelModules = ["kvm-amd"];
+    # cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver — if it already says amd-pstate-epp, you're fine. If it says acpi-cpufreq, add the param.
+    kernelParams = ["amd_pstate=active"];
   };
 
   # Hardware
@@ -48,6 +54,7 @@
       package = pkgs.steam.override {
         extraPkgs = p: [
           p.kdePackages.breeze
+          # Need python for the widescreen fix on Elden Ring
           p.python314
         ];
       };
@@ -92,5 +99,6 @@
   ];
 
   # System
+  system.stateVersion = "26.05";
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }

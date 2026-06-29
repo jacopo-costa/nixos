@@ -32,8 +32,12 @@
     "net.ipv4.conf.all.accept_source_route" = 0;
   };
 
-  # Firmware update
-  services.fwupd.enable = true;
+  services = {
+    # Firmware update
+    fwupd.enable = true;
+    # IRQ affinity management
+    irqbalance.enable = true;
+  };
 
   # Hardware
   hardware = {
@@ -75,16 +79,11 @@
     };
   };
 
-  # System
-  system = {
-    stateVersion = "26.05";
-  };
-
   # Timezone
   time.timeZone = "Europe/Rome";
 
   # Users
   # set mutable as false because
-  # the password is already set as hashable
+  # the password is already set as hashed
   users.mutableUsers = false;
 }

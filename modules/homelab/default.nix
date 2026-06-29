@@ -48,13 +48,28 @@ in {
       };
     };
 
+    # TCP tuning
+    boot = {
+      kernelModules = ["tcp_bbr"];
+      kernelParams = ["pcie_aspm=force" "pcie_aspm.policy=powersupersave"];
+
+      kernel.sysctl = {
+        "net.core.rmem_max"          = 134217728;  # 128 MiB
+        "net.core.wmem_max"          = 134217728;
+        "net.ipv4.tcp_rmem"          = "4096 87380 134217728";
+        "net.ipv4.tcp_wmem"          = "4096 65536 134217728";
+        "net.core.netdev_max_backlog" = 5000;
+        "net.ipv4.tcp_congestion_control" = "bbr";
+        "net.core.default_qdisc"     = "fq";       # required for BBR
+      };
+    };
+
     # Power Management
     powerManagement = {
       enable = true;
       powertop.enable = true;
       cpuFreqGovernor = "powersave";
     };
-    boot.kernelParams = ["pcie_aspm=force" "pcie_aspm.policy=powersupersave"];
 
     environment.systemPackages = with pkgs; [
       powertop
@@ -66,7 +81,7 @@ in {
     # Turn off WoL
     services.udev.extraRules = ''
       ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", RUN+="${pkgs.hdparm}/bin/hdparm -B 90 -S 120 /dev/%k"
-      ACTION=="add", SUBSYSTEM=="net", RUN+="${pkgs.ethtool}/bin/ethtool -s %k wol d"
+      ACTION=="add", SUBSYSTEM=="net", DRIVERS=="?*", ATTR{device/subsystem}=="pci", RUN+="${pkgs.ethtool}/bin/ethtool -s %k wol d"
     '';
 
     # SMARTd

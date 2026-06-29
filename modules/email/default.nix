@@ -11,12 +11,12 @@ in {
     fromAddress = lib.mkOption {
       description = "The 'from' address";
       type = lib.types.str;
-      default = "john@example.com";
+      default = "dimoracosta.system@gmail.com";
     };
     toAddress = lib.mkOption {
       description = "The 'to' address";
       type = lib.types.str;
-      default = "john@example.com";
+      default = "costa.jacopo@gmail.com";
     };
     smtpServer = lib.mkOption {
       description = "The SMTP server address";
@@ -31,7 +31,7 @@ in {
     smtpUsername = lib.mkOption {
       description = "The SMTP username";
       type = lib.types.str;
-      default = "john@example.com";
+      default = "dimoracosta.system@gmail.com";
     };
     smtpPasswordPath = lib.mkOption {
       description = "Path to the secret containing SMTP password";

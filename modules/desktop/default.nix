@@ -10,6 +10,7 @@ in {
     enable = lib.mkEnableOption "The desktop services and configuration variables";
     grub = lib.mkEnableOption "Whether to activate grub";
     systemd-boot = lib.mkEnableOption "Whether to activate systemd-boot";
+    intel = lib.mkEnableOption "If it's an Intel machine";
   };
   config = lib.mkIf cfg.enable {
     # Audio
@@ -32,7 +33,7 @@ in {
           efiSupport = true;
           useOSProber = true;
           # Set to default the Windows boot entry
-          default = "2";
+          default = "Windows Boot Manager";
         };
 
         # Systemd boot
@@ -92,6 +93,8 @@ in {
     services.flatpak.enable = true;
     systemd.services.flatpak-repo = {
       wantedBy = ["multi-user.target"];
+      serviceConfig.Type = "oneshot";
+      serviceConfig.RemainAfterExit = true;
       path = [pkgs.flatpak];
       script = ''
         flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -115,8 +118,10 @@ in {
       # Enable CUPS to print documents.
       printing.enable = true;
 
-      # Enable thermald
-      thermald.enable = true;
+      # Enable thermald only if it's an Intel machine
+      thermald = lib.mkIf cfg.intel {
+        enable = true;
+      };
     };
   };
 }

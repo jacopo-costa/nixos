@@ -14,6 +14,7 @@
       # and is required for future TPM2 / FIDO2 unlock.
       systemd.enable = true;
     };
+    kernelParams = ["amd_pstate=active"];
     kernelModules = ["kvm-amd"];
   };
 
@@ -35,6 +36,8 @@
       layout = "it";
       variant = "";
     };
+
+    power-profiles-daemon.enable = true;
   };
 
   # Swap
@@ -46,5 +49,6 @@
   ];
 
   # System
+  system.stateVersion = "26.05";
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }

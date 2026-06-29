@@ -1,18 +1,17 @@
 {config, ...}: {
   sops = {
     secrets = {
-      "smtp/user" = {};
       "smtp/password" = {};
     };
   };
 
   email = {
     enable = true;
-    fromAddress = config.sops.secrets."smtp/user".path;
+    fromAddress = "dimoracosta.system@gmail.com";
     toAddress = "costa.jacopo@gmail.com";
     smtpServer = "smtp.gmail.com";
     smtpPort = 587;
-    smtpUsername = config.sops.secrets."smtp/user".path;
+    smtpUsername = "dimoracosta.system@gmail.com";
     smtpPasswordPath = config.sops.secrets."smtp/password".path;
   };
 }
