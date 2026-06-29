@@ -224,7 +224,7 @@ in {
                   params = [
                     {
                       name = "channel";
-                      value = "unstable";
+                      value = osConfig.system.stateVersion;
                     }
                     {
                       name = "query";
@@ -244,7 +244,7 @@ in {
                   params = [
                     {
                       name = "channel";
-                      value = "unstable";
+                      value = osConfig.system.stateVersion;
                     }
                     {
                       name = "query";
