@@ -33,7 +33,7 @@ in {
           efiSupport = true;
           useOSProber = true;
           # Set to default the Windows boot entry
-          default = "Windows Boot Manager";
+          default = "2";
         };
 
         # Systemd boot
