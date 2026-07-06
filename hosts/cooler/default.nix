@@ -44,6 +44,7 @@
     systemPackages = with pkgs; [
       protonup-qt
       openrgb
+      mangohud
     ];
   };
 

@@ -126,6 +126,11 @@ in {
             installation_mode = "force_installed";
           };
 
+          "{22b0eca1-8c02-4c0d-a5d7-6604ddd9836e}" = {
+            install_url = "https://addons.mozilla.org/firefox/downloads/file/4226329/nicothin_space-1.1.2.xpi";
+            installation_mode = "force_installed";
+          };
+
           "uBlock0@raymondhill.net" = {
             default_area = "navbar";
             install_url = moz "ublock-origin";
@@ -239,7 +244,6 @@ in {
                   type = "application/x-suggestions+json";
                 }
               ];
-              icon = "https://search.dimoracosta.it/favicon.svg";
               definedAliases = ["@s"];
             };
 
