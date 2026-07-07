@@ -4,6 +4,7 @@
   ...
 }: {
   imports = [
+    ./backup
     ./email
     ./homelab
     ./network
