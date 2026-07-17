@@ -18,7 +18,8 @@ in {
   services.borgbackup.jobs = {
     freezer-local = {
       paths = [
-        "/srv/secrets"
+        "/srv/stacks"
+	"/opt/suwayomi"
         "/var/lib/docker/volumes"
         "/mnt/tank/nextcloud"
         "/mnt/tank/immich"
