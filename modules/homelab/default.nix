@@ -75,6 +75,7 @@ in {
       powertop
       hdparm
       smartmontools
+      virt-manager
     ];
 
     # Activate power save on any sd* disks and spindown after 10 minutes
@@ -102,6 +103,10 @@ in {
     virtualisation = {
       libvirtd = {
         enable = true;
+	qemu = {
+	  runAsRoot = true;
+	  swtpm.enable = true;
+	};
 
         onBoot = "start";
         onShutdown = "shutdown";
