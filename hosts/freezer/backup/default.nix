@@ -37,15 +37,19 @@ in {
       };
 
       preHook = ''
-        BORG_RUNNING_CONTAINERS=$(${dockerCli} ps -q)
-        if [ -n "$BORG_RUNNING_CONTAINERS" ]; then
-          ${dockerCli} stop $BORG_RUNNING_CONTAINERS
+        BORG_RUNNING_COMPOSES=$(for c in $(${dockerCli} ps -q); do ${dockerCli} inspect "$c" --format '{{ index .Config.Labels "com.docker.compose.project.config_files" }}'; done | grep -v '^$' | sort -u)
+        if [ -n "$BORG_RUNNING_COMPOSES" ]; then
+          for c in $BORG_RUNNING_COMPOSES; do
+	    ${dockerCli} compose -f $c stop;
+          done;
         fi
       '';
 
       postHook = ''
-        if [ -n "$BORG_RUNNING_CONTAINERS" ]; then
-          ${dockerCli} start $BORG_RUNNING_CONTAINERS
+        if [ -n "$BORG_RUNNING_COMPOSES" ]; then
+          for c in $BORG_RUNNING_COMPOSES; do
+            ${dockerCli} compose -f $c start;
+          done;
         fi
         ${pkgs.borgbackup}/bin/borg compact "${borgRepo}"
         ${emailOnFailure}
