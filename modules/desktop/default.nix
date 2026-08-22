@@ -7,12 +7,20 @@
   cfg = config.desktop;
 in {
   options.desktop = {
-    enable = lib.mkEnableOption "The desktop services and configuration variables";
-    grub = lib.mkEnableOption "Whether to activate grub";
-    systemd-boot = lib.mkEnableOption "Whether to activate systemd-boot";
-    intel = lib.mkEnableOption "If it's an Intel machine";
+    enable = lib.mkEnableOption "desktop services and configuration";
+    grub = lib.mkEnableOption "GRUB boot loader";
+    systemd-boot = lib.mkEnableOption "systemd-boot boot loader";
+    intel = lib.mkEnableOption "Intel-specific hardware support";
   };
   config = lib.mkIf cfg.enable {
+
+    assertions = [
+      {
+        assertion = cfg.grub != cfg.systemd-boot;
+        message = "Exactly one of desktop.grub or desktop.systemd-boot must be enabled.";
+      }
+    ];
+
     # Audio
     security.rtkit.enable = true;
     services.pipewire = {
@@ -26,6 +34,7 @@ in {
     boot = {
       loader = {
         efi.canTouchEfiVariables = true;
+
         # GRUB
         grub = lib.mkIf cfg.grub {
           enable = true;
@@ -80,9 +89,9 @@ in {
       aspell
       aspellDicts.it
       aspellDicts.en
+
       # KDE Utilities
       kdePackages.kcalc
-      kdePackages.sddm-kcm
       kdePackages.partitionmanager
     ];
 
@@ -90,35 +99,27 @@ in {
     powerManagement.enable = true;
 
     # Flatpak
-    services.flatpak.enable = true;
-    systemd.services.flatpak-repo = {
-      wantedBy = ["multi-user.target"];
-      serviceConfig.Type = "oneshot";
-      serviceConfig.RemainAfterExit = true;
-      path = [pkgs.flatpak];
-      script = ''
-        flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-      '';
-    };
+    # services.flatpak.enable = true;
+    # systemd.services.flatpak-repo = {
+    #   wantedBy = ["multi-user.target"];
+    #   serviceConfig.Type = "oneshot";
+    #   serviceConfig.RemainAfterExit = true;
+    #   path = [pkgs.flatpak];
+    #   script = ''
+    #     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    #   '';
+    # };
 
     # Services
     services = {
-      # Enable X11
-      xserver = {
-        enable = true;
-      };
-
-      # Enable Plasma and SDDM
+      # Enable Plasma and login manager
       desktopManager.plasma6.enable = true;
-      displayManager.sddm = {
-        enable = true;
-        wayland.enable = true;
-      };
+      desktopManager.plasma-login-manager.enable = true;
 
-      # Enable CUPS to print documents.
+      # Printing
       printing.enable = true;
 
-      # Enable thermald only if it's an Intel machine
+      # Intel-specific services
       thermald = lib.mkIf cfg.intel {
         enable = true;
       };

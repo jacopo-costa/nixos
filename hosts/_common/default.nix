@@ -8,30 +8,6 @@
     ./secrets
   ];
 
-  boot.kernel.sysctl = {
-    # No kernel pointer leaks to userspace
-    "kernel.kptr_restrict" = 2;
-    # dmesg only for root
-    "kernel.dmesg_restrict" = 1;
-    # Restrict ptrace to parent processes only (level 1 = safer than level 2 which breaks too much)
-    "kernel.yama.ptrace_scope" = 1;
-    # Prevent non-root BPF program loading
-    "kernel.unprivileged_bpf_disabled" = 1;
-    # Prevent null pointer dereference exploits
-    "vm.mmap_min_addr" = 65536;
-
-    # Reverse path filter (drop spoofed source addresses)
-    "net.ipv4.conf.all.rp_filter" = 1;
-    "net.ipv4.conf.default.rp_filter" = 1;
-    # SYN cookie defense against SYN flood
-    "net.ipv4.tcp_syncookies" = 1;
-    # Ignore ICMP redirects (limits MitM via rogue routers)
-    "net.ipv4.conf.all.accept_redirects" = 0;
-    "net.ipv6.conf.all.accept_redirects" = 0;
-    # Don't accept source-routed packets
-    "net.ipv4.conf.all.accept_source_route" = 0;
-  };
-
   services = {
     # Firmware update
     fwupd.enable = true;
