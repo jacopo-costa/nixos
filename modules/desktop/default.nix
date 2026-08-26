@@ -13,7 +13,6 @@ in {
     intel = lib.mkEnableOption "Intel-specific hardware support";
   };
   config = lib.mkIf cfg.enable {
-
     assertions = [
       {
         assertion = cfg.grub != cfg.systemd-boot;
@@ -61,9 +60,7 @@ in {
       initrd.verbose = false;
       kernelParams = [
         "quiet"
-        "splash"
-        "boot.shell_on_fail"
-        "udev.log_priority=3"
+        "rd.udev.log_level=3"
         "rd.systemd.show_status=auto"
       ];
     };
@@ -99,22 +96,20 @@ in {
     powerManagement.enable = true;
 
     # Flatpak
-    # services.flatpak.enable = true;
-    # systemd.services.flatpak-repo = {
-    #   wantedBy = ["multi-user.target"];
-    #   serviceConfig.Type = "oneshot";
-    #   serviceConfig.RemainAfterExit = true;
-    #   path = [pkgs.flatpak];
-    #   script = ''
-    #     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-    #   '';
-    # };
+    services.flatpak.enable = true;
+    systemd.services.flatpak-repo = {
+      wantedBy = ["multi-user.target"];
+      path = [pkgs.flatpak];
+      script = ''
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+      '';
+    };
 
     # Services
     services = {
       # Enable Plasma and login manager
       desktopManager.plasma6.enable = true;
-      desktopManager.plasma-login-manager.enable = true;
+      displayManager.plasma-login-manager.enable = true;
 
       # Printing
       printing.enable = true;

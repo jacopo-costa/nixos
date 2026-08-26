@@ -15,6 +15,8 @@
     initrd = {
       systemd.enable = true;
       availableKernelModules = ["nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod"];
+
+      kernelModules = ["amdgpu"];
     };
     # Reduce swappiness
     kernel.sysctl."vm.swappiness" = 10;
@@ -33,9 +35,10 @@
   # Pkgs
   environment = {
     systemPackages = with pkgs; [
-      protonup-qt
       openrgb
       mangohud
+
+      nodejs
     ];
   };
 
@@ -50,6 +53,10 @@
           # Need python for the widescreen fix on Elden Ring
           p.python314
         ];
+        extraEnv = {
+          GAMEMODERUN = "1";
+          MANGOHUD = "1";
+        };
       };
       localNetworkGameTransfers.openFirewall = true;
     };
@@ -59,6 +66,12 @@
   # Services
   services = {
     hardware.openrgb.enable = true;
+
+    # Ollama
+    ollama = {
+      enable = true;
+      package = pkgs.ollama-rocm;
+    };
   };
 
   # Swap
