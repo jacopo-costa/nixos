@@ -11,6 +11,10 @@ in {
     username = "jacopo";
     homeDirectory = "/home/jacopo";
     stateVersion = "26.05";
+
+    sessionPath = [
+      "$HOME/.npm-global/bin"
+    ];
   };
 
   programs = {
@@ -41,7 +45,11 @@ in {
         PAGER = "less";
       };
 
-      history.size = 5000;
+      history = {
+        path = "$HOME/.zsh_history";
+        size = 5000;
+        ignoreAllDups = true;
+      };
     };
 
     git = {
@@ -74,6 +82,9 @@ in {
 
     firefox = lib.mkIf isDesktop {
       enable = true;
+
+      # For browser integration
+      nativeMessagingHosts = [pkgs.kdePackages.plasma-browser-integration];
 
       languagePacks = [
         "it"
@@ -124,6 +135,13 @@ in {
           "it-IT@dictionaries.addons.mozilla.org" = {
             install_url = "https://addons.mozilla.org/it/firefox/addon/dizionario-italiano/";
             installation_mode = "force_installed";
+          };
+
+          "plasma-browser-integration@kde.org" = {
+            default_area = "menupanel";
+            install_url = moz "plasma-integration";
+            installation_mode = "force_installed";
+            private_browsing = false;
           };
 
           "uBlock0@raymondhill.net" = {

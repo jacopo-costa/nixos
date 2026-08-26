@@ -19,7 +19,7 @@ in {
     freezer-local = {
       paths = [
         "/srv/stacks"
-	"/opt/suwayomi"
+        "/opt/suwayomi"
         "/var/lib/docker/volumes"
         "/mnt/tank/nextcloud"
         "/mnt/tank/immich"
@@ -37,12 +37,12 @@ in {
       };
 
       preHook = ''
-        BORG_RUNNING_COMPOSES=$(for c in $(${dockerCli} ps -q); do ${dockerCli} inspect "$c" --format '{{ index .Config.Labels "com.docker.compose.project.config_files" }}'; done | grep -v '^$' | sort -u)
-        if [ -n "$BORG_RUNNING_COMPOSES" ]; then
-          for c in $BORG_RUNNING_COMPOSES; do
-	    ${dockerCli} compose -f $c stop;
-          done;
-        fi
+           BORG_RUNNING_COMPOSES=$(for c in $(${dockerCli} ps -q); do ${dockerCli} inspect "$c" --format '{{ index .Config.Labels "com.docker.compose.project.config_files" }}'; done | grep -v '^$' | sort -u)
+           if [ -n "$BORG_RUNNING_COMPOSES" ]; then
+             for c in $BORG_RUNNING_COMPOSES; do
+        ${dockerCli} compose -f $c stop;
+             done;
+           fi
       '';
 
       postHook = ''
