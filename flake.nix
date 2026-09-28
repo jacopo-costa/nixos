@@ -30,13 +30,13 @@
     ...
   } @ inputs: let
     helpers = import ./flakeHelpers.nix inputs;
-    inherit (helpers) mergeOutputs mkNixos;
+    mkNixos = helpers.mkNixos;
 
     systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
     forAllSystems = f:
       nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
   in
-    mergeOutputs [
+    nixpkgs.lib.foldl' (a: b: nixpkgs.lib.recursiveUpdate a b) {} [
       {
         formatter = forAllSystems (pkgs: pkgs.alejandra);
       }

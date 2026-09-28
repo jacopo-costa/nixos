@@ -197,7 +197,6 @@ in {
           # Localization
           "intl.locale.requested" = "it,en-US";
           "intl.regional_prefs.use_os_locales" = true;
-          "browser.urlbar.placeholderName" = "SearXNG";
           "browser.search.region" = "IT";
 
           # AI
@@ -231,35 +230,10 @@ in {
 
         search = {
           force = true;
-          default = "SearXNG";
-          privateDefault = "SearXNG";
+          default = "ddg";
+          privateDefault = "ddg";
 
           engines = {
-            "SearXNG" = {
-              urls = [
-                {
-                  template = "https://search.dimoracosta.it/search";
-                  params = [
-                    {
-                      name = "q";
-                      value = "{searchTerms}";
-                    }
-                  ];
-                }
-                {
-                  template = "https://search.dimoracosta.it/autocompleter";
-                  params = [
-                    {
-                      name = "q";
-                      value = "{searchTerms}";
-                    }
-                  ];
-                  type = "application/x-suggestions+json";
-                }
-              ];
-              definedAliases = ["@s"];
-            };
-
             "Nix Packages" = {
               urls = [
                 {
