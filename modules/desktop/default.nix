@@ -19,7 +19,6 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-
     # Audio
     security.rtkit.enable = true;
     services.pipewire = {
@@ -63,6 +62,9 @@ in {
         "rd.udev.log_level=3"
         "rd.systemd.show_status=auto"
       ];
+
+      # Reduce swappiness
+      kernel.sysctl."vm.swappiness" = 10;
     };
 
     # Hardware
