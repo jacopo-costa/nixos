@@ -8,17 +8,17 @@
 in {
   options.desktop = {
     enable = lib.mkEnableOption "desktop services and configuration";
-    grub = lib.mkEnableOption "GRUB boot loader";
-    systemd-boot = lib.mkEnableOption "systemd-boot boot loader";
+    loader = lib.mkOption {
+      default = null;
+      type = lib.types.nullOr (lib.types.enum ["grub" "systemd-boot"]);
+      description = ''
+        Boot loader to use. Set to null if the host manages its own boot loader.
+      '';
+    };
     intel = lib.mkEnableOption "Intel-specific hardware support";
   };
+
   config = lib.mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = cfg.grub != cfg.systemd-boot;
-        message = "Exactly one of desktop.grub or desktop.systemd-boot must be enabled.";
-      }
-    ];
 
     # Audio
     security.rtkit.enable = true;
@@ -35,7 +35,7 @@ in {
         efi.canTouchEfiVariables = true;
 
         # GRUB
-        grub = lib.mkIf cfg.grub {
+        grub = lib.mkIf (cfg.loader == "grub") {
           enable = true;
           devices = ["nodev"];
           efiSupport = true;
@@ -45,7 +45,7 @@ in {
         };
 
         # Systemd boot
-        systemd-boot = lib.mkIf cfg.systemd-boot {
+        systemd-boot = lib.mkIf (cfg.loader == "systemd-boot") {
           enable = true;
           editor = false;
         };
@@ -90,6 +90,9 @@ in {
       # KDE Utilities
       kdePackages.kcalc
       kdePackages.partitionmanager
+
+      # Equalizer
+      easyeffects
     ];
 
     # Power management

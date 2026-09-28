@@ -1,8 +1,7 @@
 {lib, ...}: {
   desktop = {
     enable = true;
-    grub = false;
-    systemd-boot = true;
+    loader = "systemd-boot";
   };
 
   # Boot

@@ -6,7 +6,6 @@
   imports = [
     ./backup
     ./email
-    ./homelab
     ./network
     ./zfs
   ];
@@ -20,7 +19,6 @@
     kernelModules = ["kvm-intel"];
 
     loader = {
-      # Systemd boot
       efi.canTouchEfiVariables = true;
       systemd-boot = {
         enable = true;
@@ -37,20 +35,24 @@
   };
 
   # Hardware
-  hardware = {
-    cpu.intel.updateMicrocode = true;
-    graphics = {
-      enable = true;
-      extraPackages = with pkgs; [
-        intel-media-driver
-        intel-vaapi-driver
-        libva-vdpau-driver
-        libvdpau-va-gl
-        intel-compute-runtime
-        vpl-gpu-rt
-      ];
-    };
+  hardware.cpu.intel.updateMicrocode = true;
+
+  # Jellyfin transcoding dependencies (VA-API / QuickSync only)
+  environment.systemPackages = with pkgs; [
+    intel-media-driver
+    libva-utils
+  ];
+
+  # Homelab
+  homelab = {
+    enable = true;
+    user = "ice";
+    group = "ice";
+    intel = true;
   };
+
+  # Virtualisation
+  virtualisation.libvirtd.allowedBridges = ["br0"];
 
   # Services
   services.openssh = {

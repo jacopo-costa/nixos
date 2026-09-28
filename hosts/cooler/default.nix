@@ -5,9 +5,8 @@
 }: {
   desktop = {
     enable = true;
+    loader = "grub";
     intel = false;
-    grub = true;
-    systemd-boot = false;
   };
 
   # Boot
@@ -58,7 +57,6 @@
           MANGOHUD = "1";
         };
       };
-      localNetworkGameTransfers.openFirewall = true;
     };
     gamemode.enable = true;
   };
@@ -71,6 +69,8 @@
     ollama = {
       enable = true;
       package = pkgs.ollama-rocm;
+      host = "[::]";
+      openFirewall = true;
     };
   };
 
