@@ -9,8 +9,6 @@
     initrd = {
       availableKernelModules = ["nvme" "xhci_pci" "ahci" "usb_storage" "sd_mod" "rtsx_usb_sdmmc"];
       kernelModules = ["amdgpu"];
-      # systemd-style initrd: honors console.keyMap at the LUKS prompt
-      # and is required for future TPM2 / FIDO2 unlock.
       systemd.enable = true;
     };
     kernelParams = ["amd_pstate=active"];
@@ -27,16 +25,17 @@
   networking.hostName = "librovivo";
 
   # Services
-  services = {
-    xserver.videoDrivers = ["amdgpu"];
+  services.tlp = {
+    enable = true;
 
-    # Configure keymap in X11
-    xserver.xkb = {
-      layout = "it";
-      variant = "";
+    settings = {
+      CPU_SCALING_GOVERNOR_ON_AC = "performance";
+      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+      START_CHARGE_THRESH_BAT0 = 75;
+      STOP_CHARGE_THRESH_BAT0 = 80;
+      DISK_IDLE_TIMEOUT = 15;
+      USB_AUTOSUSPEND = 1;
     };
-
-    power-profiles-daemon.enable = true;
   };
 
   # Swap
