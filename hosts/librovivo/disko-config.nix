@@ -3,7 +3,7 @@
     disk = {
       main = {
         type = "disk";
-        device = "/dev/nvme0n1";
+        device = "/dev/disk/by-id/nvme-KINGSTON_OM8PCP3512F-AB_50026B7683AB38AF";
         content = {
           type = "gpt";
           partitions = {
