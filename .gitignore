@@ -47,3 +47,27 @@ home-files
 *.bak
 *.tmp
 *.log
+
+# AI harnesses, agents & helpers (local state, caches, sessions)
+.claude/
+.pi/
+.cursor/
+.aider*
+.continue/
+.codeium/
+.windsurf/
+.roo/
+.cline/
+.serena/
+.crush/
+.opencode/
+.gemini/
+.qwen/
+.specstory/
+.tabnine/
+.github/copilot/
+.agent/
+.agents/
+graphify-out/
+AGENTS.local.md
+CLAUDE.local.md
