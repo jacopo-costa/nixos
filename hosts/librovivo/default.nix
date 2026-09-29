@@ -1,4 +1,4 @@
-{lib, ...}: {
+{...}: {
   desktop = {
     enable = true;
     loader = "systemd-boot";
@@ -34,5 +34,4 @@
 
   # System
   system.stateVersion = "26.05";
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }
