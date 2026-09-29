@@ -7,7 +7,7 @@ Personal NixOS flake for a handful of machines (desktops, laptops, homelab). One
 ```
 .
 ├── flake.nix          # nixosConfigurations + formatter, via the helpers below
-├── flakeHelpers.nix   # mkNixos + mergeOutputs
+├── flakeHelpers.nix   # mkNixos
 │
 ├── hosts/
 │   ├── _common/       # baseline every host gets (locale, nix, sops)
