@@ -26,35 +26,32 @@
 
   outputs = {
     nixpkgs,
-    home-manager,
     ...
   } @ inputs: let
-    helpers = import ./flakeHelpers.nix inputs;
-    mkNixos = helpers.mkNixos;
+    mkNixos = (import ./flakeHelpers.nix inputs).mkNixos;
 
     systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
     forAllSystems = f:
       nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
-  in
-    nixpkgs.lib.foldl' (a: b: nixpkgs.lib.recursiveUpdate a b) {} [
-      {
-        formatter = forAllSystems (pkgs: pkgs.alejandra);
-      }
-      (mkNixos "cooler" nixpkgs [
+  in {
+    formatter = forAllSystems (pkgs: pkgs.alejandra);
+
+    nixosConfigurations = {
+      cooler = mkNixos "cooler" [
         ./modules/desktop
-        # Users
         ./users/jacopo
-      ] "x86_64-linux")
-      (mkNixos "freezer" nixpkgs [
+      ] "x86_64-linux";
+
+      freezer = mkNixos "freezer" [
         ./modules/homelab
         ./modules/email
-        # Users
         ./users/jacopo
-      ] "x86_64-linux")
-      (mkNixos "librovivo" nixpkgs [
+      ] "x86_64-linux";
+
+      librovivo = mkNixos "librovivo" [
         ./modules/desktop
-        # Users
         ./users/jacopo
-      ] "x86_64-linux")
-    ];
+      ] "x86_64-linux";
+    };
+  };
 }

@@ -1,6 +1,6 @@
 inputs: {
-  mkNixos = machineHostname: nixpkgsVersion: extraModules: system: {
-    nixosConfigurations.${machineHostname} = nixpkgsVersion.lib.nixosSystem {
+  mkNixos = machineHostname: extraModules: system:
+    inputs.nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = {
         inherit inputs;
@@ -17,5 +17,4 @@ inputs: {
         ]
         ++ extraModules;
     };
-  };
 }
