@@ -11,8 +11,15 @@
       kernelModules = ["amdgpu"];
       systemd.enable = true;
     };
-    kernelParams = ["amd_pstate=active"];
+
+    kernelParams = [
+      "amd_pstate=active"
+      "resume_offset=68220928"
+    ];
+
     kernelModules = ["kvm-amd"];
+
+    resumeDevice = "/dev/mapper/cryptroot";
   };
 
   # Italian keymap at the LUKS prompt (and post-boot console)
