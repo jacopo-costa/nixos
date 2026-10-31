@@ -52,6 +52,9 @@
           MANGOHUD = "1";
         };
       };
+      extraCompatPackages = [
+        pkgs.proton-ge-bin
+      ];
     };
     gamemode.enable = true;
   };
@@ -64,6 +67,16 @@
     ollama = {
       enable = true;
       package = pkgs.ollama-rocm;
+      host = "[::]";
+      openFirewall = true;
+      environmentVariables = {
+        OLLAMA_CONTEXT_LENGTH = "16384";
+        OLLAMA_NUM_PARALLEL = "1";
+        OLLAMA_MAX_LOADED_MODELS = "1";
+        OLLAMA_FLASH_ATTENTION = "1";
+        OLLAMA_KV_CACHE_TYPE = "q8_0";
+        OLLAMA_KEEP_ALIVE = "5m";
+      };
     };
   };
 

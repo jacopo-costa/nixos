@@ -24,10 +24,7 @@
     };
   };
 
-  outputs = {
-    nixpkgs,
-    ...
-  } @ inputs: let
+  outputs = {nixpkgs, ...} @ inputs: let
     mkNixos = (import ./flakeHelpers.nix inputs).mkNixos;
 
     systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
