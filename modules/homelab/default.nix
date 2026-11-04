@@ -49,12 +49,10 @@ in {
       };
     };
 
-    boot = {
-      # TCP tuning
-      kernelModules = ["tcp_bbr"];
-      # Enable L1 + L1 substates where both link ends support it; no `force` (kernel docs: may cause lockups)
-      kernelParams = ["pcie_aspm.policy=powersupersave"];
-    };
+    # TCP tuning
+    # ASPM: no kernel params; freezer's FADT keeps ASPM under BIOS control (pcie_aspm.policy is ignored),
+    # so L1/L1 substates are set per root port in the BIOS (NIC port: L1.1 only, igc avoids L1.2)
+    boot.kernelModules = ["tcp_bbr"];
 
     # intel_pstate HWP energy/performance hint: favour power over performance
     systemd.tmpfiles.rules = lib.mkIf cfg.intel [
