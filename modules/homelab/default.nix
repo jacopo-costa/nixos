@@ -50,10 +50,7 @@ in {
     };
 
     # TCP tuning
-    boot = {
-      kernelModules = ["tcp_bbr"];
-      kernelParams = ["pcie_aspm=force" "pcie_aspm.policy=powersupersave"];
-    };
+    boot.kernelModules = ["tcp_bbr"];
 
     # Power Management
     powerManagement = {
@@ -79,7 +76,9 @@ in {
     # SMARTd
     services.smartd = {
       enable = true;
-      defaults.autodetected = "-a -o on -S on -s (S/../.././30|L/../../7/11) -n standby,q";
+      # Tests missed while in standby run at the next awake check; only the skip cap (48 x 30min = 1/day) forces a spin-up.
+      # Short: Monday 03:00 (disks already up for borg). Long: 15th, away from the monthly scrub on the 1st.
+      defaults.autodetected = "-a -o on -S on -s (S/../../1/03|L/../15/./03) -n standby,48,q";
 
       notifications = lib.mkIf config.email.enable {
         mail = {
@@ -118,6 +117,13 @@ in {
           userland-proxy = false;
           ipv6 = false;
           no-new-privileges = true;
+          # Docker's built-in pools run out of 172.x after 15 networks and fall back to 192.168.0.0/16 (LAN clash)
+          default-address-pools = [
+            {
+              base = "172.16.0.0/12";
+              size = 24;
+            }
+          ];
         };
       };
     };
