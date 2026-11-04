@@ -49,8 +49,17 @@ in {
       };
     };
 
-    # TCP tuning
-    boot.kernelModules = ["tcp_bbr"];
+    boot = {
+      # TCP tuning
+      kernelModules = ["tcp_bbr"];
+      # Enable L1 + L1 substates where both link ends support it; no `force` (kernel docs: may cause lockups)
+      kernelParams = ["pcie_aspm.policy=powersupersave"];
+    };
+
+    # intel_pstate HWP energy/performance hint: favour power over performance
+    systemd.tmpfiles.rules = lib.mkIf cfg.intel [
+      "w /sys/devices/system/cpu/cpufreq/policy*/energy_performance_preference - - - - balance_power"
+    ];
 
     # Power Management
     powerManagement = {
@@ -66,10 +75,10 @@ in {
       virt-manager
     ];
 
-    # Activate power save on any sd* disks and spindown after 10 minutes
+    # Spin down rotational sd* disks after 10 minutes idle (no -B: the pool's drives lack APM)
     # Turn off WoL
     services.udev.extraRules = ''
-      ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", RUN+="${pkgs.hdparm}/bin/hdparm -B 90 -S 120 /dev/%k"
+      ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", RUN+="${pkgs.hdparm}/bin/hdparm -S 120 /dev/%k"
       ACTION=="add", SUBSYSTEM=="net", DRIVERS=="?*", ATTR{device/subsystem}=="pci", RUN+="${pkgs.ethtool}/bin/ethtool -s %k wol d"
     '';
 
