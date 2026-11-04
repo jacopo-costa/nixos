@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{config, ...}: {
   imports = [
     ./backup
     ./email
@@ -33,12 +33,6 @@
   # Hardware
   hardware.cpu.intel.updateMicrocode = true;
 
-  # Jellyfin transcoding dependencies (VA-API / QuickSync only)
-  environment.systemPackages = with pkgs; [
-    intel-media-driver
-    libva-utils
-  ];
-
   # Homelab
   homelab = {
     enable = true;
@@ -49,6 +43,24 @@
 
   # Virtualisation
   virtualisation.libvirtd.allowedBridges = ["br0"];
+
+  # Stacks bind-mount /mnt/tank: never start Docker without the pool, or `-v` creates empty dirs on root
+  systemd.services.docker = {
+    requires = ["zfs-import-tank.service"];
+    after = ["zfs-import-tank.service" "zfs-mount.service"];
+  };
+
+  # Traefik access log (stacks/traefik); Traefik reopens it on USR1
+  services.logrotate.settings.traefik-access = {
+    files = "/var/lib/docker/volumes/traefik_logs/_data/access.log";
+    frequency = "daily";
+    rotate = 7;
+    compress = true;
+    delaycompress = true;
+    missingok = true;
+    notifempty = true;
+    postrotate = "${config.virtualisation.docker.package}/bin/docker kill --signal=USR1 traefik >/dev/null 2>&1 || true";
+  };
 
   # Services
   services.openssh = {
