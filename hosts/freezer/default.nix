@@ -1,4 +1,4 @@
-{config, ...}: {
+{...}: {
   imports = [
     ./backup
     ./email
@@ -50,7 +50,7 @@
     after = ["zfs-import-tank.service" "zfs-mount.service"];
   };
 
-  # Traefik access log (stacks/traefik); Traefik reopens it on USR1
+  # Traefik access log (stacks/traefik)
   services.logrotate.settings.traefik-access = {
     files = "/var/lib/docker/volumes/traefik_logs/_data/access.log";
     frequency = "daily";
@@ -59,7 +59,7 @@
     delaycompress = true;
     missingok = true;
     notifempty = true;
-    postrotate = "${config.virtualisation.docker.package}/bin/docker kill --signal=USR1 traefik >/dev/null 2>&1 || true";
+    copytruncate = true;
   };
 
   # Services
