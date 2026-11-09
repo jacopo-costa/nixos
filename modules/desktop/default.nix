@@ -95,6 +95,9 @@ in {
 
       # Equalizer
       easyeffects
+
+      # Office suite
+      onlyoffice-desktopeditors
     ];
 
     # Power management

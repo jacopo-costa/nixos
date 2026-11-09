@@ -178,6 +178,13 @@ in {
             installation_mode = "force_installed";
             private_browsing = false;
           };
+
+          "myallychou@gmail.com" = {
+            default_area = "menupanel";
+            install_url = moz "youtube-recommended-videos";
+            installation_mode = "force_installed";
+            private_browsing = false;
+          };
         };
       };
 
