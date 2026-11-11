@@ -11,5 +11,10 @@
 
     # Media automation
     ./arr
+
+    # Media
+    ./jellyfin
+    ./komga
+    ./suwayomi
   ];
 }
