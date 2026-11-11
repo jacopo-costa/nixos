@@ -113,8 +113,9 @@
     # Secrets are read with {{env `NAME`}}: backticks, because double quotes would break the generated TOML
     dynamicConfigOptions.http = {
       middlewares = {
-        # Private client ranges only; Traefik now runs on the host so it sees the real client IP
-        lan-only.ipAllowList.sourceRange = ["10.0.0.0/8" "192.168.0.0/16"];
+        # LAN subnets only (main, server, IoT all live in 192.168.x). Traefik runs on the host, so it sees the real client IP.
+        # No 10.0.0.0/8: podman networks are 10.88.x/10.89.x, and containers must not reach the LAN-only apps.
+        lan-only.ipAllowList.sourceRange = ["192.168.0.0/16"];
 
         ratelimiter.rateLimit = {
           average = 500;
