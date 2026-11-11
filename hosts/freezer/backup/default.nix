@@ -7,7 +7,7 @@
   borgRepo = "/mnt/tank/backup/borg/freezer";
 
   # Stopped during the backup so their databases are copied in a consistent state.
-  # Only the ones that exist are used, so commenting out an app in ../services is enough.
+  # Only the ones that exist are used, so commenting out an app in services/default.nix is enough.
   # If the backup is interrupted by a crash, systemd starts them again at boot.
   apps = lib.filter (unit: config.systemd.services ? ${unit}) [
     "crowdsec"

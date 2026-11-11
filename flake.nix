@@ -42,6 +42,7 @@
       freezer = mkNixos "freezer" [
         ./modules/homelab
         ./modules/email
+        ./services
         ./users/jacopo
       ] "x86_64-linux";
 

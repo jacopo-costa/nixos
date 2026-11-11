@@ -3,7 +3,6 @@
     ./backup
     ./email
     ./network
-    ./services
     ./zfs
   ];
 

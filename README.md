@@ -12,12 +12,13 @@ Personal NixOS flake for a handful of machines (desktops, laptops, homelab). One
 ├── hosts/
 │   ├── _common/       # baseline every host gets (locale, nix, sops)
 │   └── <host>/        # per-host: hardware, disko-config, host-specific bits
-│       └── services/  # freezer only: one folder per self-hosted app
 │
 ├── modules/           # reusable, option-driven NixOS modules
 │   ├── desktop/       # Plasma 6, SDDM, PipeWire, etc. — toggled per host
 │   ├── email/         # msmtp + sops-managed credentials
 │   └── homelab/       # libvirt, smartd, power mgmt, Intel GPU, podman
+│
+├── services/          # self-hosted apps (freezer): one folder per app, no options
 │
 └── users/jacopo/      # NixOS user + Home Manager wire-up + home.nix
 ```
@@ -28,8 +29,8 @@ Modules expose `options.<name>.enable` (plus a few knobs) and only do anything w
 
 ## Self-hosted apps (freezer)
 
-`hosts/freezer/services/` has one folder per app, imported from `services/default.nix`
-(comment out a line to turn an app off). Each app file holds, top to bottom:
+`services/` has one folder per app, listed in `services/default.nix` (comment out a line to turn an app off).
+It's plain config, not an option-driven module: freezer imports it in `flake.nix`. Each app file holds, top to bottom:
 
 1. its sops secrets (and the env file built from them),
 2. the NixOS service (`services.<app>`), or a podman container when nixpkgs has no module,
@@ -39,7 +40,7 @@ Traefik terminates TLS (Cloudflare wildcard) and applies CrowdSec, rate limiting
 `*.dimoracosta.it` (`websecure`, :443). LAN-only apps are on `*.freezer.lan` (`weblocal`, :80, LAN source IPs only).
 Apps listen on `127.0.0.1` only. Media and big data live on the ZFS pool `tank`; apps that use it never start without it.
 
-The one-time migration from the old docker stacks is in `hosts/freezer/services/MIGRATION.md`.
+The one-time migration from the old docker stacks is in `services/MIGRATION.md`.
 
 ## Home Manager
 
