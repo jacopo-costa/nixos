@@ -3,6 +3,7 @@
     ./backup
     ./email
     ./network
+    ./services
     ./zfs
   ];
 
@@ -48,18 +49,6 @@
   systemd.services.docker = {
     requires = ["zfs-import-tank.service"];
     after = ["zfs-import-tank.service" "zfs-mount.service"];
-  };
-
-  # Traefik access log (stacks/traefik)
-  services.logrotate.settings.traefik-access = {
-    files = "/var/lib/docker/volumes/traefik_logs/_data/access.log";
-    frequency = "daily";
-    rotate = 7;
-    compress = true;
-    delaycompress = true;
-    missingok = true;
-    notifempty = true;
-    copytruncate = true;
   };
 
   # Services
