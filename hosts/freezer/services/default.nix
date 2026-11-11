@@ -28,5 +28,10 @@
     # Utility
     ./glance
     ./searxng
+
+    # Podman containers (no NixOS module)
+    ./calibre-web-automated
+    ./sparkyfitness
+    ./trek
   ];
 }
