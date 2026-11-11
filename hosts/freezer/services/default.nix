@@ -24,5 +24,9 @@
 
     # Cameras
     ./frigate
+
+    # Utility
+    ./glance
+    ./searxng
   ];
 }
