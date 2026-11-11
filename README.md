@@ -12,11 +12,12 @@ Personal NixOS flake for a handful of machines (desktops, laptops, homelab). One
 ├── hosts/
 │   ├── _common/       # baseline every host gets (locale, nix, sops)
 │   └── <host>/        # per-host: hardware, disko-config, host-specific bits
+│       └── services/  # freezer only: one folder per self-hosted app
 │
 ├── modules/           # reusable, option-driven NixOS modules
 │   ├── desktop/       # Plasma 6, SDDM, PipeWire, etc. — toggled per host
 │   ├── email/         # msmtp + sops-managed credentials
-│   └── homelab/       # libvirt, smartd, power mgmt + service submodules
+│   └── homelab/       # libvirt, smartd, power mgmt, Intel GPU, podman
 │
 └── users/jacopo/      # NixOS user + Home Manager wire-up + home.nix
 ```
@@ -24,6 +25,21 @@ Personal NixOS flake for a handful of machines (desktops, laptops, homelab). One
 Each host's flake entry is built by `mkNixos`, which auto-imports `hosts/_common`, `hosts/<host>`, sops-nix, disko + the host's `disko-config.nix`, and merges any extra modules the host declares in `flake.nix`.
 
 Modules expose `options.<name>.enable` (plus a few knobs) and only do anything when the host opts in — so the homelab module doesn't run on desktops, and the desktop module doesn't run on the server.
+
+## Self-hosted apps (freezer)
+
+`hosts/freezer/services/` has one folder per app, imported from `services/default.nix`
+(comment out a line to turn an app off). Each app file holds, top to bottom:
+
+1. its sops secrets (and the env file built from them),
+2. the NixOS service (`services.<app>`), or a podman container when nixpkgs has no module,
+3. its Traefik route (`services.traefik.dynamicConfigOptions.http`).
+
+Traefik terminates TLS (Cloudflare wildcard) and applies CrowdSec, rate limiting and security headers on
+`*.dimoracosta.it` (`websecure`, :443). LAN-only apps are on `*.freezer.lan` (`weblocal`, :80, LAN source IPs only).
+Apps listen on `127.0.0.1` only. Media and big data live on the ZFS pool `tank`; apps that use it never start without it.
+
+The one-time migration from the old docker stacks is in `hosts/freezer/services/MIGRATION.md`.
 
 ## Home Manager
 

@@ -126,23 +126,9 @@ in {
         onShutdown = "shutdown";
       };
 
-      # Every app is in a docker compose under /srv/stacks
-      docker = {
-        enable = true;
-        autoPrune.enable = true;
-        daemon.settings = {
-          userland-proxy = false;
-          ipv6 = false;
-          no-new-privileges = true;
-          # Docker's built-in pools run out of 172.x after 15 networks and fall back to 192.168.0.0/16 (LAN clash)
-          default-address-pools = [
-            {
-              base = "172.16.0.0/12";
-              size = 24;
-            }
-          ];
-        };
-      };
+      # Apps without a NixOS module run as podman containers (virtualisation.oci-containers)
+      oci-containers.backend = "podman";
+      podman.autoPrune.enable = true;
     };
   };
 }

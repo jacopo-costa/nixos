@@ -45,12 +45,6 @@
   # Virtualisation
   virtualisation.libvirtd.allowedBridges = ["br0"];
 
-  # Stacks bind-mount /mnt/tank: never start Docker without the pool, or `-v` creates empty dirs on root
-  systemd.services.docker = {
-    requires = ["zfs-import-tank.service"];
-    after = ["zfs-import-tank.service" "zfs-mount.service"];
-  };
-
   # Services
   services.openssh = {
     enable = true;

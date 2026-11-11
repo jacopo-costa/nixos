@@ -5,22 +5,40 @@
   ...
 }: let
   borgRepo = "/mnt/tank/backup/borg/freezer";
-  dockerCli = "${config.virtualisation.docker.package}/bin/docker";
-  # Compose files stopped by the backup; survives a crash so boot can restart them
-  stateDir = "/var/lib/borg-compose";
-  stoppedList = "${stateDir}/stopped";
 
-  # Restart every stopped project, never abort halfway; sets startFailed=1 on any failure
-  startStopped = ''
-    set +e
-    startFailed=0
-    if [ -s ${stoppedList} ]; then
-      while read -r c; do
-        ${dockerCli} compose -f "$c" start < /dev/null || startFailed=1
-      done < ${stoppedList}
-    fi
-    [ "$startFailed" = 0 ] && rm -f ${stoppedList}
-  '';
+  # Stopped during the backup so their databases are copied in a consistent state.
+  # Only the ones that exist are used, so commenting out an app in ../services is enough.
+  # If the backup is interrupted by a crash, systemd starts them again at boot.
+  apps = lib.filter (unit: config.systemd.services ? ${unit}) [
+    "crowdsec"
+    "pocket-id"
+    "vaultwarden"
+    "sonarr"
+    "radarr"
+    "prowlarr"
+    "bazarr"
+    "sabnzbd"
+    "seerr"
+    "jellyfin"
+    "komga"
+    "suwayomi-server"
+    "immich-server"
+    "immich-machine-learning"
+    "phpfpm-nextcloud"
+    "frigate"
+    "podman-qbittorrent"
+    "podman-gluetun"
+    "podman-sparkyfitness-frontend"
+    "podman-sparkyfitness-server"
+    "podman-sparkyfitness-db"
+    "podman-trek"
+    "podman-calibre-web-automated"
+    # Databases last (systemd stops the apps that need them first anyway)
+    "postgresql"
+    "mysql"
+  ];
+  units = lib.concatMapStringsSep " " (unit: "${unit}.service") apps;
+  systemctl = "${config.systemd.package}/bin/systemctl";
 
   # body is double-quoted so shell variables in it expand
   sendMail = subject: body:
@@ -33,22 +51,27 @@
 in {
   environment.systemPackages = [pkgs.borgbackup];
 
-  systemd.tmpfiles.rules = ["d ${stateDir} 0700 root root -"];
-
   services.borgbackup.jobs = {
     freezer-local = {
       paths = [
-        "/srv/stacks"
+        # App state and databases (pocket-id, vaultwarden, arr, jellyfin, postgres, mysql, containers...)
+        "/var/lib"
         "/opt/suwayomi"
-        "/var/lib/docker/volumes"
         "/mnt/tank/nextcloud"
         "/mnt/tank/immich"
+      ];
+      exclude = [
+        # Container images: downloaded again
+        "/var/lib/containers"
+        # Old docker data, until it's deleted after the migration
+        "/var/lib/docker"
+        # VM disks
+        "/var/lib/libvirt"
       ];
 
       repo = borgRepo;
       compression = "auto,zstd";
       encryption.mode = "none";
-      readWritePaths = [stateDir];
 
       startAt = "Mon *-*-* 03:00:00";
 
@@ -58,38 +81,17 @@ in {
       };
 
       preHook = ''
-        for c in $(${dockerCli} ps -q); do
-          ${dockerCli} inspect "$c" --format '{{ index .Config.Labels "com.docker.compose.project.config_files" }}'
-        done | grep -v '^$' | sort -u >> ${stoppedList}
-        sort -u -o ${stoppedList} ${stoppedList}
-        while read -r c; do
-          ${dockerCli} compose -f "$c" stop < /dev/null
-        done < ${stoppedList}
+        ${systemctl} stop ${units}
       '';
 
+      # Runs even when the backup fails
       postHook = ''
-        ${startStopped}
+        startFailed=0
+        ${systemctl} start ${units} || startFailed=1
         if [ "$exitStatus" != "0" ] || [ "$startFailed" != "0" ]; then
-          ${sendMail "Borg backup failed" "Backup exit code: $exitStatus. Stack restart failed: $startFailed (still pending in ${stoppedList})."}
+          ${sendMail "Borg backup failed" "Backup exit code: $exitStatus. App restart failed: $startFailed (check: systemctl --failed)."}
         fi
       '';
     };
-  };
-
-  # unless-stopped containers stay down after a crash/reboot mid-backup: restart them at boot
-  systemd.services.borg-compose-restart = {
-    description = "Restart compose stacks left stopped by an interrupted borg backup";
-    after = ["docker.service"];
-    requires = ["docker.service"];
-    wantedBy = ["multi-user.target"];
-    unitConfig.ConditionPathExists = stoppedList;
-    serviceConfig.Type = "oneshot";
-    script = ''
-      ${startStopped}
-      if [ "$startFailed" != "0" ]; then
-        ${sendMail "Stack restart after interrupted backup failed" "See ${stoppedList}."}
-        exit 1
-      fi
-    '';
   };
 }
