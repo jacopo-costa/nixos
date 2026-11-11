@@ -8,5 +8,8 @@
     # Auth + passwords
     ./pocket-id
     ./vaultwarden
+
+    # Media automation
+    ./arr
   ];
 }
