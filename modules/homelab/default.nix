@@ -103,6 +103,16 @@ in {
       };
     };
 
+    # Intel GPU drivers (the containers bundled their own):
+    # VA-API (iHD) for jellyfin/immich/frigate transcoding, OpenCL for frigate's OpenVINO GPU detector
+    hardware.graphics = lib.mkIf cfg.intel {
+      enable = true;
+      extraPackages = with pkgs; [
+        intel-media-driver
+        intel-compute-runtime
+      ];
+    };
+
     # Virtualisation
     virtualisation = {
       libvirtd = {
