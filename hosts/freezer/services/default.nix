@@ -4,6 +4,7 @@
     # Reverse proxy + security
     ./traefik
     ./crowdsec
+    ./nginx
 
     # Auth + passwords
     ./pocket-id
@@ -19,5 +20,6 @@
 
     # Photos + cloud
     # ./immich  # needs NixOS 26.11: 26.05 ships immich 2.x, the database is already 3.x
+    ./nextcloud
   ];
 }
