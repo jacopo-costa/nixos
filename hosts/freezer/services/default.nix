@@ -4,5 +4,9 @@
     # Reverse proxy + security
     ./traefik
     ./crowdsec
+
+    # Auth + passwords
+    ./pocket-id
+    ./vaultwarden
   ];
 }
