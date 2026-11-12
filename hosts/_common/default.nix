@@ -6,6 +6,7 @@
   imports = [
     ./nix
     ./secrets
+    ./ssh
   ];
 
   services = {

@@ -63,16 +63,8 @@
   };
 
   # Services
-  services.openssh = {
-    enable = true;
-    ports = [22];
-    settings = {
-      PasswordAuthentication = false;
-      KbdInteractiveAuthentication = false;
-      AllowUsers = ["jacopo"];
-      PermitRootLogin = "no";
-    };
-  };
+  # SSH (hardened in hosts/_common/ssh): reachable from the LAN, the router doesn't forward port 22
+  services.openssh.openFirewall = true;
 
   # Swap
   swapDevices = [
